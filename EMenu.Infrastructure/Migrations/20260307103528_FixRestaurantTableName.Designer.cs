@@ -4,6 +4,7 @@ using EMenu.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EMenu.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260307103528_FixRestaurantTableName")]
+    partial class FixRestaurantTableName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,6 +209,9 @@ namespace EMenu.Infrastructure.Migrations
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("RestaurantTableTableID")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
@@ -219,7 +225,7 @@ namespace EMenu.Infrastructure.Migrations
 
                     b.HasIndex("CustomerID");
 
-                    b.HasIndex("TableID");
+                    b.HasIndex("RestaurantTableTableID");
 
                     b.ToTable("OrderSessions");
                 });
@@ -538,7 +544,7 @@ namespace EMenu.Infrastructure.Migrations
 
                     b.HasOne("EMenu.Domain.Entities.RestaurantTable", "RestaurantTable")
                         .WithMany("OrderSessions")
-                        .HasForeignKey("TableID")
+                        .HasForeignKey("RestaurantTableTableID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

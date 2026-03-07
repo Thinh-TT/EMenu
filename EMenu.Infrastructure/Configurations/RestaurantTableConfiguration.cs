@@ -13,7 +13,7 @@ namespace EMenu.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<RestaurantTable> builder)
         {
-            builder.ToTable("Table");
+            builder.ToTable("RestaurantTables");
 
             builder.HasKey(x => x.TableID);
 

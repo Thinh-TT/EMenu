@@ -8,12 +8,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EMenu.Domain\EMenu.Domain.csproj" />
+    <ProjectReference Include="..\EMenu.Infrastructure\EMenu.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="DTOs\" />
     <Folder Include="Interfaces\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

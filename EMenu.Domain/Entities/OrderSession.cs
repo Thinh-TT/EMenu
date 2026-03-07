@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace EMenu.Domain.Entities
 
         public int CustomerID { get; set; }
 
+        [ForeignKey("TableID")]
         public RestaurantTable RestaurantTable { get; set; }
 
         public Customer Customer { get; set; }

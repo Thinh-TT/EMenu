@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EMenu.Domain.Entities
@@ -16,6 +17,7 @@ namespace EMenu.Domain.Entities
 
         public int Status { get; set; }
 
+        [JsonIgnore]
         public ICollection<OrderSession> OrderSessions { get; set; }
     }
 }

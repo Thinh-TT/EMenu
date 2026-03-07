@@ -51,12 +51,81 @@ namespace EMenu.Infrastructure.Seed
                 context.SaveChanges();
             }
 
+            if (!context.Users.Any(x => x.UserName == "staff1"))
+            {
+                var staffUser = new User
+                {
+                    UserName = "staff1",
+                    Password = "123456",
+                    IsActive = true,
+                    CreatedAt = DateTime.Now
+                };
+
+                context.Users.Add(staffUser);
+                context.SaveChanges();
+
+                var staffRole = context.Roles.First(x => x.RoleName == "Staff");
+
+                context.UserRoles.Add(new UserRole
+                {
+                    UserID = staffUser.UserID,
+                    RoleID = staffRole.RoleID
+                });
+
+                context.SaveChanges();
+
+                context.Staffs.Add(new Staff
+                {
+                    StaffName = "Nguyen Van A",
+                    Phone = "0901234567",
+                    Email = "staff1@restaurant.com",
+                    UserID = staffUser.UserID
+                });
+
+                context.SaveChanges();
+            }
+
             if (!context.Categories.Any())
             {
                 context.Categories.AddRange(
                     new Category { CategoryName = "Food" },
                     new Category { CategoryName = "Drink" },
                     new Category { CategoryName = "Combo" }
+                );
+
+                context.SaveChanges();
+            }
+
+            if (!context.Customers.Any())
+            {
+                context.Customers.AddRange(
+                    new Customer
+                    {
+                        Name = "Nguyen Van A",
+                        Sex = "Male",
+                        Email = "a@gmail.com",
+                        Phone = "0900000001",
+                        BirthYear = 1995,
+                        CreatedAt = DateTime.Now
+                    },
+                    new Customer
+                    {
+                        Name = "Tran Thi B",
+                        Sex = "Female",
+                        Email = "b@gmail.com",
+                        Phone = "0900000002",
+                        BirthYear = 1998,
+                        CreatedAt = DateTime.Now
+                    },
+                    new Customer
+                    {
+                        Name = "Le Van C",
+                        Sex = "Male",
+                        Email = "c@gmail.com",
+                        Phone = "0900000003",
+                        BirthYear = 1992,
+                        CreatedAt = DateTime.Now
+                    }
                 );
 
                 context.SaveChanges();

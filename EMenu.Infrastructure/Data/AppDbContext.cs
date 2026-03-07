@@ -30,6 +30,7 @@ namespace EMenu.Infrastructure.Data
         public DbSet<ComboProduct> ComboProducts { get; set; }
 
         public DbSet<RestaurantTable> RestaurantTables { get; set; }
+
         public DbSet<Customer> Customers { get; set; }
         public DbSet<OrderSession> OrderSessions { get; set; }
 
@@ -41,6 +42,9 @@ namespace EMenu.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<RestaurantTable>()
+                .ToTable("Table");
+
             modelBuilder.ApplyConfigurationsFromAssembly(
                 typeof(AppDbContext).Assembly
             );
