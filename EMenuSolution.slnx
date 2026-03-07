@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="EMenu.Application/EMenu.Application.csproj" />
+  <Project Path="EMenu.Domain/EMenu.Domain.csproj" />
+  <Project Path="EMenu.Infrastructure/EMenu.Infrastructure.csproj" />
+  <Project Path="EMenu.Web/EMenu.Web.csproj" />
+</Solution>

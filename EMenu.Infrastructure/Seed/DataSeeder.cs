@@ -1,0 +1,119 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using EMenu.Domain.Entities;
+using EMenu.Domain.Enums;
+using EMenu.Infrastructure.Data;
+
+namespace EMenu.Infrastructure.Seed
+{
+    public static class DataSeeder
+    {
+        public static void Seed(AppDbContext context)
+        {
+            context.Database.EnsureCreated();
+
+            if (!context.Roles.Any())
+            {
+                var roles = new List<Role>
+                {
+                    new Role { RoleName = "Admin" },
+                    new Role { RoleName = "Staff" }
+                };
+
+                context.Roles.AddRange(roles);
+                context.SaveChanges();
+            }
+
+            if (!context.Users.Any())
+            {
+                var admin = new User
+                {
+                    UserName = "admin",
+                    Password = "123456",
+                    IsActive = true,
+                    CreatedAt = DateTime.Now
+                };
+
+                context.Users.Add(admin);
+                context.SaveChanges();
+
+                var role = context.Roles.First(x => x.RoleName == "Admin");
+
+                context.UserRoles.Add(new UserRole
+                {
+                    UserID = admin.UserID,
+                    RoleID = role.RoleID
+                });
+
+                context.SaveChanges();
+            }
+
+            if (!context.Categories.Any())
+            {
+                context.Categories.AddRange(
+                    new Category { CategoryName = "Food" },
+                    new Category { CategoryName = "Drink" },
+                    new Category { CategoryName = "Combo" }
+                );
+
+                context.SaveChanges();
+            }
+
+            if (!context.RestaurantTables.Any())
+            {
+                context.RestaurantTables.AddRange(
+                    new RestaurantTable { TableName = "B1", Capacity = 4, Status = 0 },
+                    new RestaurantTable { TableName = "B2", Capacity = 4, Status = 0 },
+                    new RestaurantTable { TableName = "B3", Capacity = 6, Status = 0 },
+                    new RestaurantTable { TableName = "B4", Capacity = 6, Status = 0 }
+                );
+
+                context.SaveChanges();
+            }
+
+            if (!context.Products.Any())
+            {
+                var food = context.Categories.First(x => x.CategoryName == "Food");
+                var drink = context.Categories.First(x => x.CategoryName == "Drink");
+
+                context.Products.AddRange(
+                    new Product
+                    {
+                        ProductName = "Burger",
+                        Description = "Beef burger",
+                        Image = "burger.jpg",
+                        Price = 5,
+                        ProductType = ProductType.Single,
+                        CategoryID = food.CategoryID,
+                        IsAvailable = true
+                    },
+                    new Product
+                    {
+                        ProductName = "Pizza",
+                        Description = "Italian pizza",
+                        Image = "pizza.jpg",
+                        Price = 8,
+                        ProductType = ProductType.Single,
+                        CategoryID = food.CategoryID,
+                        IsAvailable = true
+                    },
+                    new Product
+                    {
+                        ProductName = "Coke",
+                        Description = "Coca cola drink",
+                        Image = "coke.jpg",
+                        Price = 2,
+                        ProductType = ProductType.Single,
+                        CategoryID = drink.CategoryID,
+                        IsAvailable = true
+                    }
+                );
+
+                context.SaveChanges();
+            }
+        }
+    }
+}
