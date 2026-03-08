@@ -1,0 +1,32 @@
+﻿<h2>Edit Combo</h2>
+
+<form method="post">
+
+	<input type="hidden"
+		   name="comboId"
+		   value="@Model.ProductID" />
+
+	<h4>Products</h4>
+
+	@foreach (var p in ViewBag.Products)
+	{
+		var checkedItem = ((List<int>)ViewBag.ComboItems).Contains(p.ProductID);
+		<div>
+
+			<input type="checkbox"
+				   name="productIds"
+				   value="@p.ProductID"
+				   @(checkedItem ? "checked" : "") />
+
+			@p.ProductName
+
+		</div>
+	}
+
+	<br />
+
+	<button class="btn btn-success">
+		Save
+	</button>
+
+</form>

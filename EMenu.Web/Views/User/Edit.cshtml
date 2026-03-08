@@ -1,0 +1,40 @@
+﻿<h2>Edit User</h2>
+
+<form method="post">
+
+	<input type="hidden"
+		   name="UserID"
+		   value="@Model.UserID" />
+
+	<label>Username</label>
+
+	<input name="UserName"
+		   value="@Model.UserName"
+		   class="form-control" />
+
+	<label>Password</label>
+
+	<input name="Password"
+		   value="@Model.Password"
+		   class="form-control" />
+
+	<label>Role</label>
+
+	<select name="roleId" class="form-control">
+
+		@foreach (var r in ViewBag.Roles)
+		{
+			<option value="@r.RoleID">
+
+				@r.RoleName
+
+			</option>
+		}
+
+	</select>
+
+	<br />
+
+	<button class="btn btn-success">Update</button>
+
+</form>

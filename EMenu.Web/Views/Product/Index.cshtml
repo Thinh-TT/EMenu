@@ -1,4 +1,5 @@
-﻿<h2>Product Management</h2>
+﻿@using EMenu.Domain.Enums
+<h2>Product Management</h2>
 
 <a href="/Product/Create" class="btn btn-primary">Add Product</a>
 
@@ -11,6 +12,7 @@
 			<th>Image</th>
 			<th>Category</th>
 			<th>Price</th>
+			<th>Type</th>
 			<th>Status</th>
 			<th>Actions</th>
 		</tr>
@@ -34,7 +36,16 @@
 				<td>@item.Category?.CategoryName</td>
 
 				<td>@item.Price</td>
-
+				<td>
+					@if (item.ProductType == ProductType.Combo)
+					{
+						<span class="badge bg-warning">Combo</span>
+					}
+					else
+					{
+						<span class="badge bg-success">Single</span>
+					}
+				</td>
 				<td>
 					@(item.IsAvailable ? "Available" : "Disabled")
 				</td>

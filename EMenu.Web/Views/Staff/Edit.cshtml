@@ -1,0 +1,26 @@
+﻿<h2>Edit Staff</h2>
+
+<form method="post">
+
+	<input type="hidden" name="StaffID" value="@Model.StaffID" />
+
+	<label>Name</label>
+	<input name="StaffName"
+		   value="@Model.StaffName"
+		   class="form-control" />
+
+	<label>Phone</label>
+	<input name="Phone"
+		   value="@Model.Phone"
+		   class="form-control" />
+
+	<label>Email</label>
+	<input name="Email"
+		   value="@Model.Email"
+		   class="form-control" />
+
+	<br />
+
+	<button class="btn btn-success">Update</button>
+
+</form>

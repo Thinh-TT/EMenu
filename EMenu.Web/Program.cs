@@ -24,6 +24,16 @@ builder.Services.AddScoped<CategoryService>();
 
 builder.Services.AddScoped<ProductService>();
 
+builder.Services.AddScoped<StaffService>();
+
+builder.Services.AddScoped<UserService>();
+
+builder.Services.AddScoped<TableService>();
+
+builder.Services.AddScoped<MenuService>();
+
+builder.Services.AddScoped<ComboService>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

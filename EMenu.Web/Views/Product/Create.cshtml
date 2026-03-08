@@ -1,4 +1,5 @@
-﻿<h2>Create Product</h2>
+﻿@using EMenu.Domain.Enums
+<h2>Create Product</h2>
 
 <form method="post" enctype="multipart/form-data">
 
@@ -24,7 +25,15 @@
 	<label>Description</label>
 
 <textarea name="Description" class="form-control"></textarea>
+	<label>Product Type</label>
 
+	<select name="ProductType" class="form-control">
+
+		<option value="1">Single</option>
+
+		<option value="2">Combo</option>
+
+	</select>
 	<label>Status</label>
 	<input type="checkbox" name="IsAvailable" value="true" />
 

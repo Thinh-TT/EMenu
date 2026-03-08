@@ -17,7 +17,7 @@ namespace EMenu.Application.Services
             _context = context;
         }
 
-        public OrderSession StartSession(int tableId, int customerId)
+        public OrderSession StartSession(int tableId, int customerId )
         {
             var table = _context.RestaurantTables.Find(tableId);
 

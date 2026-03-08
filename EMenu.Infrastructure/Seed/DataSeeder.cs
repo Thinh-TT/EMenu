@@ -101,9 +101,9 @@ namespace EMenu.Infrastructure.Seed
                 context.Customers.AddRange(
                     new Customer
                     {
-                        Name = "Nguyen Van A",
+                        Name = "Unknown customer",
                         Sex = "Male",
-                        Email = "a@gmail.com",
+                        Email = "uc@gmail.com",
                         Phone = "0900000001",
                         BirthYear = 1995,
                         CreatedAt = DateTime.Now

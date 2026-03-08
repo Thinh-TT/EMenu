@@ -1,0 +1,29 @@
+﻿<h2>Table Management</h2>
+
+<div class="table-grid">
+
+    @foreach (var table in Model)
+    {
+        var color = "green";
+
+        if (table.Status == 1)
+            color = "red";
+
+        <div class="table-box"
+             style="background:@color">
+
+            <h3>@table.TableName</h3>
+
+            <p>Capacity: @table.Capacity</p>
+
+            <a href="/Table/StartSession?tableId=@table.TableID"
+               class="btn btn-light">
+
+                Open
+
+            </a>
+
+        </div>
+    }
+
+</div>

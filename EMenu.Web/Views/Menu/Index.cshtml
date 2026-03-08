@@ -1,0 +1,68 @@
+﻿@using EMenu.Domain.Enums
+<h2>Restaurant Menu</h2>
+
+@foreach (var category in Model)
+{
+    <h3>@category.CategoryName</h3>
+
+    <div class="product-grid">
+
+        @foreach (var product in category.Products)
+        {
+           
+            <div class="product-card">
+
+                <img src="/images/products/@product.Image"
+                     width="80" />
+
+                <h4>@product.ProductName</h4>
+
+                <p>@product.Price $</p>
+
+                <button class="btn btn-primary"
+                        onclick="addToOrder(@product.ProductID)">
+
+                    Add
+
+                </button>
+                @if (product.ProductType == ProductType.Combo)
+                {
+                    <button class="btn btn-warning"
+                            onclick="showCombo(@product.ProductID)">
+
+                        View Combo
+
+                    </button>
+                }
+
+            </div>
+
+        }
+
+    </div>
+
+}
+<script src="/js/menu.js"></script>
+<div id="comboModal"
+     style="display:none;
+position:fixed;
+top:20%;
+left:30%;
+width:40%;
+background:white;
+border:1px solid #ccc;
+padding:20px;
+z-index:1000">
+
+    <h3>Combo Items</h3>
+
+    <ul id="comboItems"></ul>
+
+    <button onclick="closeCombo()"
+            class="btn btn-danger">
+
+        Close
+
+    </button>
+
+</div>

@@ -1,0 +1,39 @@
+﻿<h2>Combo Management</h2>
+
+<table class="table">
+
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Price</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+
+	<tbody>
+
+		@foreach (var combo in Model)
+		{
+			<tr>
+
+				<td>@combo.ProductID</td>
+				<td>@combo.ProductName</td>
+				<td>@combo.Price</td>
+				<td>
+
+					<a href="/Combo/Edit/@combo.ProductID"
+					   class="btn btn-warning">
+
+						Edit
+
+					</a>
+
+				</td>
+
+			</tr>
+		}
+
+	</tbody>
+
+</table>
