@@ -44,17 +44,24 @@ namespace EMenu.Application.Services
             return session;
         }
 
-        public void EndSession(int sessionId)
+        public void EndSession(int tableId)
         {
-            var session = _context.OrderSessions.Find(sessionId);
+            var session = _context.OrderSessions
+                .FirstOrDefault(x => x.TableID == tableId && x.Status == 1);
 
+            if (session == null)
+                throw new Exception("Session not found");
+
+            session.Status = 0;
             session.EndTime = DateTime.Now;
-            session.Status = 2;
 
-            var table = _context.RestaurantTables.Find(session.TableID);
+            var table = _context.RestaurantTables
+                .FirstOrDefault(x => x.TableID == tableId);
+
             table.Status = 0;
 
             _context.SaveChanges();
         }
+
     }
 }

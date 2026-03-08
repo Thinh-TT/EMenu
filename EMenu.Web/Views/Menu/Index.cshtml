@@ -20,10 +20,8 @@
                 <p>@product.Price $</p>
 
                 <button class="btn btn-primary"
-                        onclick="addToOrder(@product.ProductID)">
-
+                        onclick="addToCart(@product.ProductID,'@product.ProductName',@product.Price)">
                     Add
-
                 </button>
                 @if (product.ProductType == ProductType.Combo)
                 {
@@ -42,6 +40,23 @@
     </div>
 
 }
+<div class="cart-panel">
+
+    <h3>Cart</h3>
+
+    <div id="cartItems"></div>
+
+    <h4>Total: $<span id="cartTotal">0</span></h4>
+
+    <button onclick="submitOrder()"
+            class="btn btn-success">
+
+        Submit Order
+
+    </button>
+
+</div>
+<script src="/js/cart.js"></script>
 <script src="/js/menu.js"></script>
 <div id="comboModal"
      style="display:none;

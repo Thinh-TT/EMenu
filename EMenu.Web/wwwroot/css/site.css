@@ -41,6 +41,7 @@ body {
 }
 /*--------------------------------*/
 
+
 .product-grid {
     display: grid;
     grid-template-columns: repeat(4,1fr);
@@ -59,4 +60,33 @@ body {
     width: 100%;
     height: 150px;
     object-fit: cover;
+}
+/*--------------------------------*/
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+    .cart-controls button {
+        width: 25px;
+        height: 25px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+.remove-btn {
+    background: red;
 }

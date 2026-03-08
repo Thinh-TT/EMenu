@@ -1,0 +1,227 @@
+﻿function getCart() {
+
+    let cart = sessionStorage.getItem("cart");
+
+    if (!cart) return [];
+
+    return JSON.parse(cart);
+
+}
+
+function saveCart(cart) {
+
+    sessionStorage.setItem("cart", JSON.stringify(cart));
+
+}
+
+function addToCart(productId, name, price) {
+
+    let cart = getCart();
+
+    let item = cart.find(x => x.productId === productId);
+
+    if (item) {
+
+        item.quantity++;
+
+    }
+    else {
+
+        cart.push({
+            productId: productId,
+            name: name,
+            price: price,
+            quantity: 1
+        });
+
+    }
+
+    saveCart(cart);
+
+    updateCartUI();
+}
+
+function getCart() {
+
+    let cart = sessionStorage.getItem("cart");
+
+    if (!cart) return [];
+
+    return JSON.parse(cart);
+
+}
+
+function saveCart(cart) {
+
+    sessionStorage.setItem("cart", JSON.stringify(cart));
+
+}
+
+function addToCart(productId, name, price) {
+
+    let cart = getCart();
+
+    let item = cart.find(x => x.productId === productId);
+
+    if (item) {
+
+        item.quantity++;
+
+    }
+    else {
+
+        cart.push({
+            productId: productId,
+            name: name,
+            price: price,
+            quantity: 1
+        });
+
+    }
+
+    saveCart(cart);
+
+    updateCartUI();
+
+}
+
+function submitOrder() {
+
+    let cart = getCart();
+
+    if (cart.length === 0) {
+
+        alert("Cart empty");
+
+        return;
+
+    }
+
+    fetch("/api/order/submit", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(cart)
+
+    })
+        .then(res => res.text())
+        .then(data => {
+
+            alert("Order placed!");
+
+            sessionStorage.removeItem("cart");
+
+            updateCartUI();
+
+        });
+
+}
+
+function updateCartUI() {
+
+    let cart = getCart();
+
+    let container = document.getElementById("cartItems");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    let total = 0;
+
+    cart.forEach((item, index) => {
+
+        total += item.price * item.quantity;
+
+        container.innerHTML += `
+        <div class="cart-item">
+
+            <b>${item.name}</b>
+
+            <div class="cart-controls">
+
+                <button onclick="decreaseQty(${index})">-</button>
+
+                <span>${item.quantity}</span>
+
+                <button onclick="increaseQty(${index})">+</button>
+
+                <button onclick="removeItem(${index})"
+                        class="remove-btn">
+                    ✖
+                </button>
+
+            </div>
+
+            <span>$${item.price * item.quantity}</span>
+
+        </div>
+        `;
+
+    });
+
+    document.getElementById("cartTotal").innerText = total;
+
+}
+
+function increaseQty(index) {
+
+    let cart = getCart();
+
+    cart[index].quantity++;
+
+    saveCart(cart);
+
+    updateCartUI();
+
+}
+
+function increaseQty(index) {
+
+    let cart = getCart();
+
+    cart[index].quantity++;
+
+    saveCart(cart);
+
+    updateCartUI();
+
+}
+
+function decreaseQty(index) {
+
+    let cart = getCart();
+
+    cart[index].quantity--;
+
+    if (cart[index].quantity <= 0) {
+
+        cart.splice(index, 1);
+
+    }
+
+    saveCart(cart);
+
+    updateCartUI();
+
+}
+
+function removeItem(index) {
+
+    let cart = getCart();
+
+    cart.splice(index, 1);
+
+    saveCart(cart);
+
+    updateCartUI();
+
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    updateCartUI();
+});

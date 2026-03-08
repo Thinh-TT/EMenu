@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using EMenu.Web.Hubs;
+using EMenu.Application.DTOs;
 
 namespace EMenu.Web.Controllers
 {
@@ -40,6 +41,22 @@ namespace EMenu.Web.Controllers
             });
 
             return Ok(item);
+        }
+
+        [HttpPost("submit")]
+        public IActionResult Submit([FromBody] List<CartItemDto> items)
+        {
+
+            foreach (var item in items)
+            {
+                _orderService.AddProduct(
+                1,
+                item.ProductId,
+                item.Quantity
+                );
+            }
+
+            return Ok();
         }
     }
 }

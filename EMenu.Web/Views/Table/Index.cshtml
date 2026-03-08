@@ -16,14 +16,30 @@
 
             <p>Capacity: @table.Capacity</p>
 
-            <a href="/Table/StartSession?tableId=@table.TableID"
-               class="btn btn-light">
-
+            <button onclick="openTable(@table.TableID)">
                 Open
+            </button>
 
-            </a>
+            @if (table.Status == 1)
+            {
+                <button class="btn btn-danger"
+                        onclick="endTable(@table.TableID)">
+                    End Session
+                </button>
+            }
+            @if (table.Status == 1)
+            {
+                <button class="btn btn-warning"
+                        onclick="window.location='/Bill?tableId=@table.TableID'">
+
+                    Bill
+
+                </button>
+            }
 
         </div>
     }
 
 </div>
+
+<script src="/js/table.js"></script>
