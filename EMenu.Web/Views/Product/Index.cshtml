@@ -1,0 +1,55 @@
+﻿<h2>Product Management</h2>
+
+<a href="/Product/Create" class="btn btn-primary">Add Product</a>
+
+<table class="table">
+
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Image</th>
+			<th>Category</th>
+			<th>Price</th>
+			<th>Status</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+
+	<tbody>
+
+		@foreach (var item in Model)
+		{
+			<tr>
+
+				<td>@item.ProductID</td>
+
+				<td>@item.ProductName</td>
+
+				<td>
+					<img src="/images/products/@item.Image"
+						 width="80" />
+				</td>
+
+				<td>@item.Category?.CategoryName</td>
+
+				<td>@item.Price</td>
+
+				<td>
+					@(item.IsAvailable ? "Available" : "Disabled")
+				</td>
+
+				<td>
+
+					<a href="/Product/Edit/@item.ProductID">Edit</a> |
+
+					<a href="/Product/Delete/@item.ProductID">Delete</a>
+
+				</td>
+
+			</tr>
+		}
+
+	</tbody>
+
+</table>

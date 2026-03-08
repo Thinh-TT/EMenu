@@ -1,0 +1,79 @@
+﻿<h2>Edit Product</h2>
+
+<form method="post" enctype="multipart/form-data">
+
+<input type="hidden"
+       name="ProductID"
+       value="@Model.ProductID"/>
+
+<label>Name</label>
+
+<input name="ProductName"
+       value="@Model.ProductName"
+       class="form-control"/>
+
+    <input type="hidden" name="Image" value="@Model.Image" />
+    <img id="previewImg"
+         src="/images/products/@Model.Image"
+         width="120"
+         style="border-radius:6px;margin-bottom:10px" />
+
+    <br />
+
+    <input type="file"
+           name="ImageFile"
+           onchange="previewImage(event)" />
+
+
+<label>Price</label>
+
+<input name="Price"
+       value="@Model.Price"
+       class="form-control"/>
+
+<label>Category</label>
+
+<select name="CategoryID" class="form-control">
+
+@foreach(var c in ViewBag.Categories)
+{
+            <option value="@c.CategoryID"
+                    selected="@(c.CategoryID == Model.CategoryID)">
+                @c.CategoryName
+            </option>
+}
+
+</select>
+
+    <label>Description</label>
+
+<textarea name="Description" class="form-control">@Model.Description</textarea>
+
+<label>Status</label>
+
+<input type="checkbox"
+       name="IsAvailable"
+       value="true"
+@(Model.IsAvailable ? "checked" : "") />
+
+<br/>
+
+<button class="btn btn-success">Update</button>
+
+</form>
+
+<script>
+
+    function previewImage(event)
+    {
+        const file = event.target.files[0];
+
+        if(file)
+        {
+            const url = URL.createObjectURL(file);
+
+            document.getElementById("previewImg").src = url;
+        }
+    }
+
+</script>

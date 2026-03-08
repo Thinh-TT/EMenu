@@ -1,0 +1,35 @@
+﻿<h2>Create Product</h2>
+
+<form method="post" enctype="multipart/form-data">
+
+	<label>Name</label>
+	<input name="ProductName" class="form-control" />
+
+	<label>Price</label>
+	<input name="Price" class="form-control" />
+
+	<label>Category</label>
+	<select name="CategoryID" class="form-control">
+
+		@foreach (var c in ViewBag.Categories)
+		{
+			<option value="@c.CategoryID">@c.CategoryName</option>
+		}
+
+	</select>
+
+	<label>Image</label>
+	<input type="file" name="ImageFile" class="form-control" />
+
+	<label>Description</label>
+
+<textarea name="Description" class="form-control"></textarea>
+
+	<label>Status</label>
+	<input type="checkbox" name="IsAvailable" value="true" />
+
+	<br />
+
+	<button class="btn btn-success">Save</button>
+
+</form>

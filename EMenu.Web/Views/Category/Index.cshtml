@@ -1,0 +1,30 @@
+﻿<h2>Category Management</h2>
+
+<a href="/Category/Create" class="btn btn-primary">Add Category</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CategoryID</td>
+                <td>@item.CategoryName</td>
+
+                <td>
+                    <a href="/Category/Edit/@item.CategoryID">Edit</a> |
+                    <a href="/Category/Delete/@item.CategoryID">Delete</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

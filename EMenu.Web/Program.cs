@@ -20,6 +20,10 @@ builder.Services.AddScoped<KitchenService>();
 
 builder.Services.AddScoped<DashboardService>();
 
+builder.Services.AddScoped<CategoryService>();
+
+builder.Services.AddScoped<ProductService>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
