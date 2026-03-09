@@ -12,9 +12,12 @@ namespace EMenu.Web.Controllers
             _service = service;
         }
 
-        public IActionResult Index(int tableId)
+        public IActionResult Index(
+                int tableId,
+                int sessionId)
         {
             ViewBag.TableId = tableId;
+            ViewBag.SessionId = sessionId;
 
             var menu = _service.GetMenu();
 

@@ -12,11 +12,14 @@ namespace EMenu.Web.Controllers
     {
         private readonly OrderService _orderService;
         private readonly IHubContext<OrderHub> _hub;
-
-        public OrderController(OrderService orderService,
-                       IHubContext<OrderHub> hub)
+        private readonly SessionService _sessionService;
+        public OrderController(
+            OrderService orderService,
+            SessionService sessionService,
+            IHubContext<OrderHub> hub)
         {
             _orderService = orderService;
+            _sessionService = sessionService;
             _hub = hub;
         }
 
@@ -30,29 +33,35 @@ namespace EMenu.Web.Controllers
         [HttpPost("add-product")]
         public async Task<IActionResult> AddProduct(int orderId, int productId, int quantity)
         {
-            var item = _orderService.AddProduct(orderId, productId, quantity);
+            _orderService.AddProduct(orderId, productId, quantity);
 
             await _hub.Clients.All.SendAsync("NewOrder", new
             {
-                item.OrderProductID,
-                item.ProductID,
-                item.Quantity,
-                item.Status
+                OrderID = orderId,
+                ProductID = productId,
+                Quantity = quantity
             });
 
-            return Ok(item);
+            return Ok();
         }
 
         [HttpPost("submit")]
-        public IActionResult Submit([FromBody] List<CartItemDto> items)
+        public IActionResult Submit(
+    int sessionId,
+    [FromBody] List<CartItemDto> items)
         {
+            var session =
+                _sessionService.GetById(sessionId);
+
+            if (session == null)
+                return BadRequest("Session not found");
 
             foreach (var item in items)
             {
                 _orderService.AddProduct(
-                1,
-                item.ProductId,
-                item.Quantity
+                    sessionId,
+                    item.ProductId,
+                    item.Quantity
                 );
             }
 

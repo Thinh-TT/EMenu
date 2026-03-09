@@ -17,6 +17,12 @@ namespace EMenu.Application.Services
             _context = context;
         }
 
+        public OrderSession GetById(int sessionId)
+        {
+            return _context.OrderSessions
+                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+        }
+
         public OrderSession StartSession(int tableId, int customerId )
         {
             var table = _context.RestaurantTables.Find(tableId);

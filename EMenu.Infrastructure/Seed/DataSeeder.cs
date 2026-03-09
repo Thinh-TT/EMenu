@@ -55,7 +55,7 @@ namespace EMenu.Infrastructure.Seed
             {
                 var staffUser = new User
                 {
-                    UserName = "staff1",
+                    UserName = "System",
                     Password = "123456",
                     IsActive = true,
                     CreatedAt = DateTime.Now
@@ -76,9 +76,9 @@ namespace EMenu.Infrastructure.Seed
 
                 context.Staffs.Add(new Staff
                 {
-                    StaffName = "Nguyen Van A",
-                    Phone = "0901234567",
-                    Email = "staff1@restaurant.com",
+                    StaffName = "System",
+                    Phone = "090000001",
+                    Email = "system@restaurant.com",
                     UserID = staffUser.UserID
                 });
 

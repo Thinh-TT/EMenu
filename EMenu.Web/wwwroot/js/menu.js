@@ -1,4 +1,12 @@
-﻿function addToOrder(productId) {
+﻿const params = new URLSearchParams(window.location.search);
+
+const sessionId = params.get("sessionId");
+
+if (sessionId) {
+    sessionStorage.setItem("sessionId", sessionId);
+}
+
+function addToOrder(productId) {
 
     fetch("/api/order/add-product?orderId=1&productId="
         + productId + "&quantity=1",

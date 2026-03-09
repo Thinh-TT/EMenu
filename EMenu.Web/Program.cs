@@ -34,6 +34,10 @@ builder.Services.AddScoped<MenuService>();
 
 builder.Services.AddScoped<ComboService>();
 
+builder.Services.AddScoped<QrService>();
+
+builder.Services.AddScoped<CustomerService>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,0 +1,18 @@
+﻿<h2>QR Codes for Tables</h2>
+
+<div class="qr-grid">
+
+	@for (int i = 1; i <= 10; i++)
+	{
+		<div class="qr-box">
+
+			<h3>Table @i</h3>
+
+			<img src="/Qr/Table?tableId=@i&t=@DateTime.Now.Ticks" />
+
+			<p>/Customer/Start?tableId=@i</p>
+
+		</div>
+	}
+
+</div>

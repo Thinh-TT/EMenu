@@ -7,48 +7,8 @@
     return JSON.parse(cart);
 
 }
-
-function saveCart(cart) {
-
-    sessionStorage.setItem("cart", JSON.stringify(cart));
-
-}
-
-function addToCart(productId, name, price) {
-
-    let cart = getCart();
-
-    let item = cart.find(x => x.productId === productId);
-
-    if (item) {
-
-        item.quantity++;
-
-    }
-    else {
-
-        cart.push({
-            productId: productId,
-            name: name,
-            price: price,
-            quantity: 1
-        });
-
-    }
-
-    saveCart(cart);
-
-    updateCartUI();
-}
-
-function getCart() {
-
-    let cart = sessionStorage.getItem("cart");
-
-    if (!cart) return [];
-
-    return JSON.parse(cart);
-
+function getSessionId() {
+    return sessionStorage.getItem("sessionId");
 }
 
 function saveCart(cart) {
@@ -82,34 +42,30 @@ function addToCart(productId, name, price) {
     saveCart(cart);
 
     updateCartUI();
-
 }
 
 function submitOrder() {
 
     let cart = getCart();
 
-    if (cart.length === 0) {
+    let sessionId = sessionStorage.getItem("sessionId");
 
-        alert("Cart empty");
-
+    if (!sessionId) {
+        alert("Session not found");
         return;
-
     }
 
-    fetch("/api/order/submit", {
-
+    fetch("/api/order/submit?sessionId=" + sessionId, {
         method: "POST",
-
         headers: {
             "Content-Type": "application/json"
         },
-
         body: JSON.stringify(cart)
-
     })
         .then(res => res.text())
         .then(data => {
+
+            console.log(data);
 
             alert("Order placed!");
 
@@ -117,10 +73,10 @@ function submitOrder() {
 
             updateCartUI();
 
-        });
+        })
+        .catch(err => console.error(err));
 
 }
-
 function updateCartUI() {
 
     let cart = getCart();
@@ -165,18 +121,6 @@ function updateCartUI() {
     });
 
     document.getElementById("cartTotal").innerText = total;
-
-}
-
-function increaseQty(index) {
-
-    let cart = getCart();
-
-    cart[index].quantity++;
-
-    saveCart(cart);
-
-    updateCartUI();
 
 }
 
