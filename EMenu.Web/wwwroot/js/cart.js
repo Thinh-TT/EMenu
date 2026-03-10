@@ -71,7 +71,8 @@ function submitOrder() {
 
             sessionStorage.removeItem("cart");
 
-            updateCartUI();
+            window.location.href =
+                "/OrderPage/Tracking?sessionId=" + sessionId;
 
         })
         .catch(err => console.error(err));

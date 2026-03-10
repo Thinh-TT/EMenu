@@ -1,26 +1,29 @@
-﻿using EMenu.Application.Services;
+﻿using EMenu.Application.DTOs;
+using EMenu.Application.Services;
+using EMenu.Infrastructure.Data;
+using EMenu.Web.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using EMenu.Web.Hubs;
-using EMenu.Application.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace EMenu.Web.Controllers
 {
     [ApiController]
     [Route("api/order")]
-    public class OrderController : ControllerBase
+    public class OrderController : Controller
     {
+
         private readonly OrderService _orderService;
         private readonly IHubContext<OrderHub> _hub;
         private readonly SessionService _sessionService;
-        public OrderController(
-            OrderService orderService,
-            SessionService sessionService,
-            IHubContext<OrderHub> hub)
+        private readonly AppDbContext _context;
+
+        public OrderController( OrderService orderService, SessionService sessionService, IHubContext<OrderHub> hub, AppDbContext context)
         {
             _orderService = orderService;
             _sessionService = sessionService;
             _hub = hub;
+            _context = context;
         }
 
         [HttpPost("create")]
@@ -67,5 +70,43 @@ namespace EMenu.Web.Controllers
 
             return Ok();
         }
+
+        [HttpGet("status")]
+        public IActionResult GetStatus(int sessionId)
+        {
+            var items = _context.OrderProducts
+                .Where(x => x.Order.OrderSessionID == sessionId)
+                .Select(x => new
+                {
+                    x.Product.ProductName,
+                    x.Quantity,
+                    x.Status
+                })
+                .ToList();
+
+            return Ok(items);
+        }
+
+        [HttpPost("updateStatus")]
+        public async Task<IActionResult> UpdateStatus(int orderProductId, int status)
+        {
+            var item = _context.OrderProducts.Find(orderProductId);
+
+            if (item == null)
+                return NotFound();
+
+            item.Status = (Domain.Enums.OrderItemStatus)status;
+
+            _context.SaveChanges();
+
+            await _hub.Clients.All.SendAsync(
+                "OrderStatusUpdated",
+                item.OrderProductID,
+                status
+            );
+
+            return Ok();
+        }
+
     }
 }

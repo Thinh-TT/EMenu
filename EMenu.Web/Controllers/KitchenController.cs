@@ -1,34 +1,24 @@
 ﻿using EMenu.Application.Services;
-using EMenu.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using EMenu.Web.Hubs;
 
 namespace EMenu.Web.Controllers
 {
-    [ApiController]
-    [Route("api/kitchen")]
-    public class KitchenController : ControllerBase
+    public class KitchenController : Controller
     {
         private readonly KitchenService _kitchenService;
+        private readonly IHubContext<OrderHub> _hub;
 
-        public KitchenController(KitchenService kitchenService)
+        public KitchenController(KitchenService kitchenService, IHubContext<OrderHub> hub)
         {
             _kitchenService = kitchenService;
+            _hub = hub;
         }
 
-        [HttpGet("pending")]
-        public IActionResult GetPending()
+        public IActionResult Index()
         {
-            var items = _kitchenService.GetPendingItems();
-
-            return Ok(items);
-        }
-
-        [HttpPut("update-status")]
-        public IActionResult UpdateStatus(int orderProductId, OrderItemStatus status)
-        {
-            _kitchenService.UpdateStatus(orderProductId, status);
-
-            return Ok();
+            return View();
         }
     }
 }

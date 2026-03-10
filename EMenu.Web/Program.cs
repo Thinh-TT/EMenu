@@ -60,6 +60,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapControllers();
 app.MapHub<OrderHub>("/orderHub");
 
 // Configure the HTTP request pipeline.

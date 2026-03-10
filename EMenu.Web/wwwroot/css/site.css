@@ -105,3 +105,73 @@ body {
     padding: 10px;
     text-align: center;
 }
+/*--------------------------------*/
+
+.kitchen-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+}
+
+.order-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    background: #fafafa;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.status-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pending {
+    background: #f39c12;
+    color: white;
+}
+
+.preparing {
+    background: #3498db;
+    color: white;
+}
+
+.ready {
+    background: #27ae60;
+    color: white;
+}
+/*--------------------------------*/
+
+.order-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    background: #fafafa;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.pending {
+    background: #f39c12;
+    color: white;
+}
+
+.preparing {
+    background: #3498db;
+    color: white;
+}
+
+.ready {
+    background: #27ae60;
+    color: white;
+}
