@@ -1,0 +1,31 @@
+﻿<div class="receipt">
+
+	<h2>Restaurant</h2>
+
+	<p>Table: @Model.TableName</p>
+	<p>Date: @DateTime.Now</p>
+
+	<hr />
+
+	<table>
+
+		@foreach (var i in Model.Items)
+		{
+			<tr>
+				<td>@i.ProductName</td>
+				<td>x @i.Quantity</td>
+				<td>@(i.UnitPrice* i.Quantity)</td>
+			</tr>
+		}
+
+	</table>
+
+	<hr />
+
+	<h3>Total: @Model.TotalAmount</h3>
+
+</div>
+
+<button onclick="window.print()">
+	Print
+</button>

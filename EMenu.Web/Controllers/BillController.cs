@@ -1,21 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EMenu.Application.Services;
 using EMenu.Infrastructure.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using EMenu.Application.DTOs;
 
 [Route("api/[controller]")]
 [ApiController]
 public class BillController : Controller
 {
-    public IActionResult Index(int tableId)
-    {
-        ViewBag.TableId = tableId;
-        return View();
-    }
-
+    private readonly OrderService _orderService;
     private readonly AppDbContext _context;
+    private readonly BillService _billService;
 
-    public BillController(AppDbContext context)
+    public BillController(OrderService orderService, AppDbContext context, BillService billService)
     {
+        _orderService = orderService;
         _context = context;
+        _billService = billService;
+    }
+    public IActionResult Index(int sessionId)
+    {
+        var orderId = _billService.GetOrderIdBySession(sessionId);
+
+        var bill = _billService.GetBillByOrderId(orderId);
+
+        ViewBag.SessionId = sessionId;
+
+        return View(bill);
     }
 
     [HttpGet("table")]

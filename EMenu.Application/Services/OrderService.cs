@@ -1,6 +1,8 @@
-﻿using EMenu.Domain.Entities;
+﻿using EMenu.Application.DTOs;
+using EMenu.Domain.Entities;
 using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,6 +80,35 @@ namespace EMenu.Application.Services
             order.TotalAmount += product.Price * quantity;
 
             _context.SaveChanges();
+        }
+
+        public BillDto GetSessionBill(int sessionId)
+        {
+            var session = _context.OrderSessions
+                .Include(s => s.RestaurantTable)
+                .FirstOrDefault(s => s.OrderSessionID == sessionId);
+
+            var orders = _context.Orders
+                .Where(o => o.OrderSessionID == sessionId)
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .ToList();
+
+            var items = orders
+                .SelectMany(o => o.OrderProducts)
+                .Select(p => new BillItemDto
+                {
+                    ProductName = p.Product.ProductName,
+                    Quantity = p.Quantity,
+                    UnitPrice = p.Price
+                }).ToList();
+
+            return new BillDto
+            {
+                TableName = session.RestaurantTable.TableName,
+                Items = items,
+                TotalAmount = items.Sum(x => x.UnitPrice * x.Quantity)
+            };
         }
 
     }

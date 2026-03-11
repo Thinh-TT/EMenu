@@ -1,0 +1,29 @@
+﻿<h2>Bill</h2>
+
+<table class="table">
+
+	<tr>
+		<th>Product</th>
+		<th>Qty</th>
+		<th>Price</th>
+		<th>Total</th>
+	</tr>
+
+	@foreach (var item in Model.Items)
+	{
+		<tr>
+			<td>@item.ProductName</td>
+			<td>@item.Quantity</td>
+			<td>@item.UnitPrice</td>
+			<td>@item.Total</td>
+		</tr>
+	}
+
+</table>
+
+<h3>Total: @Model.TotalAmount</h3>
+
+<a href="/Checkout?sessionId=@ViewBag.SessionId"
+	   class="btn btn-success">
+	Checkout
+</a>

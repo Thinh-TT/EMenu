@@ -175,3 +175,22 @@ body {
     background: #27ae60;
     color: white;
 }
+
+/*--------------------------------*/
+
+.receipt {
+    width: 300px;
+    margin: auto;
+    font-family: monospace;
+}
+
+    .receipt table {
+        width: 100%;
+    }
+
+@media print {
+
+    button {
+        display: none;
+    }
+}

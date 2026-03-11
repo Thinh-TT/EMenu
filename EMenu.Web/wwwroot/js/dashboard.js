@@ -33,6 +33,25 @@ async function loadTopProducts() {
         }
     });
 }
+async function loadOrdersToday() {
 
+    const res = await fetch("/api/dashboard/orders-today");
+    const data = await res.json();
+
+    document.getElementById("ordersToday").innerText = data;
+
+}
+
+async function loadTablesInUse() {
+
+    const res = await fetch("/api/dashboard/tables-in-use");
+    const data = await res.json();
+
+    document.getElementById("tablesInUse").innerText = data;
+
+}
+
+loadOrdersToday();
+loadTablesInUse();
 loadRevenue();
 loadTopProducts();

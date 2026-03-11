@@ -1,5 +1,8 @@
 ﻿using EMenu.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using EMenu.Infrastructure.Data;
+
 
 namespace EMenu.Web.Controllers
 {
@@ -8,10 +11,14 @@ namespace EMenu.Web.Controllers
     public class DashboardController : Controller
     {
         private readonly DashboardService _service;
+        private readonly AppDbContext _context;
 
-        public DashboardController(DashboardService service)
+
+
+        public DashboardController(DashboardService service, AppDbContext context)
         {
             _service = service;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -36,5 +43,28 @@ namespace EMenu.Web.Controllers
         {
             return Ok(_service.GetTableStatus());
         }
+
+        [HttpGet("orders-today")]
+        public IActionResult OrdersToday()
+        {
+            var today = DateTime.Today;
+
+            var count = _context.Orders
+                .Where(o => o.CreatedTime.Date == today)
+                .Count();
+
+            return Ok(count);
+        }
+
+        [HttpGet("tables-in-use")]
+        public IActionResult TablesInUse()
+        {
+            var count = _context.RestaurantTables
+                .Where(t => t.Status == 1)
+                .Count();
+
+            return Ok(count);
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 using EMenu.Application.Services;
+using EMenu.Infrastructure.Configurations;
 using EMenu.Infrastructure.Data;
 using EMenu.Infrastructure.Seed;
 using EMenu.Web.Hubs;
@@ -38,6 +39,12 @@ builder.Services.AddScoped<QrService>();
 
 builder.Services.AddScoped<CustomerService>();
 
+builder.Services.AddScoped<BillService>();
+
+builder.Services.AddScoped<VNPayService>();
+
+builder.Services.AddScoped<PaymentService>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -48,6 +55,8 @@ builder.Services.AddControllers()
     options.JsonSerializerOptions.ReferenceHandler =
         System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
+builder.Services.Configure<VNPayConfig>(
+    builder.Configuration.GetSection("VNPay"));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
