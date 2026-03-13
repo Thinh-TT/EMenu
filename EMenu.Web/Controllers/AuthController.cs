@@ -32,11 +32,24 @@ namespace EMenu.Web.Controllers
             var user = _context.Users
                 .Include(x => x.UserRoles)
                 .ThenInclude(x => x.Role)
-                .FirstOrDefault(x => x.UserName == username && x.Password == password);
+                .FirstOrDefault(x => x.UserName == username);
 
             if (user == null)
             {
-                ViewBag.Error = "Invalid login";
+                ViewBag.Error = "Invalid username or password";
+                return View();
+            }
+            if (!user.IsActive)
+            {
+                ViewBag.Error = "Account disabled";
+                return View();
+            }
+
+            bool validPassword = BCrypt.Net.BCrypt.Verify(password, user.Password);
+
+            if (!validPassword)
+            {
+                ViewBag.Error = "Invalid username or password";
                 return View();
             }
 

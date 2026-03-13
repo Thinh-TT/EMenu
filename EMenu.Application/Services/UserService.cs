@@ -42,6 +42,8 @@ namespace EMenu.Application.Services
         {
             user.CreatedAt = DateTime.Now;
 
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
             _context.Users.Add(user);
             _context.SaveChanges();
 
@@ -57,6 +59,11 @@ namespace EMenu.Application.Services
 
         public void Update(User user, int roleId)
         {
+            if (!string.IsNullOrEmpty(user.Password))
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            }
+
             _context.Users.Update(user);
             _context.SaveChanges();
 
