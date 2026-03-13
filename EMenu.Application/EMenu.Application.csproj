@@ -12,11 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
+    <PackageReference Include="QRCoder" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="QRCoder" Version="1.7.0" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
 
 </Project>

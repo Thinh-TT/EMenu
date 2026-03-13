@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.24" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.24">
@@ -24,6 +20,10 @@
     </PackageReference>
     <PackageReference Include="QRCoder" Version="1.7.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>

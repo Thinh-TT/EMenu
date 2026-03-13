@@ -1,9 +1,11 @@
 ﻿using EMenu.Application.Services;
 using EMenu.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMenu.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class StaffController : Controller
     {
         private readonly StaffService _service;

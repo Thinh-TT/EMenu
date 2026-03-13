@@ -1,9 +1,11 @@
 ﻿using EMenu.Application.Services;
 using EMenu.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMenu.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly UserService _service;

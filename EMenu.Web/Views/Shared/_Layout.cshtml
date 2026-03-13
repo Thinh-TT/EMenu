@@ -22,92 +22,108 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Dashboard"
-                               asp-action="Index">
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Category"
-                               asp-action="Index">
-                                Category
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Product"
-                               asp-action="Index">
-                                Product
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Staff"
-                               asp-action="Index">
-                                Staff
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="User"
-                               asp-action="Index">
-                                User
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Table"
-                               asp-action="Index">
-                                Table
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Menu"
-                               asp-action="Index">
-                                Menu
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Combo"
-                               asp-action="Index">
-                                Combo
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Qr"
-                               asp-action="Index">
-                                Qr
-                            </a>
-                        </li>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="Kitchen"
-                               asp-action="Index">
-                                Kitchen
-                            </a>
-                        </li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                       asp-controller="Auth"
+                                       asp-action="Login">
+                                    Login
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Category" asp-action="Index">Category</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Product" asp-action="Index">Product</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Combo" asp-action="Index">Combo</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="Index">Staff</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="User" asp-action="Index">User</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Table" asp-action="Index">Table</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"asp-controller="Menu"asp-action="Index">Menu</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Qr" asp-action="Index">QR</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Staff"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Table" asp-action="Index">Table</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Menu" asp-action="Index">Menu</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Qr" asp-action="Index">QR</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                 </div>
+            <ul class="navbar-nav ms-auto">
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            Hello, @User.Identity.Name
+                        </span>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="/Auth/Logout">
+                            Logout
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-3"
+                               href="/Auth/Login">
+                            Login
+                        </a>
+                    </li>
+                }
+
+            </ul>
             </div>
         </nav>
     </header>

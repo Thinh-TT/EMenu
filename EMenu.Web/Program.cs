@@ -46,6 +46,14 @@ builder.Services.AddScoped<VNPayService>();
 builder.Services.AddScoped<PaymentService>();
 
 
+builder.Services
+.AddAuthentication("CookieAuth")
+.AddCookie("CookieAuth", options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
@@ -85,6 +93,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

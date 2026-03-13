@@ -1,11 +1,13 @@
 ﻿using EMenu.Application.Services;
+using EMenu.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using EMenu.Infrastructure.Data;
 
 
 namespace EMenu.Web.Controllers
 {
+    [Authorize(Roles = "Admin,Staff")]
     [ApiController]
     [Route("api/dashboard")]
     public class DashboardController : Controller

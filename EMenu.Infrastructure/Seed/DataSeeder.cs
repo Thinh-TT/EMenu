@@ -51,7 +51,7 @@ namespace EMenu.Infrastructure.Seed
                 context.SaveChanges();
             }
 
-            if (!context.Users.Any(x => x.UserName == "staff1"))
+            if (!context.Users.Any(x => x.UserName == "System"))
             {
                 var staffUser = new User
                 {

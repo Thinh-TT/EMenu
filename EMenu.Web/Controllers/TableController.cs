@@ -1,8 +1,10 @@
 ﻿using EMenu.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMenu.Web.Controllers
 {
+    [Authorize(Roles = "Admin,Staff")]
     public class TableController : Controller
     {
         private readonly TableService _service;
