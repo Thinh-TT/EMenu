@@ -1,6 +1,8 @@
 ﻿using EMenu.Application.Services;
 using EMenu.Domain.Enums;
+using EMenu.Web.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace EMenu.Web.Controllers
 {
@@ -10,10 +12,14 @@ namespace EMenu.Web.Controllers
     {
 
         private readonly KitchenService _kitchenService;
+        private readonly IHubContext<OrderHub> _hub;
 
-        public KitchenAPIController(KitchenService kitchenService)
+        public KitchenAPIController(
+            KitchenService kitchenService,
+            IHubContext<OrderHub> hub)
         {
             _kitchenService = kitchenService;
+            _hub = hub;
         }
 
         [HttpGet("pending")]
@@ -25,9 +31,15 @@ namespace EMenu.Web.Controllers
         }
 
         [HttpPut("update-status")]
-        public IActionResult UpdateStatus(int orderProductId, OrderItemStatus status)
+        public async Task<IActionResult> UpdateStatus(int orderProductId, OrderItemStatus status)
         {
             _kitchenService.UpdateStatus(orderProductId, status);
+
+            await _hub.Clients.All.SendAsync(
+                "OrderStatusUpdated",
+                orderProductId,
+                (int)status
+            );
 
             return Ok();
         }

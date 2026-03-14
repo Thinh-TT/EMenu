@@ -50,6 +50,11 @@ function submitOrder() {
 
     let sessionId = sessionStorage.getItem("sessionId");
 
+    if (cart.length === 0) {
+        alert("Cart is empty");
+        return;
+    }
+
     if (!sessionId) {
         alert("Session not found");
         return;
@@ -62,10 +67,11 @@ function submitOrder() {
         },
         body: JSON.stringify(cart)
     })
-        .then(res => res.text())
-        .then(data => {
-
-            console.log(data);
+        .then(async res => {
+            if (!res.ok) {
+                const message = await res.text();
+                throw new Error(message || "Unable to place order");
+            }
 
             alert("Order placed!");
 
@@ -75,7 +81,10 @@ function submitOrder() {
                 "/OrderPage/Tracking?sessionId=" + sessionId;
 
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            console.error(err);
+            alert(err.message || "Unable to place order");
+        });
 
 }
 function updateCartUI() {

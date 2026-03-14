@@ -22,6 +22,7 @@ namespace EMenu.Application.Services
         public int GetOrderIdBySession(int sessionId)
         {
             var order = _context.Orders
+                .OrderByDescending(o => o.OrderID)
                 .FirstOrDefault(o => o.OrderSessionID == sessionId);
 
             if (order == null)
@@ -30,10 +31,49 @@ namespace EMenu.Application.Services
             return order.OrderID;
         }
 
+        public BillDto GetBillBySessionId(int sessionId)
+        {
+            var session = _context.OrderSessions
+                .Include(x => x.RestaurantTable)
+                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+
+            if (session == null)
+                throw new Exception("Session not found");
+
+            var orders = _context.Orders
+                .Where(x => x.OrderSessionID == sessionId)
+                .Include(x => x.OrderProducts)
+                .ThenInclude(x => x.Product)
+                .ToList();
+
+            if (!orders.Any())
+                throw new Exception("Order not found");
+
+            var items = orders
+                .SelectMany(x => x.OrderProducts)
+                .Select(x => new BillItemDto
+                {
+                    ProductName = x.Product.ProductName,
+                    Quantity = x.Quantity,
+                    UnitPrice = x.Price
+                })
+                .ToList();
+
+            return new BillDto
+            {
+                OrderId = orders.OrderByDescending(x => x.OrderID).First().OrderID,
+                TableName = session.RestaurantTable?.TableName,
+                Items = items,
+                TotalAmount = items.Sum(x => x.Total)
+            };
+        }
+
         // tạo bill từ orderId
         public BillDto GetBillByOrderId(int orderId)
         {
             var order = _context.Orders
+                .Include(o => o.OrderSession)
+                .ThenInclude(x => x.RestaurantTable)
                 .Include(o => o.OrderProducts)
                 .ThenInclude(op => op.Product)
                 .FirstOrDefault(o => o.OrderID == orderId);
@@ -53,6 +93,7 @@ namespace EMenu.Application.Services
             return new BillDto
             {
                 OrderId = orderId,
+                TableName = order.OrderSession?.RestaurantTable?.TableName,
                 Items = items,
                 TotalAmount = items.Sum(i => i.Total)
             };

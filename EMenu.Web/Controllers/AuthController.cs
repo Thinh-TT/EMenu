@@ -45,7 +45,19 @@ namespace EMenu.Web.Controllers
                 return View();
             }
 
-            bool validPassword = BCrypt.Net.BCrypt.Verify(password, user.Password);
+            bool validPassword = false;
+
+            if (!string.IsNullOrWhiteSpace(user.Password) &&
+                user.Password.StartsWith("$2"))
+            {
+                validPassword = BCrypt.Net.BCrypt.Verify(password, user.Password);
+            }
+            else if (user.Password == password)
+            {
+                validPassword = true;
+                user.Password = BCrypt.Net.BCrypt.HashPassword(password);
+                _context.SaveChanges();
+            }
 
             if (!validPassword)
             {

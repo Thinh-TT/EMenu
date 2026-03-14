@@ -3,22 +3,38 @@
 const sessionId = params.get("sessionId");
 
 if (sessionId) {
+    const previousSessionId = sessionStorage.getItem("sessionId");
+
+    if (previousSessionId && previousSessionId !== sessionId) {
+        sessionStorage.removeItem("cart");
+    }
+
     sessionStorage.setItem("sessionId", sessionId);
 }
 
 function addToOrder(productId) {
+    const sessionId = sessionStorage.getItem("sessionId");
 
-    fetch("/api/order/add-product?orderId=1&productId="
+    if (!sessionId) {
+        alert("Session not found");
+        return;
+    }
+
+    fetch("/api/order/add-product?sessionId=" + sessionId + "&productId="
         + productId + "&quantity=1",
         {
             method: "POST"
         })
-        .then(res => res.json())
-        .then(data => {
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Unable to add product");
+            }
 
-            alert("Added to order")
-
+            alert("Added to order");
         })
+        .catch(() => {
+            alert("Unable to add product");
+        });
 }
 
 function showCombo(comboId) {

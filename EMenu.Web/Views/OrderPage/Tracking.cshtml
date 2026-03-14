@@ -8,8 +8,6 @@
 
 	loadStatus();
 
-	setInterval(loadStatus,3000);
-
 	function loadStatus(){
 
 	fetch("/api/order/status?sessionId=" + sessionId)
@@ -45,6 +43,8 @@
 	if(s==0) return "Pending";
 	if(s==1) return "Preparing";
 	if(s==2) return "Ready";
+	if(s==3) return "Served";
+	if(s==4) return "Cancelled";
 
 	return "";
 

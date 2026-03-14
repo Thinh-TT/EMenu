@@ -1,4 +1,5 @@
 ﻿using EMenu.Domain.Entities;
+using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -19,13 +20,30 @@ namespace EMenu.Application.Services
 
         public void PayCash(int sessionId)
         {
+            var session = _context.OrderSessions
+                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+
+            if (session == null)
+                throw new Exception("Session not found");
+
+            if (session.Status != 1)
+                throw new Exception("Session is already closed");
+
             var order = _context.Orders
                 .FirstOrDefault(x => x.OrderSessionID == sessionId);
 
             if (order == null)
                 throw new Exception("Order not found");
 
-            // create invoice
+            if (!_context.OrderProducts.Any(x => x.OrderID == order.OrderID))
+                throw new Exception("Order has no items");
+
+            var existingInvoice = _context.Invoices
+                .FirstOrDefault(x => x.OrderID == order.OrderID);
+
+            if (existingInvoice != null)
+                throw new Exception("Order is already paid");
+
             var invoice = new Invoice
             {
                 OrderID = order.OrderID,
@@ -36,7 +54,6 @@ namespace EMenu.Application.Services
             _context.Invoices.Add(invoice);
             _context.SaveChanges();
 
-            // create payment
             var payment = new Payment
             {
                 InvoiceID = invoice.InvoiceID,
@@ -48,16 +65,15 @@ namespace EMenu.Application.Services
 
             _context.Payments.Add(payment);
 
-            // end session
-            var session = _context.OrderSessions
-                .First(x => x.OrderSessionID == sessionId);
-
+            order.Status = OrderStatus.Completed;
             session.Status = 0;
             session.EndTime = DateTime.Now;
 
-            // set table available
             var table = _context.RestaurantTables
-                .First(x => x.TableID == session.TableID);
+                .FirstOrDefault(x => x.TableID == session.TableID);
+
+            if (table == null)
+                throw new Exception("Table not found");
 
             table.Status = 0;
 
@@ -67,24 +83,36 @@ namespace EMenu.Application.Services
         {
             var session = _context.OrderSessions.Find(sessionId);
 
+            if (session == null)
+                throw new Exception("Session not found");
+
             session.Status = 0;
             session.EndTime = DateTime.Now;
 
             var table = _context.RestaurantTables.Find(session.TableID);
 
+            if (table == null)
+                throw new Exception("Table not found");
+
             table.Status = 0;
         }
-        public void PaymentSuccess(int OrderID)
+        public void PaymentSuccess(int orderId)
         {
             var invoice = new Invoice
             {
-                OrderID = OrderID,
+                OrderID = orderId,
                 CreatedDate = DateTime.Now
             };
 
             _context.Invoices.Add(invoice);
 
-            EndSession(OrderID);
+            var order = _context.Orders
+                .FirstOrDefault(x => x.OrderID == orderId);
+
+            if (order == null)
+                throw new Exception("Order not found");
+
+            EndSession(order.OrderSessionID);
 
             _context.SaveChanges();
         }

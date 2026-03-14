@@ -23,10 +23,22 @@ namespace EMenu.Application.Services
 
         public Order CreateOrder(int sessionId, int staffId)
         {
+            var session = _context.OrderSessions
+                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+
+            if (session == null || session.Status != 1)
+                throw new Exception("Session is not active");
+
+            var existingOrder = _context.Orders
+                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+
+            if (existingOrder != null)
+                return existingOrder;
+
             var order = new Order
             {
                 OrderSessionID = sessionId,
-                StaffID = 1,
+                StaffID = ResolveStaffId(staffId),
                 CreatedTime = DateTime.Now,
                 Status = OrderStatus.Pending,
                 TotalAmount = 0
@@ -39,40 +51,49 @@ namespace EMenu.Application.Services
         }
         public void AddProduct(int sessionId, int productId, int quantity)
         {
-            // tìm order theo session
+            if (quantity <= 0)
+                throw new Exception("Quantity must be greater than 0");
+
+            var session = _context.OrderSessions
+                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+
+            if (session == null || session.Status != 1)
+                throw new Exception("Session is not active");
+
             var order = _context.Orders
                 .FirstOrDefault(o => o.OrderSessionID == sessionId);
 
             var product = _context.Products
-        .FirstOrDefault(x => x.ProductID == productId);
+                .FirstOrDefault(x => x.ProductID == productId);
 
-            // nếu chưa có order → tạo mới
             if (order == null)
             {
                 order = new Order
                 {
                     OrderSessionID = sessionId,
-                    StaffID = 1,
+                    StaffID = ResolveStaffId(),
                     CreatedTime = DateTime.Now,
-                    Status = (OrderStatus)1,
+                    Status = OrderStatus.Pending,
                     TotalAmount = 0
                 };
 
                 _context.Orders.Add(order);
                 _context.SaveChanges();
             }
+
             if (product == null)
                 throw new Exception("Product not found");
 
+            if (!product.IsAvailable)
+                throw new Exception("Product is not available");
 
-            // thêm sản phẩm vào order
             var orderProduct = new OrderProduct
             {
                 OrderID = order.OrderID,
                 ProductID = productId,
                 Quantity = quantity,
                 Price = product.Price,
-                Status = (OrderItemStatus)1
+                Status = OrderItemStatus.Pending
             };
 
             _context.OrderProducts.Add(orderProduct);
@@ -109,6 +130,27 @@ namespace EMenu.Application.Services
                 Items = items,
                 TotalAmount = items.Sum(x => x.UnitPrice * x.Quantity)
             };
+        }
+
+        private int ResolveStaffId(int? staffId = null)
+        {
+            if (staffId.HasValue && staffId.Value > 0)
+                return staffId.Value;
+
+            var systemStaff = _context.Staffs
+                .FirstOrDefault(x => x.StaffName == "System");
+
+            if (systemStaff != null)
+                return systemStaff.StaffID;
+
+            var firstStaff = _context.Staffs
+                .OrderBy(x => x.StaffID)
+                .FirstOrDefault();
+
+            if (firstStaff == null)
+                throw new Exception("No staff account configured");
+
+            return firstStaff.StaffID;
         }
 
     }

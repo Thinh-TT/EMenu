@@ -34,15 +34,29 @@ namespace EMenu.Application.Services
 
         public void Create(Staff staff, string username, string password)
         {
+            var staffRole = _context.Roles
+                .FirstOrDefault(x => x.RoleName == "Staff");
+
+            if (staffRole == null)
+                throw new Exception("Staff role not found");
+
             var user = new User
             {
                 UserName = username,
-                Password = password,
+                Password = BCrypt.Net.BCrypt.HashPassword(password),
                 IsActive = true,
                 CreatedAt = DateTime.Now
             };
 
             _context.Users.Add(user);
+            _context.SaveChanges();
+
+            _context.UserRoles.Add(new UserRole
+            {
+                UserID = user.UserID,
+                RoleID = staffRole.RoleID
+            });
+
             _context.SaveChanges();
 
             staff.UserID = user.UserID;

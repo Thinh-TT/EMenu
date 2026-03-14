@@ -1,5 +1,6 @@
 ﻿using EMenu.Domain.Entities;
 using EMenu.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,13 @@ namespace EMenu.Application.Services
         {
             return _context.OrderSessions
                 .FirstOrDefault(x => x.OrderSessionID == sessionId);
+        }
+
+        public OrderSession GetActiveSessionByTable(int tableId)
+        {
+            return _context.OrderSessions
+                .Include(x => x.RestaurantTable)
+                .FirstOrDefault(x => x.TableID == tableId && x.Status == 1);
         }
 
         public OrderSession StartSession(int tableId, int customerId )
@@ -50,7 +58,7 @@ namespace EMenu.Application.Services
             return session;
         }
 
-        public void EndSession(int tableId)
+        public void EndSessionByTable(int tableId)
         {
             var session = _context.OrderSessions
                 .FirstOrDefault(x => x.TableID == tableId && x.Status == 1);
@@ -58,11 +66,28 @@ namespace EMenu.Application.Services
             if (session == null)
                 throw new Exception("Session not found");
 
+            EndSessionById(session.OrderSessionID);
+        }
+
+        public void EndSessionById(int sessionId)
+        {
+            var session = _context.OrderSessions
+                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+
+            if (session == null)
+                throw new Exception("Session not found");
+
+            if (session.Status == 0)
+                return;
+
             session.Status = 0;
             session.EndTime = DateTime.Now;
 
             var table = _context.RestaurantTables
-                .FirstOrDefault(x => x.TableID == tableId);
+                .FirstOrDefault(x => x.TableID == session.TableID);
+
+            if (table == null)
+                throw new Exception("Table not found");
 
             table.Status = 0;
 

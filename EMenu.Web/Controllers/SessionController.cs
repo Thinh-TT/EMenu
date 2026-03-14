@@ -25,7 +25,7 @@ namespace EMenu.Web.Controllers
         [HttpPost("end")]
         public IActionResult EndSession(int tableId)
         {
-            _sessionService.EndSession(tableId);
+            _sessionService.EndSessionByTable(tableId);
 
             return Ok();
         }

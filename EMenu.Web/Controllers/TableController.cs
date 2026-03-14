@@ -8,10 +8,14 @@ namespace EMenu.Web.Controllers
     public class TableController : Controller
     {
         private readonly TableService _service;
+        private readonly SessionService _sessionService;
 
-        public TableController(TableService service)
+        public TableController(
+            TableService service,
+            SessionService sessionService)
         {
             _service = service;
+            _sessionService = sessionService;
         }
 
         public IActionResult Index()
@@ -25,6 +29,17 @@ namespace EMenu.Web.Controllers
         {
             return RedirectToAction("Start", "Session",
                 new { tableId = tableId });
+        }
+
+        public IActionResult Bill(int tableId)
+        {
+            var session = _sessionService.GetActiveSessionByTable(tableId);
+
+            if (session == null)
+                return RedirectToAction("Index");
+
+            return RedirectToAction("Index", "BillPage",
+                new { sessionId = session.OrderSessionID });
         }
     }
 }

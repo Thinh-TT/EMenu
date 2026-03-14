@@ -16,9 +16,12 @@
 
             <p>Capacity: @table.Capacity</p>
 
-            <button onclick="openTable(@table.TableID)">
-                Open
-            </button>
+            @if (table.Status == 0)
+            {
+                <button onclick="openTable(@table.TableID)">
+                    Open
+                </button>
+            }
 
             @if (table.Status == 1)
             {
@@ -30,7 +33,7 @@
             @if (table.Status == 1)
             {
                 <button class="btn btn-warning"
-                        onclick="window.location='/Bill?tableId=@table.TableID'">
+                        onclick="window.location='/Table/Bill?tableId=@table.TableID'">
 
                     Bill
 

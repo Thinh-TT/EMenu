@@ -4,7 +4,6 @@ using EMenu.Infrastructure.Data;
 using EMenu.Web.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 
 namespace EMenu.Web.Controllers
 {
@@ -34,13 +33,13 @@ namespace EMenu.Web.Controllers
         }
 
         [HttpPost("add-product")]
-        public async Task<IActionResult> AddProduct(int orderId, int productId, int quantity)
+        public async Task<IActionResult> AddProduct(int sessionId, int productId, int quantity)
         {
-            _orderService.AddProduct(orderId, productId, quantity);
+            _orderService.AddProduct(sessionId, productId, quantity);
 
             await _hub.Clients.All.SendAsync("NewOrder", new
             {
-                OrderID = orderId,
+                SessionID = sessionId,
                 ProductID = productId,
                 Quantity = quantity
             });
@@ -49,15 +48,17 @@ namespace EMenu.Web.Controllers
         }
 
         [HttpPost("submit")]
-        public IActionResult Submit(
-    int sessionId,
-    [FromBody] List<CartItemDto> items)
+        public async Task<IActionResult> Submit(
+            int sessionId,
+            [FromBody] List<CartItemDto> items)
         {
-            var session =
-                _sessionService.GetById(sessionId);
+            var session = _sessionService.GetById(sessionId);
 
             if (session == null)
                 return BadRequest("Session not found");
+
+            if (items == null || items.Count == 0)
+                return BadRequest("Cart is empty");
 
             foreach (var item in items)
             {
@@ -68,6 +69,20 @@ namespace EMenu.Web.Controllers
                 );
             }
 
+            var tableName = _context.RestaurantTables
+                .Where(x => x.TableID == session.TableID)
+                .Select(x => x.TableName)
+                .FirstOrDefault();
+
+            await _hub.Clients.All.SendAsync("OrderSubmitted", new
+            {
+                SessionID = sessionId,
+                TableID = session.TableID,
+                TableName = tableName ?? $"Table {session.TableID}",
+                ItemCount = items.Sum(x => x.Quantity),
+                SubmittedAt = DateTime.UtcNow
+            });
+
             return Ok();
         }
 
@@ -76,6 +91,7 @@ namespace EMenu.Web.Controllers
         {
             var items = _context.OrderProducts
                 .Where(x => x.Order.OrderSessionID == sessionId)
+                .OrderBy(x => x.OrderProductID)
                 .Select(x => new
                 {
                     x.Product.ProductName,

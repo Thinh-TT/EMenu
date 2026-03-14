@@ -32,7 +32,7 @@ namespace EMenu.Infrastructure.Seed
                 var admin = new User
                 {
                     UserName = "admin",
-                    Password = "123456",
+                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     IsActive = true,
                     CreatedAt = DateTime.Now
                 };
@@ -56,7 +56,7 @@ namespace EMenu.Infrastructure.Seed
                 var staffUser = new User
                 {
                     UserName = "System",
-                    Password = "123456",
+                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     IsActive = true,
                     CreatedAt = DateTime.Now
                 };

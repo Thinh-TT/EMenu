@@ -16,9 +16,7 @@ namespace EMenu.Web.Controllers
 
         public IActionResult Index(int sessionId)
         {
-            var orderId = _billService.GetOrderIdBySession(sessionId);
-
-            var bill = _billService.GetBillByOrderId(orderId);
+            var bill = _billService.GetBillBySessionId(sessionId);
 
             ViewBag.SessionId = sessionId;
 

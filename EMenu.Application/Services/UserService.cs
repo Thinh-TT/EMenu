@@ -41,6 +41,7 @@ namespace EMenu.Application.Services
         public void Create(User user, int roleId)
         {
             user.CreatedAt = DateTime.Now;
+            user.IsActive = true;
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
@@ -59,16 +60,25 @@ namespace EMenu.Application.Services
 
         public void Update(User user, int roleId)
         {
+            var dbUser = _context.Users
+                .Include(x => x.UserRoles)
+                .FirstOrDefault(x => x.UserID == user.UserID);
+
+            if (dbUser == null)
+                throw new Exception("User not found");
+
+            dbUser.UserName = user.UserName;
+
             if (!string.IsNullOrEmpty(user.Password))
             {
-                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                dbUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             }
 
-            _context.Users.Update(user);
+            _context.Users.Update(dbUser);
             _context.SaveChanges();
 
             var userRole = _context.UserRoles
-                .FirstOrDefault(x => x.UserID == user.UserID);
+                .FirstOrDefault(x => x.UserID == dbUser.UserID);
 
             if (userRole != null)
             {
