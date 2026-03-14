@@ -31,6 +31,9 @@ namespace EMenu.Application.Services
         {
             var table = _context.RestaurantTables.Find(tableId);
 
+            if (table == null)
+                throw new InvalidOperationException("Table not found.");
+
             table.Status = status;
 
             _context.SaveChanges();

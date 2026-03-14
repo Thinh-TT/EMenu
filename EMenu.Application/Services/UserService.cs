@@ -1,21 +1,18 @@
-﻿using EMenu.Domain.Entities;
+using EMenu.Domain.Entities;
 using EMenu.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EMenu.Application.Services
 {
     public class UserService
     {
         private readonly AppDbContext _context;
+        private readonly PasswordService _passwordService;
 
-        public UserService(AppDbContext context)
+        public UserService(AppDbContext context, PasswordService passwordService)
         {
             _context = context;
+            _passwordService = passwordService;
         }
 
         public List<User> GetAll()
@@ -38,12 +35,22 @@ namespace EMenu.Application.Services
             return _context.Roles.ToList();
         }
 
-        public void Create(User user, int roleId)
+        public void Create(User user, int roleId, string? confirmPassword)
         {
+            if (string.IsNullOrWhiteSpace(user.UserName))
+                throw new ArgumentException("Username is required.");
+
+            if (_context.Users.Any(x => x.UserName == user.UserName))
+                throw new ArgumentException("Username already exists.");
+
+            _passwordService.EnsureValidPassword(
+                user.Password,
+                confirmPassword,
+                required: true);
+
             user.CreatedAt = DateTime.Now;
             user.IsActive = true;
-
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = _passwordService.HashPassword(user.Password);
 
             _context.Users.Add(user);
             _context.SaveChanges();
@@ -58,7 +65,7 @@ namespace EMenu.Application.Services
             _context.SaveChanges();
         }
 
-        public void Update(User user, int roleId)
+        public void Update(User user, int roleId, string? confirmPassword)
         {
             var dbUser = _context.Users
                 .Include(x => x.UserRoles)
@@ -67,11 +74,22 @@ namespace EMenu.Application.Services
             if (dbUser == null)
                 throw new Exception("User not found");
 
+            if (string.IsNullOrWhiteSpace(user.UserName))
+                throw new ArgumentException("Username is required.");
+
+            if (_context.Users.Any(x => x.UserID != user.UserID && x.UserName == user.UserName))
+                throw new ArgumentException("Username already exists.");
+
             dbUser.UserName = user.UserName;
 
-            if (!string.IsNullOrEmpty(user.Password))
+            if (!string.IsNullOrWhiteSpace(user.Password))
             {
-                dbUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                _passwordService.EnsureValidPassword(
+                    user.Password,
+                    confirmPassword,
+                    required: false);
+
+                dbUser.Password = _passwordService.HashPassword(user.Password);
             }
 
             _context.Users.Update(dbUser);

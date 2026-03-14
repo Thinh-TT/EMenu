@@ -1,9 +1,7 @@
-﻿function openTable(tableId) {
-
+function openTable(tableId) {
     fetch(`/api/session/start?tableId=${tableId}&customerId=1`, {
-
-        method: "POST"
-
+        method: "POST",
+        headers: window.emenu.getAntiforgeryHeaders()
     })
         .then(async res => {
             if (!res.ok) {
@@ -14,23 +12,20 @@
             return res.json();
         })
         .then(data => {
-
             alert("Session started");
 
             window.location =
                 `/Menu?tableId=${tableId}&sessionId=${data.orderSessionID}`;
-
         })
         .catch(err => {
             alert(err.message || "Unable to start session");
         });
-
 }
 
 function endTable(tableId) {
-
     fetch(`/api/session/end?tableId=${tableId}`, {
-        method: "POST"
+        method: "POST",
+        headers: window.emenu.getAntiforgeryHeaders()
     })
         .then(async res => {
             if (!res.ok) {
@@ -39,12 +34,9 @@ function endTable(tableId) {
             }
 
             alert("Session ended");
-
             location.reload();
-
         })
         .catch(err => {
             alert(err.message || "Unable to end session");
         });
-
 }

@@ -1,4 +1,4 @@
-﻿const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 
 const sessionId = params.get("sessionId");
 
@@ -23,7 +23,8 @@ function addToOrder(productId) {
     fetch("/api/order/add-product?sessionId=" + sessionId + "&productId="
         + productId + "&quantity=1",
         {
-            method: "POST"
+            method: "POST",
+            headers: window.emenu.getAntiforgeryHeaders()
         })
         .then(res => {
             if (!res.ok) {
@@ -38,35 +39,27 @@ function addToOrder(productId) {
 }
 
 function showCombo(comboId) {
-
     fetch("/Combo/GetItems?comboId=" + comboId)
         .then(res => res.json())
         .then(data => {
-
             let list = document.getElementById("comboItems");
 
             list.innerHTML = "";
 
             data.forEach(item => {
-
                 let li = document.createElement("li");
 
                 li.innerText = item.name + " - $" + item.price;
 
                 list.appendChild(li);
-
             });
 
             document.getElementById("comboModal")
                 .style.display = "block";
-
         });
-
 }
 
 function closeCombo() {
-
     document.getElementById("comboModal")
         .style.display = "none";
-
 }

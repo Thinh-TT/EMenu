@@ -1,4 +1,5 @@
-﻿using EMenu.Application.Services;
+using EMenu.Application.Services;
+using EMenu.Domain.Constants;
 using EMenu.Web.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace EMenu.Web.Controllers
 {
-    [Authorize(Roles = "Admin,Staff")]
+    [Authorize(Roles = AppRoles.AdminStaffKitchen)]
     public class KitchenController : Controller
     {
         private readonly KitchenService _kitchenService;

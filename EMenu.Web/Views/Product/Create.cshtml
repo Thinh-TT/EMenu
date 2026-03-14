@@ -1,7 +1,8 @@
-﻿@using EMenu.Domain.Enums
+@using EMenu.Domain.Enums
 <h2>Create Product</h2>
 
 <form method="post" enctype="multipart/form-data">
+	@Html.AntiForgeryToken()
 
 	<label>Name</label>
 	<input name="ProductName" class="form-control" />
@@ -11,34 +12,28 @@
 
 	<label>Category</label>
 	<select name="CategoryID" class="form-control">
-
 		@foreach (var c in ViewBag.Categories)
 		{
 			<option value="@c.CategoryID">@c.CategoryName</option>
 		}
-
 	</select>
 
 	<label>Image</label>
 	<input type="file" name="ImageFile" class="form-control" />
 
 	<label>Description</label>
+	<textarea name="Description" class="form-control"></textarea>
 
-<textarea name="Description" class="form-control"></textarea>
 	<label>Product Type</label>
-
 	<select name="ProductType" class="form-control">
-
 		<option value="1">Single</option>
-
 		<option value="2">Combo</option>
-
 	</select>
+
 	<label>Status</label>
 	<input type="checkbox" name="IsAvailable" value="true" />
 
 	<br />
 
 	<button class="btn btn-success">Save</button>
-
 </form>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EMenu.Domain.Constants;
 using EMenu.Domain.Entities;
 using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
@@ -15,15 +16,19 @@ namespace EMenu.Infrastructure.Seed
         {
             context.Database.EnsureCreated();
 
-            if (!context.Roles.Any())
-            {
-                var roles = new List<Role>
-                {
-                    new Role { RoleName = "Admin" },
-                    new Role { RoleName = "Staff" }
-                };
+            var requiredRoles = new[] { AppRoles.Admin, AppRoles.Staff, AppRoles.Kitchen };
+            var existingRoles = context.Roles
+                .Select(x => x.RoleName)
+                .ToHashSet();
 
-                context.Roles.AddRange(roles);
+            var missingRoles = requiredRoles
+                .Where(x => !existingRoles.Contains(x))
+                .Select(x => new Role { RoleName = x })
+                .ToList();
+
+            if (missingRoles.Any())
+            {
+                context.Roles.AddRange(missingRoles);
                 context.SaveChanges();
             }
 
@@ -32,7 +37,7 @@ namespace EMenu.Infrastructure.Seed
                 var admin = new User
                 {
                     UserName = "admin",
-                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
+                    Password = BCrypt.Net.BCrypt.HashPassword("Admin123"),
                     IsActive = true,
                     CreatedAt = DateTime.Now
                 };
@@ -40,7 +45,7 @@ namespace EMenu.Infrastructure.Seed
                 context.Users.Add(admin);
                 context.SaveChanges();
 
-                var role = context.Roles.First(x => x.RoleName == "Admin");
+                var role = context.Roles.First(x => x.RoleName == AppRoles.Admin);
 
                 context.UserRoles.Add(new UserRole
                 {
@@ -56,7 +61,7 @@ namespace EMenu.Infrastructure.Seed
                 var staffUser = new User
                 {
                     UserName = "System",
-                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
+                    Password = BCrypt.Net.BCrypt.HashPassword("System123"),
                     IsActive = true,
                     CreatedAt = DateTime.Now
                 };
@@ -64,7 +69,7 @@ namespace EMenu.Infrastructure.Seed
                 context.Users.Add(staffUser);
                 context.SaveChanges();
 
-                var staffRole = context.Roles.First(x => x.RoleName == "Staff");
+                var staffRole = context.Roles.First(x => x.RoleName == AppRoles.Staff);
 
                 context.UserRoles.Add(new UserRole
                 {

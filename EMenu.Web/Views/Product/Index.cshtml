@@ -1,10 +1,9 @@
-﻿@using EMenu.Domain.Enums
+@using EMenu.Domain.Enums
 <h2>Product Management</h2>
 
 <a href="/Product/Create" class="btn btn-primary">Add Product</a>
 
 <table class="table">
-
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -19,22 +18,16 @@
 	</thead>
 
 	<tbody>
-
 		@foreach (var item in Model)
 		{
 			<tr>
-
 				<td>@item.ProductID</td>
-
 				<td>@item.ProductName</td>
-
 				<td>
 					<img src="/images/products/@item.Image"
-						 width="80" />
+					     width="80" />
 				</td>
-
 				<td>@item.Category?.CategoryName</td>
-
 				<td>@item.Price</td>
 				<td>
 					@if (item.ProductType == ProductType.Combo)
@@ -46,21 +39,20 @@
 						<span class="badge bg-success">Single</span>
 					}
 				</td>
+				<td>@(item.IsAvailable ? "Available" : "Disabled")</td>
 				<td>
-					@(item.IsAvailable ? "Available" : "Disabled")
-				</td>
-
-				<td>
-
 					<a href="/Product/Edit/@item.ProductID">Edit</a> |
-
-					<a href="/Product/Delete/@item.ProductID">Delete</a>
-
+					<form asp-action="Delete"
+					      asp-route-id="@item.ProductID"
+					      method="post"
+					      style="display:inline">
+						<button type="submit"
+						        class="btn btn-link p-0 align-baseline">
+							Delete
+						</button>
+					</form>
 				</td>
-
 			</tr>
 		}
-
 	</tbody>
-
 </table>

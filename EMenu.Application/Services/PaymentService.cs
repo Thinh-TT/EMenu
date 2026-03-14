@@ -1,11 +1,6 @@
-﻿using EMenu.Domain.Entities;
+using EMenu.Domain.Entities;
 using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EMenu.Application.Services
 {
@@ -24,31 +19,49 @@ namespace EMenu.Application.Services
                 .FirstOrDefault(x => x.OrderSessionID == sessionId);
 
             if (session == null)
-                throw new Exception("Session not found");
+                throw new InvalidOperationException("Session not found.");
 
             if (session.Status != 1)
-                throw new Exception("Session is already closed");
+                throw new InvalidOperationException("Session is already closed.");
 
             var order = _context.Orders
+                .OrderByDescending(x => x.OrderID)
                 .FirstOrDefault(x => x.OrderSessionID == sessionId);
 
             if (order == null)
-                throw new Exception("Order not found");
+                throw new InvalidOperationException("Order not found.");
 
-            if (!_context.OrderProducts.Any(x => x.OrderID == order.OrderID))
-                throw new Exception("Order has no items");
+            var items = _context.OrderProducts
+                .Where(x => x.OrderID == order.OrderID && x.Status != OrderItemStatus.Cancelled)
+                .ToList();
+
+            if (!items.Any())
+                throw new InvalidOperationException("Order has no billable items.");
 
             var existingInvoice = _context.Invoices
                 .FirstOrDefault(x => x.OrderID == order.OrderID);
 
             if (existingInvoice != null)
-                throw new Exception("Order is already paid");
+                throw new InvalidOperationException("Order is already paid.");
+
+            var table = _context.RestaurantTables
+                .FirstOrDefault(x => x.TableID == session.TableID);
+
+            if (table == null)
+                throw new InvalidOperationException("Table not found.");
+
+            var totalAmount = items.Sum(x => x.Price * x.Quantity);
+
+            using var transaction = _context.Database.BeginTransaction();
+
+            order.TotalAmount = totalAmount;
+            order.Status = OrderStatus.Completed;
 
             var invoice = new Invoice
             {
                 OrderID = order.OrderID,
                 CreatedDate = DateTime.Now,
-                TotalAmount = order.TotalAmount
+                TotalAmount = totalAmount
             };
 
             _context.Invoices.Add(invoice);
@@ -65,56 +78,89 @@ namespace EMenu.Application.Services
 
             _context.Payments.Add(payment);
 
-            order.Status = OrderStatus.Completed;
             session.Status = 0;
             session.EndTime = DateTime.Now;
-
-            var table = _context.RestaurantTables
-                .FirstOrDefault(x => x.TableID == session.TableID);
-
-            if (table == null)
-                throw new Exception("Table not found");
-
             table.Status = 0;
 
             _context.SaveChanges();
+
+            transaction.Commit();
         }
+
         public void EndSession(int sessionId)
         {
             var session = _context.OrderSessions.Find(sessionId);
 
             if (session == null)
-                throw new Exception("Session not found");
-
-            session.Status = 0;
-            session.EndTime = DateTime.Now;
+                throw new InvalidOperationException("Session not found.");
 
             var table = _context.RestaurantTables.Find(session.TableID);
 
             if (table == null)
-                throw new Exception("Table not found");
+                throw new InvalidOperationException("Table not found.");
 
-            table.Status = 0;
+            using var transaction = _context.Database.BeginTransaction();
+
+            CloseSession(session, table);
+
+            _context.SaveChanges();
+
+            transaction.Commit();
         }
+
         public void PaymentSuccess(int orderId)
         {
-            var invoice = new Invoice
-            {
-                OrderID = orderId,
-                CreatedDate = DateTime.Now
-            };
-
-            _context.Invoices.Add(invoice);
-
             var order = _context.Orders
                 .FirstOrDefault(x => x.OrderID == orderId);
 
             if (order == null)
-                throw new Exception("Order not found");
+                throw new InvalidOperationException("Order not found.");
 
-            EndSession(order.OrderSessionID);
+            if (_context.Invoices.Any(x => x.OrderID == orderId))
+                return;
+
+            var totalAmount = _context.OrderProducts
+                .Where(x => x.OrderID == orderId && x.Status != OrderItemStatus.Cancelled)
+                .Sum(x => x.Price * x.Quantity);
+
+            using var transaction = _context.Database.BeginTransaction();
+
+            var invoice = new Invoice
+            {
+                OrderID = orderId,
+                CreatedDate = DateTime.Now,
+                TotalAmount = totalAmount
+            };
+
+            _context.Invoices.Add(invoice);
+
+            order.TotalAmount = totalAmount;
+            order.Status = OrderStatus.Completed;
+
+            var session = _context.OrderSessions
+                .FirstOrDefault(x => x.OrderSessionID == order.OrderSessionID);
+
+            if (session == null)
+                throw new InvalidOperationException("Session not found.");
+
+            var table = _context.RestaurantTables
+                .FirstOrDefault(x => x.TableID == session.TableID);
+
+            if (table == null)
+                throw new InvalidOperationException("Table not found.");
+
+            CloseSession(session, table);
 
             _context.SaveChanges();
+
+            transaction.Commit();
+        }
+
+        private static void CloseSession(OrderSession session, RestaurantTable table)
+        {
+            session.Status = 0;
+            session.EndTime = DateTime.Now;
+            table.Status = 0;
         }
     }
 }

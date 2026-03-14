@@ -1,8 +1,13 @@
-﻿<!DOCTYPE html>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var antiforgeryTokens = Antiforgery.GetAndStoreTokens(Context);
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="request-verification-token" content="@antiforgeryTokens.RequestToken" />
     <title>@ViewData["Title"] - EMenu.Web</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -22,12 +27,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @if (!User.Identity.IsAuthenticated)
+                        @if (User.Identity?.IsAuthenticated != true)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark"
-                                       asp-controller="Auth"
-                                       asp-action="Login">
+                                   asp-controller="Auth"
+                                   asp-action="Login">
                                     Login
                                 </a>
                             </li>
@@ -37,37 +42,30 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Category" asp-action="Index">Category</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Product" asp-action="Index">Product</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Combo" asp-action="Index">Combo</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Staff" asp-action="Index">Staff</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="User" asp-action="Index">User</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Table" asp-action="Index">Table</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark"asp-controller="Menu"asp-action="Index">Menu</a>
+                                <a class="nav-link text-dark" asp-controller="Menu" asp-action="Index">Menu</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Qr" asp-action="Index">QR</a>
                             </li>
@@ -77,14 +75,12 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Table" asp-action="Index">Table</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Menu" asp-action="Index">Menu</a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
                             </li>
@@ -97,33 +93,36 @@
                         </li>
                     </ul>
                 </div>
-            <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <span class="nav-link">
+                                Hello, @User.Identity.Name
+                            </span>
+                        </li>
 
-                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    <li class="nav-item">
-                        <span class="nav-link">
-                            Hello, @User.Identity.Name
-                        </span>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" href="/Auth/Logout">
-                            Logout
-                        </a>
-                    </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white px-3"
+                        <li class="nav-item">
+                            <form asp-controller="Auth"
+                                  asp-action="Logout"
+                                  method="post"
+                                  class="d-inline">
+                                <button type="submit" class="nav-link btn btn-link text-danger">
+                                    Logout
+                                </button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-primary text-white px-3"
                                href="/Auth/Login">
-                            Login
-                        </a>
-                    </li>
-                }
-
-            </ul>
+                                Login
+                            </a>
+                        </li>
+                    }
+                </ul>
             </div>
         </nav>
     </header>
@@ -141,6 +140,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/antiforgery.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

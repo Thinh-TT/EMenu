@@ -1,9 +1,8 @@
-﻿<h2>Staff Management</h2>
+<h2>Staff Management</h2>
 
 <a href="/Staff/Create" class="btn btn-primary">Add Staff</a>
 
 <table class="table">
-
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -16,32 +15,27 @@
 	</thead>
 
 	<tbody>
-
 		@foreach (var item in Model)
 		{
 			<tr>
-
 				<td>@item.StaffID</td>
-
 				<td>@item.StaffName</td>
-
 				<td>@item.Phone</td>
-
 				<td>@item.Email</td>
-
 				<td>@item.User?.UserName</td>
-
 				<td>
-
 					<a href="/Staff/Edit/@item.StaffID">Edit</a> |
-
-					<a href="/Staff/Delete/@item.StaffID">Delete</a>
-
+					<form asp-action="Delete"
+					      asp-route-id="@item.StaffID"
+					      method="post"
+					      style="display:inline">
+						<button type="submit"
+						        class="btn btn-link p-0 align-baseline">
+							Delete
+						</button>
+					</form>
 				</td>
-
 			</tr>
 		}
-
 	</tbody>
-
 </table>

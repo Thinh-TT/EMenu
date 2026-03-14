@@ -1,8 +1,25 @@
-﻿<h2>Select Payment Method</h2>
+<h2>Select Payment Method</h2>
 
-<a href="/Payment/Cash?sessionId=@ViewBag.SessionId"
-	   class="btn btn-primary">
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
 
-	Cash Payment
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
 
-</a>
+<form asp-controller="Payment"
+      asp-action="Cash"
+      asp-route-sessionId="@ViewBag.SessionId"
+      method="post">
+	<button type="submit"
+	        class="btn btn-primary">
+		Cash Payment
+	</button>
+</form>

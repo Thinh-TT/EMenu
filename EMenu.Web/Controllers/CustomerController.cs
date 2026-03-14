@@ -29,19 +29,28 @@ namespace EMenu.Web.Controllers
                  string? phone,
                  string? email)
         {
-            var customer =
-                _customerService.Create(name, phone, email);
+            try
+            {
+                var customer =
+                    _customerService.Create(name, phone, email);
 
-            var session =
-                _sessionService.StartSession(
-                    tableId,
-                    customer.CustomerID
+                var session =
+                    _sessionService.StartSession(
+                        tableId,
+                        customer.CustomerID
+                    );
+
+                return Redirect(
+                    "/Menu?tableId=" + tableId +
+                    "&sessionId=" + session.OrderSessionID
                 );
-
-            return Redirect(
-                "/Menu?tableId=" + tableId +
-                "&sessionId=" + session.OrderSessionID
-            );
+            }
+            catch (InvalidOperationException ex)
+            {
+                ViewBag.TableId = tableId;
+                ViewBag.Error = ex.Message;
+                return View();
+            }
         }
     }
 }

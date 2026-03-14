@@ -1,28 +1,38 @@
-﻿<h2>Create User</h2>
+<h2>Create User</h2>
 
 <form method="post">
+	@Html.AntiForgeryToken()
+
+	@if (ViewBag.Error != null)
+	{
+		<div class="alert alert-danger">@ViewBag.Error</div>
+	}
+
+	@if (ViewBag.PasswordPolicy != null)
+	{
+		<div class="alert alert-info">@ViewBag.PasswordPolicy</div>
+	}
 
 	<label>Username</label>
-	<input name="UserName" class="form-control" />
+	<input name="UserName" class="form-control" value="@Model?.UserName" />
 
 	<label>Password</label>
 	<input name="Password" type="password" class="form-control" />
 
+	<label>Confirm Password</label>
+	<input name="confirmPassword" type="password" class="form-control" />
+
 	<label>Role</label>
-
 	<select name="roleId" class="form-control">
-
 		@foreach (var r in ViewBag.Roles)
 		{
 			<option value="@r.RoleID">
 				@r.RoleName
 			</option>
 		}
-
 	</select>
 
 	<br />
 
 	<button class="btn btn-success">Save</button>
-
 </form>

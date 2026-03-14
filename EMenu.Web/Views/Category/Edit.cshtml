@@ -1,11 +1,11 @@
-﻿<h2>Edit Category</h2>
+<h2>Edit Category</h2>
 
 <form method="post">
+    @Html.AntiForgeryToken()
 
     <input type="hidden" name="CategoryID" value="@Model.CategoryID" />
 
     <label>Name</label>
-
     <input name="CategoryName"
            value="@Model.CategoryName"
            class="form-control" />
@@ -13,5 +13,4 @@
     <br />
 
     <button type="submit" class="btn btn-success">Update</button>
-
 </form>

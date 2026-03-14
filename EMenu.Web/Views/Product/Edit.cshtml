@@ -1,17 +1,17 @@
-﻿@using EMenu.Domain.Enums
+@using EMenu.Domain.Enums
 <h2>Edit Product</h2>
 
 <form method="post" enctype="multipart/form-data">
+	@Html.AntiForgeryToken()
 
-<input type="hidden"
-       name="ProductID"
-       value="@Model.ProductID"/>
+	<input type="hidden"
+	       name="ProductID"
+	       value="@Model.ProductID" />
 
-<label>Name</label>
-
-<input name="ProductName"
-       value="@Model.ProductName"
-       class="form-control"/>
+	<label>Name</label>
+	<input name="ProductName"
+	       value="@Model.ProductName"
+	       class="form-control" />
 
     <input type="hidden" name="Image" value="@Model.Image" />
     <img id="previewImg"
@@ -25,64 +25,52 @@
            name="ImageFile"
            onchange="previewImage(event)" />
 
+	<label>Price</label>
+	<input name="Price"
+	       value="@Model.Price"
+	       class="form-control" />
 
-<label>Price</label>
-
-<input name="Price"
-       value="@Model.Price"
-       class="form-control"/>
-
-<label>Category</label>
-
-<select name="CategoryID" class="form-control">
-
-@foreach(var c in ViewBag.Categories)
-{
+	<label>Category</label>
+	<select name="CategoryID" class="form-control">
+		@foreach (var c in ViewBag.Categories)
+		{
             <option value="@c.CategoryID"
                     selected="@(c.CategoryID == Model.CategoryID)">
                 @c.CategoryName
             </option>
-}
-
-</select>
+		}
+	</select>
 
     <label>Description</label>
+	<textarea name="Description" class="form-control">@Model.Description</textarea>
 
-<textarea name="Description" class="form-control">@Model.Description</textarea>
     <label>Product Type</label>
-
     <select name="ProductType" class="form-control">
-
         <option value="1">Single</option>
-
         <option value="2">Combo</option>
-
     </select>
-<label>Status</label>
 
-<input type="checkbox"
-       name="IsAvailable"
-       value="true"
-@(Model.IsAvailable ? "checked" : "") />
+	<label>Status</label>
+	<input type="checkbox"
+	       name="IsAvailable"
+	       value="true"
+	       @(Model.IsAvailable ? "checked" : "") />
 
-<br/>
+	<br />
 
-<button class="btn btn-success">Update</button>
-
+	<button class="btn btn-success">Update</button>
 </form>
 
 <script>
-
     function previewImage(event)
     {
         const file = event.target.files[0];
 
-        if(file)
+        if (file)
         {
             const url = URL.createObjectURL(file);
 
             document.getElementById("previewImg").src = url;
         }
     }
-
 </script>

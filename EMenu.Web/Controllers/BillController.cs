@@ -1,89 +1,88 @@
-﻿using EMenu.Application.Services;
-using EMenu.Infrastructure.Data;
+using EMenu.Application.Services;
+using EMenu.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using EMenu.Application.DTOs;
 
+[Authorize(Roles = AppRoles.AdminOrStaff)]
 [Route("api/[controller]")]
 [ApiController]
 public class BillController : Controller
 {
     private readonly OrderService _orderService;
-    private readonly AppDbContext _context;
     private readonly BillService _billService;
+    private readonly SessionService _sessionService;
+    private readonly PaymentService _paymentService;
 
-    public BillController(OrderService orderService, AppDbContext context, BillService billService)
+    public BillController(
+        OrderService orderService,
+        BillService billService,
+        SessionService sessionService,
+        PaymentService paymentService)
     {
         _orderService = orderService;
-        _context = context;
         _billService = billService;
+        _sessionService = sessionService;
+        _paymentService = paymentService;
     }
+
     public IActionResult Index(int sessionId)
     {
-        var orderId = _billService.GetOrderIdBySession(sessionId);
+        try
+        {
+            var orderId = _billService.GetOrderIdBySession(sessionId);
+            var bill = _billService.GetBillByOrderId(orderId);
 
-        var bill = _billService.GetBillByOrderId(orderId);
+            ViewBag.SessionId = sessionId;
 
-        ViewBag.SessionId = sessionId;
-
-        return View(bill);
+            return View(bill);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("table")]
     public IActionResult GetBill(int tableId)
     {
-        var session = _context.OrderSessions
-            .FirstOrDefault(x => x.TableID == tableId && x.Status == 1);
-
-        if (session == null)
-            return NotFound("Session not found");
-
-        var items = _context.OrderProducts
-            .Join(_context.Orders,
-                op => op.OrderID,
-                o => o.OrderID,
-                (op, o) => new { op, o })
-            .Join(_context.Products,
-                x => x.op.ProductID,
-                p => p.ProductID,
-                (x, p) => new
-                {
-                    p.ProductName,
-                    x.op.Quantity,
-                    p.Price,
-                    Total = x.op.Quantity * p.Price
-                })
-            .ToList();
-
-        var total = items.Sum(x => x.Total);
-
-        return Ok(new
+        try
         {
-            Items = items,
-            Total = total
-        });
+            var session = _sessionService.GetActiveSessionByTable(tableId);
+
+            if (session == null)
+                return NotFound("Session not found");
+
+            var bill = _billService.GetBillBySessionId(session.OrderSessionID);
+
+            return Ok(new
+            {
+                bill.Items,
+                Total = bill.TotalAmount
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPost("checkout")]
     public IActionResult Checkout(int tableId)
     {
-        var session = _context.OrderSessions
-            .FirstOrDefault(x => x.TableID == tableId && x.Status == 1);
+        try
+        {
+            var session = _sessionService.GetActiveSessionByTable(tableId);
 
-        if (session == null)
-            return NotFound("Session not found");
+            if (session == null)
+                return NotFound("Session not found");
 
-        session.Status = 0;
-        session.EndTime = DateTime.Now;
+            _paymentService.PayCash(session.OrderSessionID);
 
-        var table = _context.RestaurantTables
-            .FirstOrDefault(x => x.TableID == tableId);
-
-        table.Status = 0;
-
-        _context.SaveChanges();
-
-        return Ok();
+            return Ok();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
-
 }

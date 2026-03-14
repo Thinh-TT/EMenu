@@ -1,15 +1,26 @@
-﻿<h2>Create Staff</h2>
+<h2>Create Staff</h2>
 
 <form method="post">
+	@Html.AntiForgeryToken()
+
+	@if (ViewBag.Error != null)
+	{
+		<div class="alert alert-danger">@ViewBag.Error</div>
+	}
+
+	@if (ViewBag.PasswordPolicy != null)
+	{
+		<div class="alert alert-info">@ViewBag.PasswordPolicy</div>
+	}
 
 	<label>Name</label>
-	<input name="StaffName" class="form-control" />
+	<input name="StaffName" class="form-control" value="@Model?.StaffName" />
 
 	<label>Phone</label>
-	<input name="Phone" class="form-control" />
+	<input name="Phone" class="form-control" value="@Model?.Phone" />
 
 	<label>Email</label>
-	<input name="Email" class="form-control" />
+	<input name="Email" class="form-control" value="@Model?.Email" />
 
 	<hr />
 
@@ -21,8 +32,10 @@
 	<label>Password</label>
 	<input name="password" type="password" class="form-control" />
 
+	<label>Confirm Password</label>
+	<input name="confirmPassword" type="password" class="form-control" />
+
 	<br />
 
 	<button class="btn btn-success">Save</button>
-
 </form>

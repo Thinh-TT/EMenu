@@ -1,38 +1,46 @@
-﻿<h2>Edit User</h2>
+<h2>Edit User</h2>
 
 <form method="post">
+	@Html.AntiForgeryToken()
+
+	@if (ViewBag.Error != null)
+	{
+		<div class="alert alert-danger">@ViewBag.Error</div>
+	}
+
+	@if (ViewBag.PasswordPolicy != null)
+	{
+		<div class="alert alert-info">@ViewBag.PasswordPolicy</div>
+	}
 
 	<input type="hidden"
 		   name="UserID"
 		   value="@Model.UserID" />
 
 	<label>Username</label>
-
 	<input name="UserName"
 		   value="@Model.UserName"
 		   class="form-control" />
 
-	<label>Password</label>
-
+	<label>New Password</label>
 	<input type="password" name="Password" class="form-control" />
 
+	<label>Confirm New Password</label>
+	<input type="password" name="confirmPassword" class="form-control" />
+
+	<small class="text-muted">Leave password blank to keep the current password.</small>
+
 	<label>Role</label>
-
 	<select name="roleId" class="form-control">
-
 		@foreach (var r in ViewBag.Roles)
 		{
 			<option value="@r.RoleID">
-
 				@r.RoleName
-
 			</option>
 		}
-
 	</select>
 
 	<br />
 
 	<button class="btn btn-success">Update</button>
-
 </form>

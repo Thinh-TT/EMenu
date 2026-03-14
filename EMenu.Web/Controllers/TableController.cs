@@ -1,10 +1,11 @@
-﻿using EMenu.Application.Services;
+using EMenu.Application.Services;
+using EMenu.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMenu.Web.Controllers
 {
-    [Authorize(Roles = "Admin,Staff")]
+    [Authorize(Roles = AppRoles.AdminOrStaff)]
     public class TableController : Controller
     {
         private readonly TableService _service;
@@ -43,3 +44,4 @@ namespace EMenu.Web.Controllers
         }
     }
 }
+

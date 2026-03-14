@@ -1,5 +1,4 @@
-﻿loadOrders();
-setInterval(loadStatus, 3000);
+loadOrders();
 
 function loadOrders() {
   fetch("/api/kitchen/pending")
@@ -21,7 +20,7 @@ No pending orders right now.
   }
 
   let orders = {};
-  // group by orderID
+
   items.forEach((item) => {
     if (!orders[item.orderID]) {
       orders[item.orderID] = [];
@@ -56,6 +55,7 @@ No pending orders right now.
       } else {
         buttonText = "Done";
       }
+
       let statusClass = "";
 
       if (i.status == 0) statusClass = "pending";
@@ -115,8 +115,20 @@ function updateStatus(orderProductID, status) {
       status,
     {
       method: "PUT",
+      headers: window.emenu.getAntiforgeryHeaders(),
     },
-  ).then(() => loadOrders());
+  )
+    .then(async (res) => {
+      if (!res.ok) {
+        const message = await res.text();
+        throw new Error(message || "Unable to update order status.");
+      }
+
+      loadOrders();
+    })
+    .catch((err) => {
+      alert(err.message || "Unable to update order status.");
+    });
 }
 
 const connection = new signalR.HubConnectionBuilder()
@@ -142,6 +154,7 @@ connection.on("OrderStatusUpdated", function () {
 
   loadOrders();
 });
+
 connection
   .start()
   .then(() => console.log("SignalR connected"))

@@ -1,21 +1,19 @@
-﻿using EMenu.Domain.Entities;
+using EMenu.Domain.Constants;
+using EMenu.Domain.Entities;
 using EMenu.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EMenu.Application.Services
 {
     public class StaffService
     {
         private readonly AppDbContext _context;
+        private readonly PasswordService _passwordService;
 
-        public StaffService(AppDbContext context)
+        public StaffService(AppDbContext context, PasswordService passwordService)
         {
             _context = context;
+            _passwordService = passwordService;
         }
 
         public List<Staff> GetAll()
@@ -32,10 +30,21 @@ namespace EMenu.Application.Services
                 .FirstOrDefault(x => x.StaffID == id);
         }
 
-        public void Create(Staff staff, string username, string password)
+        public void Create(Staff staff, string username, string password, string? confirmPassword)
         {
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException("Username is required.");
+
+            if (_context.Users.Any(x => x.UserName == username))
+                throw new ArgumentException("Username already exists.");
+
+            _passwordService.EnsureValidPassword(
+                password,
+                confirmPassword,
+                required: true);
+
             var staffRole = _context.Roles
-                .FirstOrDefault(x => x.RoleName == "Staff");
+                .FirstOrDefault(x => x.RoleName == AppRoles.Staff);
 
             if (staffRole == null)
                 throw new Exception("Staff role not found");
@@ -43,7 +52,7 @@ namespace EMenu.Application.Services
             var user = new User
             {
                 UserName = username,
-                Password = BCrypt.Net.BCrypt.HashPassword(password),
+                Password = _passwordService.HashPassword(password),
                 IsActive = true,
                 CreatedAt = DateTime.Now
             };

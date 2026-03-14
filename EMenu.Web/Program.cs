@@ -3,15 +3,25 @@ using EMenu.Infrastructure.Configurations;
 using EMenu.Infrastructure.Data;
 using EMenu.Infrastructure.Seed;
 using EMenu.Web.Hubs;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrWhiteSpace(defaultConnection))
+{
+    throw new InvalidOperationException(
+        "Missing ConnectionStrings:DefaultConnection. Configure it with dotnet user-secrets for local development or environment variables for deployed environments.");
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(defaultConnection));
 
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<PasswordService>();
 
 builder.Services.AddScoped<OrderService>();
 
@@ -57,7 +67,14 @@ builder.Services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
-builder.Services.AddControllers()
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "RequestVerificationToken";
+});
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+})
 .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler =
@@ -65,9 +82,6 @@ builder.Services.AddControllers()
 });
 builder.Services.Configure<VNPayConfig>(
     builder.Configuration.GetSection("VNPay"));
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -104,8 +118,12 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider
         .GetRequiredService<AppDbContext>();
+    var passwordService = scope.ServiceProvider
+        .GetRequiredService<PasswordService>();
 
     DataSeeder.Seed(context);
+
+    passwordService.MigrateLegacyPasswords(context);
 }
 
 app.Run();

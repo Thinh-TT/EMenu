@@ -1,13 +1,11 @@
-﻿@model List<EMenu.Domain.Entities.User>
+@model List<EMenu.Domain.Entities.User>
 @using System.Linq
-
 
 <h2>User Management</h2>
 
 <a href="/User/Create" class="btn btn-primary">Create User</a>
 
 <table class="table">
-
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -19,36 +17,26 @@
 	</thead>
 
 	<tbody>
-
 		@foreach (var user in Model)
 		{
 			<tr>
-
 				<td>@user.UserID</td>
-
 				<td>@user.UserName</td>
-
+				<td>@user.UserRoles.FirstOrDefault()?.Role?.RoleName</td>
+				<td>@(user.IsActive ? "Active" : "Disabled")</td>
 				<td>
-					@user.UserRoles.FirstOrDefault()?.Role?.RoleName
-				</td>
-
-				<td>
-					@(user.IsActive ? "Active" : "Disabled")
-				</td>
-
-				<td>
-
 					<a href="/User/Edit/@user.UserID">Edit</a> |
-
-					<a href="/User/ToggleStatus/@user.UserID">
-						Toggle Status
-					</a>
-
+					<form asp-action="ToggleStatus"
+					      asp-route-id="@user.UserID"
+					      method="post"
+					      style="display:inline">
+						<button type="submit"
+						        class="btn btn-link p-0 align-baseline">
+							Toggle Status
+						</button>
+					</form>
 				</td>
-
 			</tr>
 		}
-
 	</tbody>
-
 </table>

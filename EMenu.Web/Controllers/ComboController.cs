@@ -1,11 +1,12 @@
-﻿using EMenu.Application.Services;
+using EMenu.Application.Services;
+using EMenu.Domain.Constants;
 using EMenu.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMenu.Web.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = AppRoles.Admin)]
     public class ComboController : Controller
     {
         private readonly ComboService _service;
@@ -69,3 +70,4 @@ namespace EMenu.Web.Controllers
 
     }
 }
+

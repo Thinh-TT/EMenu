@@ -1,10 +1,5 @@
-﻿using EMenu.Domain.Enums;
+using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace EMenu.Application.Services
@@ -37,16 +32,42 @@ namespace EMenu.Application.Services
 
             return items;
         }
+
         public void UpdateStatus(int orderProductId, OrderItemStatus status)
         {
             var item = _context.OrderProducts.Find(orderProductId);
 
             if (item == null)
-                throw new Exception("Order item not found");
+                throw new InvalidOperationException("Order item not found.");
+
+            if (!IsValidStatusTransition(item.Status, status))
+                throw new InvalidOperationException("Invalid kitchen status transition.");
 
             item.Status = status;
 
             _context.SaveChanges();
+        }
+
+        private static bool IsValidStatusTransition(OrderItemStatus currentStatus, OrderItemStatus nextStatus)
+        {
+            if (currentStatus == nextStatus)
+                return true;
+
+            if (currentStatus == OrderItemStatus.Pending && nextStatus == OrderItemStatus.Preparing)
+                return true;
+
+            if (currentStatus == OrderItemStatus.Preparing && nextStatus == OrderItemStatus.Ready)
+                return true;
+
+            if (currentStatus == OrderItemStatus.Ready && nextStatus == OrderItemStatus.Served)
+                return true;
+
+            if (nextStatus == OrderItemStatus.Cancelled &&
+                currentStatus != OrderItemStatus.Served &&
+                currentStatus != OrderItemStatus.Cancelled)
+                return true;
+
+            return false;
         }
     }
 }

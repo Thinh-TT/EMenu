@@ -1,8 +1,11 @@
-﻿using EMenu.Application.Services;
+using EMenu.Application.Services;
+using EMenu.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMenu.Web.Controllers
 {
+    [Authorize(Roles = AppRoles.AdminOrStaff)]
     public class BillPageController : Controller
     {
         private readonly BillService _billService;
@@ -16,19 +19,34 @@ namespace EMenu.Web.Controllers
 
         public IActionResult Index(int sessionId)
         {
-            var bill = _billService.GetBillBySessionId(sessionId);
+            try
+            {
+                var bill = _billService.GetBillBySessionId(sessionId);
 
-            ViewBag.SessionId = sessionId;
+                ViewBag.SessionId = sessionId;
 
-            return View(bill);
+                return View(bill);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Index", "Table");
+            }
         }
 
         public IActionResult Print(int sessionId)
         {
-            var bill = _orderService.GetSessionBill(sessionId);
+            try
+            {
+                var bill = _orderService.GetSessionBill(sessionId);
 
-            return View(bill);
+                return View(bill);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Index", "Table");
+            }
         }
-
     }
 }

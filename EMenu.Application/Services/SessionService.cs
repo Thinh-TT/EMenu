@@ -1,11 +1,7 @@
-﻿using EMenu.Domain.Entities;
+using EMenu.Domain.Entities;
+using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EMenu.Application.Services
 {
@@ -31,15 +27,25 @@ namespace EMenu.Application.Services
                 .FirstOrDefault(x => x.TableID == tableId && x.Status == 1);
         }
 
-        public OrderSession StartSession(int tableId, int customerId )
+        public OrderSession StartSession(int tableId, int customerId)
         {
             var table = _context.RestaurantTables.Find(tableId);
 
             if (table == null)
-                throw new Exception("Table not found");
+                throw new InvalidOperationException("Table not found.");
 
-            if (table.Status == 1)
-                throw new Exception("Table is already occupied");
+            var customerExists = _context.Customers.Any(x => x.CustomerID == customerId);
+
+            if (!customerExists)
+                throw new InvalidOperationException("Customer not found.");
+
+            var hasActiveSession = _context.OrderSessions
+                .Any(x => x.TableID == tableId && x.Status == 1);
+
+            if (table.Status == 1 || hasActiveSession)
+                throw new InvalidOperationException("Table is already occupied.");
+
+            using var transaction = _context.Database.BeginTransaction();
 
             table.Status = 1;
 
@@ -52,8 +58,9 @@ namespace EMenu.Application.Services
             };
 
             _context.OrderSessions.Add(session);
-
             _context.SaveChanges();
+
+            transaction.Commit();
 
             return session;
         }
@@ -64,7 +71,7 @@ namespace EMenu.Application.Services
                 .FirstOrDefault(x => x.TableID == tableId && x.Status == 1);
 
             if (session == null)
-                throw new Exception("Session not found");
+                throw new InvalidOperationException("Session not found.");
 
             EndSessionById(session.OrderSessionID);
         }
@@ -75,24 +82,46 @@ namespace EMenu.Application.Services
                 .FirstOrDefault(x => x.OrderSessionID == sessionId);
 
             if (session == null)
-                throw new Exception("Session not found");
+                throw new InvalidOperationException("Session not found.");
 
             if (session.Status == 0)
                 return;
 
-            session.Status = 0;
-            session.EndTime = DateTime.Now;
+            EnsureSessionCanClose(sessionId);
 
             var table = _context.RestaurantTables
                 .FirstOrDefault(x => x.TableID == session.TableID);
 
             if (table == null)
-                throw new Exception("Table not found");
+                throw new InvalidOperationException("Table not found.");
 
+            using var transaction = _context.Database.BeginTransaction();
+
+            session.Status = 0;
+            session.EndTime = DateTime.Now;
             table.Status = 0;
 
             _context.SaveChanges();
+
+            transaction.Commit();
         }
 
+        private void EnsureSessionCanClose(int sessionId)
+        {
+            var orderIds = _context.Orders
+                .Where(x => x.OrderSessionID == sessionId)
+                .Select(x => x.OrderID)
+                .ToList();
+
+            if (!orderIds.Any())
+                return;
+
+            var unpaidOrderExists = orderIds.Any(orderId =>
+                _context.OrderProducts.Any(x => x.OrderID == orderId && x.Status != OrderItemStatus.Cancelled) &&
+                !_context.Invoices.Any(x => x.OrderID == orderId));
+
+            if (unpaidOrderExists)
+                throw new InvalidOperationException("Cannot close session with unpaid order.");
+        }
     }
 }

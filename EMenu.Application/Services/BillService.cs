@@ -1,11 +1,7 @@
-﻿using EMenu.Application.DTOs;
+using EMenu.Application.DTOs;
+using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EMenu.Application.Services
 {
@@ -18,7 +14,6 @@ namespace EMenu.Application.Services
             _context = context;
         }
 
-        // lấy orderId từ sessionId
         public int GetOrderIdBySession(int sessionId)
         {
             var order = _context.Orders
@@ -26,7 +21,7 @@ namespace EMenu.Application.Services
                 .FirstOrDefault(o => o.OrderSessionID == sessionId);
 
             if (order == null)
-                throw new Exception("Order not found");
+                throw new InvalidOperationException("Order not found.");
 
             return order.OrderID;
         }
@@ -38,7 +33,7 @@ namespace EMenu.Application.Services
                 .FirstOrDefault(x => x.OrderSessionID == sessionId);
 
             if (session == null)
-                throw new Exception("Session not found");
+                throw new InvalidOperationException("Session not found.");
 
             var orders = _context.Orders
                 .Where(x => x.OrderSessionID == sessionId)
@@ -47,10 +42,11 @@ namespace EMenu.Application.Services
                 .ToList();
 
             if (!orders.Any())
-                throw new Exception("Order not found");
+                throw new InvalidOperationException("Order not found.");
 
             var items = orders
                 .SelectMany(x => x.OrderProducts)
+                .Where(x => x.Status != OrderItemStatus.Cancelled)
                 .Select(x => new BillItemDto
                 {
                     ProductName = x.Product.ProductName,
@@ -58,6 +54,9 @@ namespace EMenu.Application.Services
                     UnitPrice = x.Price
                 })
                 .ToList();
+
+            if (!items.Any())
+                throw new InvalidOperationException("Order has no billable items.");
 
             return new BillDto
             {
@@ -68,7 +67,6 @@ namespace EMenu.Application.Services
             };
         }
 
-        // tạo bill từ orderId
         public BillDto GetBillByOrderId(int orderId)
         {
             var order = _context.Orders
@@ -79,9 +77,10 @@ namespace EMenu.Application.Services
                 .FirstOrDefault(o => o.OrderID == orderId);
 
             if (order == null)
-                throw new Exception("Order not found");
+                throw new InvalidOperationException("Order not found.");
 
             var items = order.OrderProducts
+                .Where(x => x.Status != OrderItemStatus.Cancelled)
                 .Select(op => new BillItemDto
                 {
                     ProductName = op.Product.ProductName,
@@ -89,6 +88,9 @@ namespace EMenu.Application.Services
                     UnitPrice = op.Price
                 })
                 .ToList();
+
+            if (!items.Any())
+                throw new InvalidOperationException("Order has no billable items.");
 
             return new BillDto
             {

@@ -1,6 +1,7 @@
-﻿<h2>Edit Combo</h2>
+<h2>Edit Combo</h2>
 
 <form method="post">
+	@Html.AntiForgeryToken()
 
 	<input type="hidden"
 		   name="comboId"
@@ -12,14 +13,11 @@
 	{
 		var checkedItem = ((List<int>)ViewBag.ComboItems).Contains(p.ProductID);
 		<div>
-
 			<input type="checkbox"
 				   name="productIds"
 				   value="@p.ProductID"
 				   @(checkedItem ? "checked" : "") />
-
 			@p.ProductName
-
 		</div>
 	}
 
@@ -28,5 +26,4 @@
 	<button class="btn btn-success">
 		Save
 	</button>
-
 </form>
