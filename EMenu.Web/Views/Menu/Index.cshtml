@@ -1,83 +1,67 @@
-﻿@using EMenu.Domain.Enums
-<h2>Restaurant Menu</h2>
+@using EMenu.Domain.Enums
 
-@foreach (var category in Model)
-{
-    <h3>@category.CategoryName</h3>
+<section class="page-intro">
+    <h2>Restaurant Menu</h2>
+    <p>Browse products by category, review combos quickly and keep the cart visible while ordering.</p>
+</section>
 
-    <div class="product-grid">
-
-        @foreach (var product in category.Products)
+<div class="menu-layout">
+    <div class="menu-catalog">
+        @foreach (var category in Model)
         {
-           
-            <div class="product-card">
+            <section class="menu-category">
+                <div class="category-heading">
+                    <h3>@category.CategoryName</h3>
+                    <span class="category-count">@category.Products.Count item(s)</span>
+                </div>
 
-                <img src="/images/products/@product.Image"
-                     width="80" />
+                <div class="product-grid">
+                    @foreach (var product in category.Products)
+                    {
+                        <div class="product-card">
+                            <img class="product-img"
+                                 src="/images/products/@product.Image"
+                                 alt="@product.ProductName" />
 
-                <h4>@product.ProductName</h4>
+                            <h4>@product.ProductName</h4>
+                            <p>@product.Price $</p>
 
-                <p>@product.Price $</p>
+                            <div class="product-card-actions">
+                                <button class="btn btn-primary"
+                                        onclick="addToCart(@product.ProductID,'@product.ProductName',@product.Price)">
+                                    Add
+                                </button>
 
-                <button class="btn btn-primary"
-                        onclick="addToCart(@product.ProductID,'@product.ProductName',@product.Price)">
-                    Add
-                </button>
-                @if (product.ProductType == ProductType.Combo)
-                {
-                    <button class="btn btn-warning"
-                            onclick="showCombo(@product.ProductID)">
-
-                        View Combo
-
-                    </button>
-                }
-
-            </div>
-
+                                @if (product.ProductType == ProductType.Combo)
+                                {
+                                    <button class="btn btn-warning"
+                                            onclick="showCombo(@product.ProductID)">
+                                        View Combo
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
         }
-
     </div>
 
-}
-<div class="cart-panel">
-
-    <h3>Cart</h3>
-
-    <div id="cartItems"></div>
-
-    <h4>Total: $<span id="cartTotal">0</span></h4>
-
-    <button onclick="submitOrder()"
-            class="btn btn-success">
-
-        Submit Order
-
-    </button>
-
+    <aside class="cart-panel">
+        <h3>Cart</h3>
+        <div id="cartItems"></div>
+        <h4>Total: $<span id="cartTotal">0</span></h4>
+        <button onclick="submitOrder()" class="btn btn-success">Submit Order</button>
+    </aside>
 </div>
+
 <script src="/js/cart.js"></script>
 <script src="/js/menu.js"></script>
-<div id="comboModal"
-     style="display:none;
-position:fixed;
-top:20%;
-left:30%;
-width:40%;
-background:white;
-border:1px solid #ccc;
-padding:20px;
-z-index:1000">
 
-    <h3>Combo Items</h3>
-
-    <ul id="comboItems"></ul>
-
-    <button onclick="closeCombo()"
-            class="btn btn-danger">
-
-        Close
-
-    </button>
-
+<div id="comboModal" class="combo-modal">
+    <div class="combo-modal-card">
+        <h3>Combo Items</h3>
+        <ul id="comboItems"></ul>
+        <button onclick="closeCombo()" class="btn btn-danger">Close</button>
+    </div>
 </div>

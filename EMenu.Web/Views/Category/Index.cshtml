@@ -17,14 +17,14 @@
             <tr>
                 <td>@item.CategoryID</td>
                 <td>@item.CategoryName</td>
-                <td>
-                    <a href="/Category/Edit/@item.CategoryID">Edit</a> |
+                <td class="table-actions">
+                    <a class="table-action-link" href="/Category/Edit/@item.CategoryID">Edit</a>
                     <form asp-action="Delete"
                           asp-route-id="@item.CategoryID"
                           method="post"
-                          style="display:inline">
+                          class="table-action-form">
                         <button type="submit"
-                                class="btn btn-link p-0 align-baseline">
+                                class="btn btn-link table-action-link">
                             Delete
                         </button>
                     </form>

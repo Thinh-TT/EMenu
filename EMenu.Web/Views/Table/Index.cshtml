@@ -1,65 +1,56 @@
-<h2>Table Management</h2>
+<section class="table-stage">
+    <h2>Table Management</h2>
+    <p>Open or end sessions quickly with a clearer overview of table capacity and current status.</p>
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["Error"]
-    </div>
-}
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Success"]
-    </div>
-}
-
-<div class="table-grid">
-
-    @foreach (var table in Model)
+    @if (TempData["Error"] != null)
     {
-        var color = "green";
-
-        if (table.Status == 1)
-            color = "red";
-
-        <div class="table-box"
-             style="background:@color">
-
-            <h3>@table.TableName</h3>
-
-            <p>Capacity: @table.Capacity</p>
-
-            @if (table.Status == 0)
-            {
-                <button onclick="openTable(@table.TableID)">
-                    Open
-                </button>
-            }
-
-            @if (table.Status == 1)
-            {
-                <button class="btn btn-danger"
-                        onclick="endTable(@table.TableID)">
-                    End Session
-                </button>
-            }
-            @if (table.Status == 1)
-            {
-                <button class="btn btn-warning"
-                        onclick="window.location='/Table/Bill?tableId=@table.TableID'">
-
-                    Bill
-
-                </button>
-            }
-
+        <div class="alert alert-danger">
+            @TempData["Error"]
         </div>
     }
 
-</div>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    <div class="table-grid">
+        @foreach (var table in Model)
+        {
+            var statusClass = table.Status == 1 ? "table-box table-box--busy" : "table-box table-box--free";
+            var statusText = table.Status == 1 ? "Busy" : "Available";
+
+            <div class="@statusClass">
+                <div>
+                    <span class="status-pill">@statusText</span>
+                    <h3 class="mt-3">@table.TableName</h3>
+                    <p>Capacity: @table.Capacity</p>
+                </div>
+
+                <div class="table-box-actions">
+                    @if (table.Status == 0)
+                    {
+                        <button onclick="openTable(@table.TableID)">Open</button>
+                    }
+
+                    @if (table.Status == 1)
+                    {
+                        <button class="btn btn-danger"
+                                onclick="endTable(@table.TableID)">
+                            End Session
+                        </button>
+
+                        <button class="btn btn-warning"
+                                onclick="window.location='/Table/Bill?tableId=@table.TableID'">
+                            Bill
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
 
 <script src="/js/table.js"></script>
-
-
-

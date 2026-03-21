@@ -1,8 +1,43 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="home-hero">
+    <div class="home-hero-copy">
+        <span class="eyebrow">Blue and white experience</span>
+        <h1 class="display-4">Welcome</h1>
+        <p>
+            Learn about
+            <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-primary" asp-controller="Menu" asp-action="Index">Open Menu</a>
+            <a class="btn btn-warning" asp-controller="Auth" asp-action="Login">Login</a>
+        </div>
+        <div class="hero-feature-grid">
+            <div class="feature-card">
+                <strong>Fast service flow</strong>
+                <span>QR, ordering, kitchen tracking, bill and payment are grouped into one clear experience.</span>
+            </div>
+            <div class="feature-card">
+                <strong>Simple operations</strong>
+                <span>Staff, tables, products and combos stay easy to find from one navigation system.</span>
+            </div>
+        </div>
+    </div>
+    <div class="flow-card">
+        <h3>Business Flow</h3>
+        <ul class="flow-list">
+            <li>QR</li>
+            <li>Menu</li>
+            <li>Cart</li>
+            <li>Order</li>
+            <li>Kitchen</li>
+            <li>Tracking</li>
+            <li>Bill</li>
+            <li>Checkout</li>
+            <li>Payment</li>
+            <li>End session</li>
+        </ul>
+    </div>
+</section>

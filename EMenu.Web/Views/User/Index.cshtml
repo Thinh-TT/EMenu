@@ -24,14 +24,14 @@
 				<td>@user.UserName</td>
 				<td>@user.UserRoles.FirstOrDefault()?.Role?.RoleName</td>
 				<td>@(user.IsActive ? "Active" : "Disabled")</td>
-				<td>
-					<a href="/User/Edit/@user.UserID">Edit</a> |
+				<td class="table-actions">
+					<a class="table-action-link" href="/User/Edit/@user.UserID">Edit</a>
 					<form asp-action="ToggleStatus"
 					      asp-route-id="@user.UserID"
 					      method="post"
-					      style="display:inline">
+					      class="table-action-form">
 						<button type="submit"
-						        class="btn btn-link p-0 align-baseline">
+						        class="btn btn-link table-action-link">
 							Toggle Status
 						</button>
 					</form>

@@ -24,8 +24,7 @@
 				<td>@item.ProductID</td>
 				<td>@item.ProductName</td>
 				<td>
-					<img src="/images/products/@item.Image"
-					     width="80" />
+					<img src="/images/products/@item.Image" width="80" />
 				</td>
 				<td>@item.Category?.CategoryName</td>
 				<td>@item.Price</td>
@@ -41,13 +40,9 @@
 				</td>
 				<td>@(item.IsAvailable ? "Available" : "Disabled")</td>
 				<td>
-					<a href="/Product/Edit/@item.ProductID">Edit</a> |
-					<form asp-action="Delete"
-					      asp-route-id="@item.ProductID"
-					      method="post"
-					      style="display:inline">
-						<button type="submit"
-						        class="btn btn-link p-0 align-baseline">
+					<a class="table-action-link" href="/Product/Edit/@item.ProductID">Edit</a> |
+					<form asp-action="Delete" asp-route-id="@item.ProductID" method="post" class="table-action-form">
+						<button type="submit" class="btn btn-link table-action-link">
 							Delete
 						</button>
 					</form>

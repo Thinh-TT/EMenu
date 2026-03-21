@@ -1,25 +1,31 @@
-﻿<h2>Restaurant Dashboard</h2>
+<section class="dashboard-surface">
+    <h2>Restaurant Dashboard</h2>
+    <p>Track operational activity and keep an eye on table usage and revenue trends.</p>
 
-<div class="row mb-4">
+    <div class="dashboard-grid">
+        <div class="metric-card text-center">
+            <h4 id="ordersToday">0</h4>
+            <p>Orders Today</p>
+        </div>
 
-	<div class="col-md-3">
-		<div class="card text-center">
-			<h4 id="ordersToday">0</h4>
-			<p>Orders Today</p>
-		</div>
-	</div>
+        <div class="metric-card text-center">
+            <h4 id="tablesInUse">0</h4>
+            <p>Tables In Use</p>
+        </div>
+    </div>
+</section>
 
-	<div class="col-md-3">
-		<div class="card text-center">
-			<h4 id="tablesInUse">0</h4>
-			<p>Tables In Use</p>
-		</div>
-	</div>
+<div class="chart-grid">
+    <section class="chart-card">
+        <h3>Revenue Overview</h3>
+        <canvas id="revenueChart"></canvas>
+    </section>
 
+    <section class="chart-card">
+        <h3>Top Products</h3>
+        <canvas id="productChart"></canvas>
+    </section>
 </div>
-
-<canvas id="revenueChart"></canvas>
-<canvas id="productChart"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/dashboard.js"></script>
