@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EMenu.Domain.Constants;
 using EMenu.Domain.Entities;
 using EMenu.Domain.Enums;
@@ -16,178 +11,454 @@ namespace EMenu.Infrastructure.Seed
         {
             context.Database.EnsureCreated();
 
-            var requiredRoles = new[] { AppRoles.Admin, AppRoles.Staff, AppRoles.Kitchen };
-            var existingRoles = context.Roles
+            EnsureRoles(context);
+
+            var adminUser = EnsureUser(
+                context,
+                userName: "admin",
+                password: "Admin123",
+                isActive: true);
+            EnsureUserRole(context, adminUser.UserID, AppRoles.Admin);
+
+            var staffOne = EnsureStaff(
+                context,
+                userName: "System",
+                password: "System123",
+                staffName: "System Staff",
+                phone: "0900000001",
+                email: "system@emenu.local");
+
+            var staffTwo = EnsureStaff(
+                context,
+                userName: "staff01",
+                password: "Staff123",
+                staffName: "Cashier Staff",
+                phone: "0900000002",
+                email: "staff01@emenu.local");
+
+            var categories = EnsureCategories(context);
+
+            EnsureCustomers(context);
+            EnsureRestaurantTables(context);
+
+            var shifts = EnsureShifts(context);
+            EnsureShiftLog(context, staffOne.StaffID, shifts["Morning"]);
+            EnsureShiftLog(context, staffTwo.StaffID, shifts["Evening"]);
+
+            var products = EnsureProducts(context, categories);
+            EnsureComboProducts(context, products);
+        }
+
+        private static void EnsureRoles(AppDbContext context)
+        {
+            var requiredRoles = new[]
+            {
+                AppRoles.Admin,
+                AppRoles.Staff,
+                AppRoles.Kitchen
+            };
+
+            var existingRoleNames = context.Roles
                 .Select(x => x.RoleName)
-                .ToHashSet();
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             var missingRoles = requiredRoles
-                .Where(x => !existingRoles.Contains(x))
-                .Select(x => new Role { RoleName = x })
+                .Where(roleName => !existingRoleNames.Contains(roleName))
+                .Select(roleName => new Role { RoleName = roleName })
                 .ToList();
 
-            if (missingRoles.Any())
+            if (missingRoles.Count == 0)
             {
-                context.Roles.AddRange(missingRoles);
-                context.SaveChanges();
+                return;
             }
 
-            if (!context.Users.Any())
-            {
-                var admin = new User
-                {
-                    UserName = "admin",
-                    Password = BCrypt.Net.BCrypt.HashPassword("Admin123"),
-                    IsActive = true,
-                    CreatedAt = DateTime.Now
-                };
-
-                context.Users.Add(admin);
-                context.SaveChanges();
-
-                var role = context.Roles.First(x => x.RoleName == AppRoles.Admin);
-
-                context.UserRoles.Add(new UserRole
-                {
-                    UserID = admin.UserID,
-                    RoleID = role.RoleID
-                });
-
-                context.SaveChanges();
-            }
-
-            if (!context.Users.Any(x => x.UserName == "System"))
-            {
-                var staffUser = new User
-                {
-                    UserName = "System",
-                    Password = BCrypt.Net.BCrypt.HashPassword("System123"),
-                    IsActive = true,
-                    CreatedAt = DateTime.Now
-                };
-
-                context.Users.Add(staffUser);
-                context.SaveChanges();
-
-                var staffRole = context.Roles.First(x => x.RoleName == AppRoles.Staff);
-
-                context.UserRoles.Add(new UserRole
-                {
-                    UserID = staffUser.UserID,
-                    RoleID = staffRole.RoleID
-                });
-
-                context.SaveChanges();
-
-                context.Staffs.Add(new Staff
-                {
-                    StaffName = "System",
-                    Phone = "090000001",
-                    Email = "system@restaurant.com",
-                    UserID = staffUser.UserID
-                });
-
-                context.SaveChanges();
-            }
-
-            if (!context.Categories.Any())
-            {
-                context.Categories.AddRange(
-                    new Category { CategoryName = "Food" },
-                    new Category { CategoryName = "Drink" },
-                    new Category { CategoryName = "Combo" }
-                );
-
-                context.SaveChanges();
-            }
-
-            if (!context.Customers.Any())
-            {
-                context.Customers.AddRange(
-                    new Customer
-                    {
-                        Name = "Unknown customer",
-                        Sex = "Male",
-                        Email = "uc@gmail.com",
-                        Phone = "0900000001",
-                        BirthYear = 1995,
-                        CreatedAt = DateTime.Now
-                    },
-                    new Customer
-                    {
-                        Name = "Tran Thi B",
-                        Sex = "Female",
-                        Email = "b@gmail.com",
-                        Phone = "0900000002",
-                        BirthYear = 1998,
-                        CreatedAt = DateTime.Now
-                    },
-                    new Customer
-                    {
-                        Name = "Le Van C",
-                        Sex = "Male",
-                        Email = "c@gmail.com",
-                        Phone = "0900000003",
-                        BirthYear = 1992,
-                        CreatedAt = DateTime.Now
-                    }
-                );
-
-                context.SaveChanges();
-            }
-
-            if (!context.RestaurantTables.Any())
-            {
-                context.RestaurantTables.AddRange(
-                    new RestaurantTable { TableName = "B1", Capacity = 4, Status = 0 },
-                    new RestaurantTable { TableName = "B2", Capacity = 4, Status = 0 },
-                    new RestaurantTable { TableName = "B3", Capacity = 6, Status = 0 },
-                    new RestaurantTable { TableName = "B4", Capacity = 6, Status = 0 }
-                );
-
-                context.SaveChanges();
-            }
-
-            if (!context.Products.Any())
-            {
-                var food = context.Categories.First(x => x.CategoryName == "Food");
-                var drink = context.Categories.First(x => x.CategoryName == "Drink");
-
-                context.Products.AddRange(
-                    new Product
-                    {
-                        ProductName = "Burger",
-                        Description = "Beef burger",
-                        Image = "burger.jpg",
-                        Price = 5,
-                        ProductType = ProductType.Single,
-                        CategoryID = food.CategoryID,
-                        IsAvailable = true
-                    },
-                    new Product
-                    {
-                        ProductName = "Pizza",
-                        Description = "Italian pizza",
-                        Image = "pizza.jpg",
-                        Price = 8,
-                        ProductType = ProductType.Single,
-                        CategoryID = food.CategoryID,
-                        IsAvailable = true
-                    },
-                    new Product
-                    {
-                        ProductName = "Coke",
-                        Description = "Coca cola drink",
-                        Image = "coke.jpg",
-                        Price = 2,
-                        ProductType = ProductType.Single,
-                        CategoryID = drink.CategoryID,
-                        IsAvailable = true
-                    }
-                );
-
-                context.SaveChanges();
-            }
+            context.Roles.AddRange(missingRoles);
+            context.SaveChanges();
         }
+
+        private static User EnsureUser(
+            AppDbContext context,
+            string userName,
+            string password,
+            bool isActive)
+        {
+            var user = context.Users.FirstOrDefault(x => x.UserName == userName);
+
+            if (user == null)
+            {
+                user = new User
+                {
+                    UserName = userName,
+                    Password = BCrypt.Net.BCrypt.HashPassword(password),
+                    IsActive = isActive,
+                    CreatedAt = DateTime.Now
+                };
+
+                context.Users.Add(user);
+                context.SaveChanges();
+
+                return user;
+            }
+
+            if (!user.IsActive)
+            {
+                user.IsActive = true;
+                context.SaveChanges();
+            }
+
+            return user;
+        }
+
+        private static void EnsureUserRole(AppDbContext context, int userId, string roleName)
+        {
+            var roleId = context.Roles
+                .Where(x => x.RoleName == roleName)
+                .Select(x => x.RoleID)
+                .First();
+
+            var hasRole = context.UserRoles.Any(x => x.UserID == userId && x.RoleID == roleId);
+
+            if (hasRole)
+            {
+                return;
+            }
+
+            context.UserRoles.Add(new UserRole
+            {
+                UserID = userId,
+                RoleID = roleId
+            });
+
+            context.SaveChanges();
+        }
+
+        private static Staff EnsureStaff(
+            AppDbContext context,
+            string userName,
+            string password,
+            string staffName,
+            string phone,
+            string email)
+        {
+            var user = EnsureUser(context, userName, password, isActive: true);
+            EnsureUserRole(context, user.UserID, AppRoles.Staff);
+
+            var staff = context.Staffs.FirstOrDefault(x => x.UserID == user.UserID);
+
+            if (staff != null)
+            {
+                return staff;
+            }
+
+            staff = new Staff
+            {
+                StaffName = staffName,
+                Phone = phone,
+                Email = email,
+                UserID = user.UserID
+            };
+
+            context.Staffs.Add(staff);
+            context.SaveChanges();
+
+            return staff;
+        }
+
+        private static Dictionary<string, int> EnsureCategories(AppDbContext context)
+        {
+            var categoryNames = new[] { "Food", "Drink", "Combo" };
+
+            var existingCategoryNames = context.Categories
+                .Select(x => x.CategoryName)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var missingCategories = categoryNames
+                .Where(categoryName => !existingCategoryNames.Contains(categoryName))
+                .Select(categoryName => new Category { CategoryName = categoryName })
+                .ToList();
+
+            if (missingCategories.Count > 0)
+            {
+                context.Categories.AddRange(missingCategories);
+                context.SaveChanges();
+            }
+
+            return context.Categories
+                .Where(x => categoryNames.Contains(x.CategoryName))
+                .ToDictionary(x => x.CategoryName, x => x.CategoryID, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static void EnsureCustomers(AppDbContext context)
+        {
+            var customerSeeds = new[]
+            {
+                new CustomerSeed("Guest Customer", "Male", "guest@emenu.local", "0911000001", 1995),
+                new CustomerSeed("Nguyen Minh Anh", "Female", "minh.anh@emenu.local", "0911000002", 1998),
+                new CustomerSeed("Tran Quoc Bao", "Male", "quoc.bao@emenu.local", "0911000003", 1993),
+                new CustomerSeed("Le Thu Ha", "Female", "thu.ha@emenu.local", "0911000004", 1997),
+                new CustomerSeed("Pham Gia Huy", "Male", "gia.huy@emenu.local", "0911000005", 1996)
+            };
+
+            var existingPhones = context.Customers
+                .Where(x => x.Phone != null)
+                .Select(x => x.Phone!)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var newCustomers = customerSeeds
+                .Where(seed => !existingPhones.Contains(seed.Phone))
+                .Select(seed => new Customer
+                {
+                    Name = seed.Name,
+                    Sex = seed.Sex,
+                    Email = seed.Email,
+                    Phone = seed.Phone,
+                    BirthYear = seed.BirthYear,
+                    CreatedAt = DateTime.Now
+                })
+                .ToList();
+
+            if (newCustomers.Count == 0)
+            {
+                return;
+            }
+
+            context.Customers.AddRange(newCustomers);
+            context.SaveChanges();
+        }
+
+        private static void EnsureRestaurantTables(AppDbContext context)
+        {
+            var tableSeeds = new[]
+            {
+                new TableSeed("T01", 2),
+                new TableSeed("T02", 2),
+                new TableSeed("T03", 4),
+                new TableSeed("T04", 4),
+                new TableSeed("T05", 4),
+                new TableSeed("T06", 4),
+                new TableSeed("T07", 6),
+                new TableSeed("T08", 6),
+                new TableSeed("T09", 8),
+                new TableSeed("T10", 8)
+            };
+
+            var existingTableNames = context.RestaurantTables
+                .Select(x => x.TableName)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var newTables = tableSeeds
+                .Where(seed => !existingTableNames.Contains(seed.TableName))
+                .Select(seed => new RestaurantTable
+                {
+                    TableName = seed.TableName,
+                    Capacity = seed.Capacity,
+                    Status = 0
+                })
+                .ToList();
+
+            if (newTables.Count == 0)
+            {
+                return;
+            }
+
+            context.RestaurantTables.AddRange(newTables);
+            context.SaveChanges();
+        }
+
+        private static Dictionary<string, int> EnsureShifts(AppDbContext context)
+        {
+            var shiftSeeds = new[]
+            {
+                new ShiftSeed("Morning", new TimeSpan(8, 0, 0), new TimeSpan(16, 0, 0)),
+                new ShiftSeed("Evening", new TimeSpan(16, 0, 0), new TimeSpan(22, 0, 0))
+            };
+
+            var existingShiftLookup = context.Shifts
+                .ToList()
+                .ToDictionary(
+                    x => $"{x.StartTime}-{x.EndTime}",
+                    x => x.ShiftID,
+                    StringComparer.OrdinalIgnoreCase);
+
+            var newShifts = shiftSeeds
+                .Where(seed => !existingShiftLookup.ContainsKey($"{seed.StartTime}-{seed.EndTime}"))
+                .Select(seed => new Shift
+                {
+                    StartTime = seed.StartTime,
+                    EndTime = seed.EndTime
+                })
+                .ToList();
+
+            if (newShifts.Count > 0)
+            {
+                context.Shifts.AddRange(newShifts);
+                context.SaveChanges();
+            }
+
+            var shifts = context.Shifts.ToList();
+
+            return shiftSeeds.ToDictionary(
+                seed => seed.Name,
+                seed => shifts
+                    .First(x => x.StartTime == seed.StartTime && x.EndTime == seed.EndTime)
+                    .ShiftID,
+                StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static void EnsureShiftLog(AppDbContext context, int staffId, int shiftId)
+        {
+            var exists = context.ShiftLogs.Any(x => x.StaffID == staffId && x.ShiftID == shiftId);
+
+            if (exists)
+            {
+                return;
+            }
+
+            context.ShiftLogs.Add(new ShiftLog
+            {
+                StaffID = staffId,
+                ShiftID = shiftId
+            });
+
+            context.SaveChanges();
+        }
+
+        private static Dictionary<string, Product> EnsureProducts(
+            AppDbContext context,
+            IReadOnlyDictionary<string, int> categories)
+        {
+            var productSeeds = new List<ProductSeed>
+            {
+                new("Burger", "Classic beef burger with fresh vegetables.", "burger.jpg", 5.50m, ProductType.Single, "Food"),
+                new("Pizza", "Thin crust pizza with mozzarella and tomato sauce.", "pizza.jpg", 8.50m, ProductType.Single, "Food"),
+                new("Fried Chicken", "Crispy fried chicken served hot.", "burger.jpg", 6.50m, ProductType.Single, "Food"),
+                new("Spaghetti Carbonara", "Creamy pasta with bacon and parmesan.", "pizza.jpg", 7.50m, ProductType.Single, "Food"),
+                new("Seafood Fried Rice", "Fried rice with shrimp, squid and vegetables.", "pizza.jpg", 6.80m, ProductType.Single, "Food"),
+                new("Beef Steak", "Pan-seared beef steak with black pepper sauce.", "burger.jpg", 12.00m, ProductType.Single, "Food"),
+                new("Chicken Caesar Salad", "Romaine lettuce, grilled chicken and Caesar dressing.", "burger.jpg", 5.80m, ProductType.Single, "Food"),
+                new("French Fries", "Golden French fries with light seasoning.", "burger.jpg", 3.00m, ProductType.Single, "Food"),
+                new("Grilled Pork Rice", "Charcoal grilled pork served with steamed rice.", "pizza.jpg", 5.90m, ProductType.Single, "Food"),
+                new("Pho Bo", "Vietnamese beef noodle soup.", "burger.jpg", 4.80m, ProductType.Single, "Food"),
+                new("Bun Cha", "Grilled pork with vermicelli and herbs.", "pizza.jpg", 5.20m, ProductType.Single, "Food"),
+                new("Spring Rolls", "Fresh spring rolls with dipping sauce.", "burger.jpg", 4.20m, ProductType.Single, "Food"),
+                new("Coke", "Chilled Coca-Cola.", "coke.jpg", 2.00m, ProductType.Single, "Drink"),
+                new("Sprite", "Refreshing lemon-lime soda.", "coke.jpg", 2.00m, ProductType.Single, "Drink"),
+                new("Orange Juice", "Fresh orange juice without added sugar.", "coke.jpg", 2.80m, ProductType.Single, "Drink"),
+                new("Lemon Tea", "Iced lemon tea.", "coke.jpg", 2.50m, ProductType.Single, "Drink"),
+                new("Iced Americano", "Black coffee served over ice.", "coke.jpg", 3.00m, ProductType.Single, "Drink"),
+                new("Mineral Water", "Bottled mineral water.", "coke.jpg", 1.50m, ProductType.Single, "Drink"),
+                new("Peach Tea", "Peach-flavored iced tea.", "coke.jpg", 2.70m, ProductType.Single, "Drink"),
+                new("Mango Smoothie", "Blended mango smoothie.", "coke.jpg", 3.20m, ProductType.Single, "Drink"),
+                new("Burger Combo", "Burger set with fries and a drink.", "burger.jpg", 9.50m, ProductType.Combo, "Combo"),
+                new("Pizza Combo", "Pizza set with salad and a drink.", "pizza.jpg", 12.50m, ProductType.Combo, "Combo"),
+                new("Vietnamese Lunch Combo", "A local set for lunch rush.", "burger.jpg", 10.80m, ProductType.Combo, "Combo"),
+                new("Family Sharing Combo", "A larger combo for two to three guests.", "pizza.jpg", 16.90m, ProductType.Combo, "Combo"),
+                new("Light Meal Combo", "Balanced light meal with drink.", "burger.jpg", 9.20m, ProductType.Combo, "Combo")
+            };
+
+            var existingProductNames = context.Products
+                .Select(x => x.ProductName)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var newProducts = productSeeds
+                .Where(seed => !existingProductNames.Contains(seed.ProductName))
+                .Select(seed => new Product
+                {
+                    ProductName = seed.ProductName,
+                    Description = seed.Description,
+                    Image = seed.Image,
+                    Price = seed.Price,
+                    ProductType = seed.ProductType,
+                    CategoryID = categories[seed.CategoryName],
+                    IsAvailable = true
+                })
+                .ToList();
+
+            if (newProducts.Count > 0)
+            {
+                context.Products.AddRange(newProducts);
+                context.SaveChanges();
+            }
+
+            var seededNames = productSeeds
+                .Select(x => x.ProductName)
+                .ToList();
+
+            return context.Products
+                .Where(x => seededNames.Contains(x.ProductName))
+                .ToDictionary(x => x.ProductName, x => x, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static void EnsureComboProducts(
+            AppDbContext context,
+            IReadOnlyDictionary<string, Product> products)
+        {
+            var comboSeeds = new[]
+            {
+                new ComboSeed("Burger Combo", new[] { new ComboItemSeed("Burger", 1), new ComboItemSeed("French Fries", 1), new ComboItemSeed("Coke", 1) }),
+                new ComboSeed("Pizza Combo", new[] { new ComboItemSeed("Pizza", 1), new ComboItemSeed("Chicken Caesar Salad", 1), new ComboItemSeed("Sprite", 1) }),
+                new ComboSeed("Vietnamese Lunch Combo", new[] { new ComboItemSeed("Pho Bo", 1), new ComboItemSeed("Spring Rolls", 1), new ComboItemSeed("Peach Tea", 1) }),
+                new ComboSeed("Family Sharing Combo", new[] { new ComboItemSeed("Fried Chicken", 1), new ComboItemSeed("Seafood Fried Rice", 1), new ComboItemSeed("Orange Juice", 1), new ComboItemSeed("Mineral Water", 1) }),
+                new ComboSeed("Light Meal Combo", new[] { new ComboItemSeed("Grilled Pork Rice", 1), new ComboItemSeed("Spring Rolls", 1), new ComboItemSeed("Lemon Tea", 1) })
+            };
+
+            foreach (var comboSeed in comboSeeds)
+            {
+                var combo = products[comboSeed.ComboName];
+
+                foreach (var itemSeed in comboSeed.Items)
+                {
+                    var product = products[itemSeed.ProductName];
+
+                    // The current ComboService uses ProductID as the combo root
+                    // and ComboID as the linked product ID.
+                    var comboProduct = context.ComboProducts.FirstOrDefault(x =>
+                        x.ProductID == combo.ProductID &&
+                        x.ComboID == product.ProductID);
+
+                    if (comboProduct == null)
+                    {
+                        context.ComboProducts.Add(new ComboProduct
+                        {
+                            ProductID = combo.ProductID,
+                            ComboID = product.ProductID,
+                            Quantity = itemSeed.Quantity
+                        });
+
+                        continue;
+                    }
+
+                    if (comboProduct.Quantity != itemSeed.Quantity)
+                    {
+                        comboProduct.Quantity = itemSeed.Quantity;
+                    }
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        private sealed record CustomerSeed(
+            string Name,
+            string Sex,
+            string Email,
+            string Phone,
+            int BirthYear);
+
+        private sealed record TableSeed(string TableName, int Capacity);
+
+        private sealed record ShiftSeed(string Name, TimeSpan StartTime, TimeSpan EndTime);
+
+        private sealed record ProductSeed(
+            string ProductName,
+            string Description,
+            string Image,
+            decimal Price,
+            ProductType ProductType,
+            string CategoryName);
+
+        private sealed record ComboSeed(string ComboName, ComboItemSeed[] Items);
+
+        private sealed record ComboItemSeed(string ProductName, int Quantity);
     }
 }
