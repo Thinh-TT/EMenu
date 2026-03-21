@@ -1,3 +1,4 @@
+@model List<EMenu.Domain.Entities.Category>
 @using EMenu.Domain.Enums
 
 <section class="page-intro">
@@ -19,12 +20,10 @@
                     @foreach (var product in category.Products)
                     {
                         <div class="product-card">
-                            <img class="product-img"
-                                 src="/images/products/@product.Image"
-                                 alt="@product.ProductName" />
+                            <img class="product-img" src="/images/products/@product.Image" alt="@product.ProductName" />
 
                             <h4>@product.ProductName</h4>
-                            <p>@product.Price $</p>
+                            <p>@product.Price.ToVnd()</p>
 
                             <div class="product-card-actions">
                                 <button class="btn btn-primary"
@@ -34,8 +33,7 @@
 
                                 @if (product.ProductType == ProductType.Combo)
                                 {
-                                    <button class="btn btn-warning"
-                                            onclick="showCombo(@product.ProductID)">
+                                    <button class="btn btn-warning" onclick="showCombo(@product.ProductID)">
                                         View Combo
                                     </button>
                                 }
@@ -50,7 +48,7 @@
     <aside class="cart-panel">
         <h3>Cart</h3>
         <div id="cartItems"></div>
-        <h4>Total: $<span id="cartTotal">0</span></h4>
+        <h4>Total: <span id="cartTotal">@((0m).ToVnd())</span></h4>
         <button onclick="submitOrder()" class="btn btn-success">Submit Order</button>
     </aside>
 </div>

@@ -1,3 +1,4 @@
+@model List<EMenu.Domain.Entities.Product>
 @using EMenu.Domain.Enums
 <h2>Product Management</h2>
 
@@ -27,7 +28,7 @@
 					<img src="/images/products/@item.Image" width="80" />
 				</td>
 				<td>@item.Category?.CategoryName</td>
-				<td>@item.Price</td>
+				<td>@item.Price.ToVnd()</td>
 				<td>
 					@if (item.ProductType == ProductType.Combo)
 					{

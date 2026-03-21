@@ -1,4 +1,6 @@
-﻿<h2>Bill</h2>
+@model EMenu.Application.DTOs.BillDto
+
+<h2>Bill</h2>
 
 @if (!string.IsNullOrEmpty(Model.TableName))
 {
@@ -19,14 +21,14 @@
 		<tr>
 			<td>@item.ProductName</td>
 			<td>@item.Quantity</td>
-			<td>@item.UnitPrice</td>
-			<td>@item.Total</td>
+			<td>@item.UnitPrice.ToVnd()</td>
+			<td>@item.Total.ToVnd()</td>
 		</tr>
 	}
 
 </table>
 
-<h3>Total: @Model.TotalAmount</h3>
+<h3>Total: @Model.TotalAmount.ToVnd()</h3>
 
 
 @if (User.IsInRole("Staff") || User.IsInRole("Admin"))

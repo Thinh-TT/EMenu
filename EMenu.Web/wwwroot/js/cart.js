@@ -102,18 +102,19 @@ function updateCartUI() {
 
                 <button onclick="removeItem(${index})"
                         class="remove-btn">
-                    ✖
+                    x
                 </button>
 
             </div>
 
-            <span>$${item.price * item.quantity}</span>
+            <span>${window.emenu.formatCurrency(item.price * item.quantity)}</span>
 
         </div>
         `;
     });
 
-    document.getElementById("cartTotal").innerText = total;
+    document.getElementById("cartTotal").innerText =
+        window.emenu.formatCurrency(total);
 }
 
 function increaseQty(index) {

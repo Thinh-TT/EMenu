@@ -16,17 +16,21 @@ function loadBill() {
             container.innerHTML = "";
 
             data.items.forEach(item => {
+                const unitPrice = item.unitPrice ?? item.price ?? 0;
+                const total = item.total ?? (unitPrice * (item.quantity ?? 0));
+
                 container.innerHTML += `
                     <tr>
                     <td>${item.productName}</td>
                     <td>${item.quantity}</td>
-                    <td>$${item.price}</td>
-                    <td>$${item.total}</td>
+                    <td>${window.emenu.formatCurrency(unitPrice)}</td>
+                    <td>${window.emenu.formatCurrency(total)}</td>
                     </tr>
                     `;
             });
 
-            document.getElementById("billTotal").innerText = data.total;
+            document.getElementById("billTotal").innerText =
+                window.emenu.formatCurrency(data.totalAmount ?? data.total ?? 0);
         })
         .catch(err => {
             alert(err.message || "Unable to load bill");

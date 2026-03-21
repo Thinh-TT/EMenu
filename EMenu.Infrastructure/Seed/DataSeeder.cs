@@ -329,63 +329,71 @@ namespace EMenu.Infrastructure.Seed
         {
             var productSeeds = new List<ProductSeed>
             {
-                new("Burger", "Classic beef burger with fresh vegetables.", "burger.jpg", 5.50m, ProductType.Single, "Food"),
-                new("Pizza", "Thin crust pizza with mozzarella and tomato sauce.", "pizza.jpg", 8.50m, ProductType.Single, "Food"),
-                new("Fried Chicken", "Crispy fried chicken served hot.", "burger.jpg", 6.50m, ProductType.Single, "Food"),
-                new("Spaghetti Carbonara", "Creamy pasta with bacon and parmesan.", "pizza.jpg", 7.50m, ProductType.Single, "Food"),
-                new("Seafood Fried Rice", "Fried rice with shrimp, squid and vegetables.", "pizza.jpg", 6.80m, ProductType.Single, "Food"),
-                new("Beef Steak", "Pan-seared beef steak with black pepper sauce.", "burger.jpg", 12.00m, ProductType.Single, "Food"),
-                new("Chicken Caesar Salad", "Romaine lettuce, grilled chicken and Caesar dressing.", "burger.jpg", 5.80m, ProductType.Single, "Food"),
-                new("French Fries", "Golden French fries with light seasoning.", "burger.jpg", 3.00m, ProductType.Single, "Food"),
-                new("Grilled Pork Rice", "Charcoal grilled pork served with steamed rice.", "pizza.jpg", 5.90m, ProductType.Single, "Food"),
-                new("Pho Bo", "Vietnamese beef noodle soup.", "burger.jpg", 4.80m, ProductType.Single, "Food"),
-                new("Bun Cha", "Grilled pork with vermicelli and herbs.", "pizza.jpg", 5.20m, ProductType.Single, "Food"),
-                new("Spring Rolls", "Fresh spring rolls with dipping sauce.", "burger.jpg", 4.20m, ProductType.Single, "Food"),
-                new("Coke", "Chilled Coca-Cola.", "coke.jpg", 2.00m, ProductType.Single, "Drink"),
-                new("Sprite", "Refreshing lemon-lime soda.", "coke.jpg", 2.00m, ProductType.Single, "Drink"),
-                new("Orange Juice", "Fresh orange juice without added sugar.", "coke.jpg", 2.80m, ProductType.Single, "Drink"),
-                new("Lemon Tea", "Iced lemon tea.", "coke.jpg", 2.50m, ProductType.Single, "Drink"),
-                new("Iced Americano", "Black coffee served over ice.", "coke.jpg", 3.00m, ProductType.Single, "Drink"),
-                new("Mineral Water", "Bottled mineral water.", "coke.jpg", 1.50m, ProductType.Single, "Drink"),
-                new("Peach Tea", "Peach-flavored iced tea.", "coke.jpg", 2.70m, ProductType.Single, "Drink"),
-                new("Mango Smoothie", "Blended mango smoothie.", "coke.jpg", 3.20m, ProductType.Single, "Drink"),
-                new("Burger Combo", "Burger set with fries and a drink.", "burger.jpg", 9.50m, ProductType.Combo, "Combo"),
-                new("Pizza Combo", "Pizza set with salad and a drink.", "pizza.jpg", 12.50m, ProductType.Combo, "Combo"),
-                new("Vietnamese Lunch Combo", "A local set for lunch rush.", "burger.jpg", 10.80m, ProductType.Combo, "Combo"),
-                new("Family Sharing Combo", "A larger combo for two to three guests.", "pizza.jpg", 16.90m, ProductType.Combo, "Combo"),
-                new("Light Meal Combo", "Balanced light meal with drink.", "burger.jpg", 9.20m, ProductType.Combo, "Combo")
+                new("Burger", "Classic beef burger with fresh vegetables.", "burger.jpg", 55000m, ProductType.Single, "Food"),
+                new("Pizza", "Thin crust pizza with mozzarella and tomato sauce.", "pizza.jpg", 89000m, ProductType.Single, "Food"),
+                new("Fried Chicken", "Crispy fried chicken served hot.", "friedchicken.jpg", 69000m, ProductType.Single, "Food"),
+                new("Spaghetti Carbonara", "Creamy pasta with bacon and parmesan.", "spaghetticarbonara.jpg", 75000m, ProductType.Single, "Food"),
+                new("Seafood Fried Rice", "Fried rice with shrimp, squid and vegetables.", "seafoodfriedrice.jpg", 68000m, ProductType.Single, "Food"),
+                new("Beef Steak", "Pan-seared beef steak with black pepper sauce.", "beefsteak.jpg", 159000m, ProductType.Single, "Food"),
+                new("Chicken Caesar Salad", "Romaine lettuce, grilled chicken and Caesar dressing.", "chickencaesarsalad.jpg", 59000m, ProductType.Single, "Food"),
+                new("French Fries", "Golden French fries with light seasoning.", "frenchfries.jpg", 35000m, ProductType.Single, "Food"),
+                new("Grilled Pork Rice", "Charcoal grilled pork served with steamed rice.", "grilledporkrice.jpg", 52000m, ProductType.Single, "Food"),
+                new("Pho Bo", "Vietnamese beef noodle soup.", "phobo.jpg", 65000m, ProductType.Single, "Food"),
+                new("Bun Cha", "Grilled pork with vermicelli and herbs.", "buncha.jpg", 60000m, ProductType.Single, "Food"),
+                new("Spring Rolls", "Fresh spring rolls with dipping sauce.", "springrolls.jpg", 45000m, ProductType.Single, "Food"),
+                new("Coke", "Chilled Coca-Cola.", "coke.jpg", 18000m, ProductType.Single, "Drink"),
+                new("Sprite", "Refreshing lemon-lime soda.", "sprite.jpg", 18000m, ProductType.Single, "Drink"),
+                new("Orange Juice", "Fresh orange juice without added sugar.", "orangejuice.jpg", 32000m, ProductType.Single, "Drink"),
+                new("Lemon Tea", "Iced lemon tea.", "lemontea.jpg", 25000m, ProductType.Single, "Drink"),
+                new("Iced Americano", "Black coffee served over ice.", "icedamericano.jpg", 39000m, ProductType.Single, "Drink"),
+                new("Mineral Water", "Bottled mineral water.", "mineralwater.jpg", 12000m, ProductType.Single, "Drink"),
+                new("Peach Tea", "Peach-flavored iced tea.", "peachtea.jpg", 29000m, ProductType.Single, "Drink"),
+                new("Mango Smoothie", "Blended mango smoothie.", "mangosmoothie.jpg", 42000m, ProductType.Single, "Drink"),
+                new("Burger Combo", "Burger set with fries and a drink.", "burgercombo.jpg", 99000m, ProductType.Combo, "Combo"),
+                new("Pizza Combo", "Pizza set with salad and a drink.", "pizzacombo.jpg", 129000m, ProductType.Combo, "Combo"),
+                new("Vietnamese Lunch Combo", "A local set for lunch rush.", "vietnameselunchcombo.jpg", 109000m, ProductType.Combo, "Combo"),
+                new("Family Sharing Combo", "A larger combo for two to three guests.", "familysharingcombo.jpg", 189000m, ProductType.Combo, "Combo"),
+                new("Light Meal Combo", "Balanced light meal with drink.", "lightmealcombo.jpg", 95000m, ProductType.Combo, "Combo")
             };
 
-            var existingProductNames = context.Products
+            var productNames = productSeeds
                 .Select(x => x.ProductName)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-            var newProducts = productSeeds
-                .Where(seed => !existingProductNames.Contains(seed.ProductName))
-                .Select(seed => new Product
-                {
-                    ProductName = seed.ProductName,
-                    Description = seed.Description,
-                    Image = seed.Image,
-                    Price = seed.Price,
-                    ProductType = seed.ProductType,
-                    CategoryID = categories[seed.CategoryName],
-                    IsAvailable = true
-                })
                 .ToList();
 
-            if (newProducts.Count > 0)
+            var existingProducts = context.Products
+                .Where(x => productNames.Contains(x.ProductName))
+                .ToDictionary(x => x.ProductName, x => x, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var seed in productSeeds)
             {
-                context.Products.AddRange(newProducts);
-                context.SaveChanges();
+                if (!existingProducts.TryGetValue(seed.ProductName, out var product))
+                {
+                    context.Products.Add(new Product
+                    {
+                        ProductName = seed.ProductName,
+                        Description = seed.Description,
+                        Image = seed.Image,
+                        Price = seed.Price,
+                        ProductType = seed.ProductType,
+                        CategoryID = categories[seed.CategoryName],
+                        IsAvailable = true
+                    });
+
+                    continue;
+                }
+
+                product.Description = seed.Description;
+                product.Image = seed.Image;
+                product.Price = seed.Price;
+                product.ProductType = seed.ProductType;
+                product.CategoryID = categories[seed.CategoryName];
+                product.IsAvailable = true;
             }
 
-            var seededNames = productSeeds
-                .Select(x => x.ProductName)
-                .ToList();
+            context.SaveChanges();
 
             return context.Products
-                .Where(x => seededNames.Contains(x.ProductName))
+                .Where(x => productNames.Contains(x.ProductName))
                 .ToDictionary(x => x.ProductName, x => x, StringComparer.OrdinalIgnoreCase);
         }
 

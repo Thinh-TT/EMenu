@@ -3,63 +3,67 @@ const params = new URLSearchParams(window.location.search);
 const sessionId = params.get("sessionId");
 
 if (sessionId) {
-    const previousSessionId = sessionStorage.getItem("sessionId");
+  const previousSessionId = sessionStorage.getItem("sessionId");
 
-    if (previousSessionId && previousSessionId !== sessionId) {
-        sessionStorage.removeItem("cart");
-    }
+  if (previousSessionId && previousSessionId !== sessionId) {
+    sessionStorage.removeItem("cart");
+  }
 
-    sessionStorage.setItem("sessionId", sessionId);
+  sessionStorage.setItem("sessionId", sessionId);
 }
 
 function addToOrder(productId) {
-    const sessionId = sessionStorage.getItem("sessionId");
+  const sessionId = sessionStorage.getItem("sessionId");
 
-    if (!sessionId) {
-        alert("Session not found");
-        return;
-    }
+  if (!sessionId) {
+    alert("Session not found");
+    return;
+  }
 
-    fetch("/api/order/add-product?sessionId=" + sessionId + "&productId="
-        + productId + "&quantity=1",
-        {
-            method: "POST",
-            headers: window.emenu.getAntiforgeryHeaders()
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error("Unable to add product");
-            }
+  fetch(
+    "/api/order/add-product?sessionId=" +
+      sessionId +
+      "&productId=" +
+      productId +
+      "&quantity=1",
+    {
+      method: "POST",
+      headers: window.emenu.getAntiforgeryHeaders(),
+    },
+  )
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error("Unable to add product");
+      }
 
-            alert("Added to order");
-        })
-        .catch(() => {
-            alert("Unable to add product");
-        });
+      alert("Added to order");
+    })
+    .catch(() => {
+      alert("Unable to add product");
+    });
 }
 
 function showCombo(comboId) {
-    fetch("/Combo/GetItems?comboId=" + comboId)
-        .then(res => res.json())
-        .then(data => {
-            let list = document.getElementById("comboItems");
+  fetch("/Combo/GetItems?comboId=" + comboId)
+    .then((res) => res.json())
+    .then((data) => {
+      let list = document.getElementById("comboItems");
 
-            list.innerHTML = "";
+      list.innerHTML = "";
 
-            data.forEach(item => {
-                let li = document.createElement("li");
+      data.forEach((item) => {
+        let li = document.createElement("li");
 
-                li.innerText = item.name + " - $" + item.price;
+        li.innerText =
+          item.name + " - " + window.emenu.formatCurrency(item.price);
 
-                list.appendChild(li);
-            });
+        list.appendChild(li);
+      });
 
-            document.getElementById("comboModal")
-                .style.display = "block";
-        });
+      document.getElementById("comboModal").style.display = "block";
+    });
 }
 
 function closeCombo() {
-    document.getElementById("comboModal")
-        .style.display = "none";
+  document.getElementById("comboModal").style.display = "none";
 }

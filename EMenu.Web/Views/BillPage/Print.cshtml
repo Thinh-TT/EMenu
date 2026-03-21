@@ -1,4 +1,6 @@
-﻿<div class="receipt">
+@model EMenu.Application.DTOs.BillDto
+
+<div class="receipt">
 
 	<h2>Restaurant</h2>
 
@@ -14,7 +16,7 @@
 			<tr>
 				<td>@i.ProductName</td>
 				<td>x @i.Quantity</td>
-				<td>@(i.UnitPrice* i.Quantity)</td>
+				<td>@((i.UnitPrice * i.Quantity).ToVnd())</td>
 			</tr>
 		}
 
@@ -22,7 +24,7 @@
 
 	<hr />
 
-	<h3>Total: @Model.TotalAmount</h3>
+	<h3>Total: @Model.TotalAmount.ToVnd()</h3>
 
 </div>
 

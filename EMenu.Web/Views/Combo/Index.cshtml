@@ -1,4 +1,6 @@
-﻿<h2>Combo Management</h2>
+@model List<EMenu.Domain.Entities.Product>
+
+<h2>Combo Management</h2>
 
 <table class="table">
 
@@ -19,7 +21,7 @@
 
 				<td>@combo.ProductID</td>
 				<td>@combo.ProductName</td>
-				<td>@combo.Price</td>
+				<td>@combo.Price.ToVnd()</td>
 				<td>
 
 					<a href="/Combo/Edit/@combo.ProductID"
