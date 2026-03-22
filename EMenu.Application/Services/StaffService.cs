@@ -1,33 +1,40 @@
+using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Constants;
 using EMenu.Domain.Entities;
-using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace EMenu.Application.Services
 {
     public class StaffService
     {
-        private readonly AppDbContext _context;
+        private readonly IStaffRepository _staffRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly PasswordService _passwordService;
 
-        public StaffService(AppDbContext context, PasswordService passwordService)
+        public StaffService(
+            IStaffRepository staffRepository,
+            IUserRepository userRepository,
+            IRoleRepository roleRepository,
+            IUnitOfWork unitOfWork,
+            PasswordService passwordService)
         {
-            _context = context;
+            _staffRepository = staffRepository;
+            _userRepository = userRepository;
+            _roleRepository = roleRepository;
+            _unitOfWork = unitOfWork;
             _passwordService = passwordService;
         }
 
         public List<Staff> GetAll()
         {
-            return _context.Staffs
-                .Include(x => x.User)
-                .ToList();
+            return _staffRepository.GetAllWithUser().ToList();
         }
 
         public Staff GetById(int id)
         {
-            return _context.Staffs
-                .Include(x => x.User)
-                .FirstOrDefault(x => x.StaffID == id);
+            return _staffRepository.GetByIdWithUser(id);
         }
 
         public void Create(Staff staff, string username, string password, string? confirmPassword)
@@ -35,7 +42,7 @@ namespace EMenu.Application.Services
             if (string.IsNullOrWhiteSpace(username))
                 throw new ArgumentException("Username is required.");
 
-            if (_context.Users.Any(x => x.UserName == username))
+            if (_userRepository.ExistsByUsername(username))
                 throw new ArgumentException("Username already exists.");
 
             _passwordService.EnsureValidPassword(
@@ -43,11 +50,12 @@ namespace EMenu.Application.Services
                 confirmPassword,
                 required: true);
 
-            var staffRole = _context.Roles
-                .FirstOrDefault(x => x.RoleName == AppRoles.Staff);
+            var staffRole = _roleRepository.GetByName(AppRoles.Staff);
 
             if (staffRole == null)
                 throw new Exception("Staff role not found");
+
+            using var transaction = _unitOfWork.BeginTransaction();
 
             var user = new User
             {
@@ -57,37 +65,36 @@ namespace EMenu.Application.Services
                 CreatedAt = DateTime.Now
             };
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            _userRepository.Add(user);
 
-            _context.UserRoles.Add(new UserRole
+            _userRepository.AddUserRole(new UserRole
             {
-                UserID = user.UserID,
+                User = user,
                 RoleID = staffRole.RoleID
             });
 
-            _context.SaveChanges();
+            staff.User = user;
 
-            staff.UserID = user.UserID;
+            _staffRepository.Add(staff);
+            _unitOfWork.SaveChanges();
 
-            _context.Staffs.Add(staff);
-            _context.SaveChanges();
+            transaction.Commit();
         }
 
         public void Update(Staff staff)
         {
-            _context.Staffs.Update(staff);
-            _context.SaveChanges();
+            _staffRepository.Update(staff);
+            _unitOfWork.SaveChanges();
         }
 
         public void Delete(int id)
         {
-            var staff = _context.Staffs.Find(id);
+            var staff = _staffRepository.GetById(id);
 
             if (staff != null)
             {
-                _context.Staffs.Remove(staff);
-                _context.SaveChanges();
+                _staffRepository.Remove(staff);
+                _unitOfWork.SaveChanges();
             }
         }
     }

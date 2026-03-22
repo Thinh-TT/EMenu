@@ -1,28 +1,20 @@
-﻿using EMenu.Domain.Entities;
-using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EMenu.Application.Abstractions.Repositories;
+using EMenu.Domain.Entities;
 
 namespace EMenu.Application.Services
 {
     public class MenuService
     {
-        private readonly AppDbContext _context;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public MenuService(AppDbContext context)
+        public MenuService(ICategoryRepository categoryRepository)
         {
-            _context = context;
+            _categoryRepository = categoryRepository;
         }
 
         public List<Category> GetMenu()
         {
-            return _context.Categories
-                .Include(x => x.Products)
-                .ToList();
+            return _categoryRepository.GetAllWithProducts().ToList();
         }
     }
 }

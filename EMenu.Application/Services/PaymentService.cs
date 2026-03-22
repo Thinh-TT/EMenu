@@ -1,22 +1,38 @@
+using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Entities;
 using EMenu.Domain.Enums;
-using EMenu.Infrastructure.Data;
 
 namespace EMenu.Application.Services
 {
     public class PaymentService
     {
-        private readonly AppDbContext _context;
+        private readonly ISessionRepository _sessionRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
+        private readonly ITableRepository _tableRepository;
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PaymentService(AppDbContext context)
+        public PaymentService(
+            ISessionRepository sessionRepository,
+            IOrderRepository orderRepository,
+            IOrderItemRepository orderItemRepository,
+            ITableRepository tableRepository,
+            IPaymentRepository paymentRepository,
+            IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _sessionRepository = sessionRepository;
+            _orderRepository = orderRepository;
+            _orderItemRepository = orderItemRepository;
+            _tableRepository = tableRepository;
+            _paymentRepository = paymentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public void PayCash(int sessionId)
         {
-            var session = _context.OrderSessions
-                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+            var session = _sessionRepository.GetById(sessionId);
 
             if (session == null)
                 throw new InvalidOperationException("Session not found.");
@@ -24,35 +40,29 @@ namespace EMenu.Application.Services
             if (session.Status != 1)
                 throw new InvalidOperationException("Session is already closed.");
 
-            var order = _context.Orders
-                .OrderByDescending(x => x.OrderID)
-                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+            var order = _orderRepository.GetLatestBySession(sessionId);
 
             if (order == null)
                 throw new InvalidOperationException("Order not found.");
 
-            var items = _context.OrderProducts
-                .Where(x => x.OrderID == order.OrderID && x.Status != OrderItemStatus.Cancelled)
-                .ToList();
+            var items = _orderItemRepository.GetBillableByOrderId(order.OrderID);
 
             if (!items.Any())
                 throw new InvalidOperationException("Order has no billable items.");
 
-            var existingInvoice = _context.Invoices
-                .FirstOrDefault(x => x.OrderID == order.OrderID);
+            var existingInvoice = _paymentRepository.GetInvoiceByOrderId(order.OrderID);
 
             if (existingInvoice != null)
                 throw new InvalidOperationException("Order is already paid.");
 
-            var table = _context.RestaurantTables
-                .FirstOrDefault(x => x.TableID == session.TableID);
+            var table = _tableRepository.GetById(session.TableID);
 
             if (table == null)
                 throw new InvalidOperationException("Table not found.");
 
             var totalAmount = items.Sum(x => x.Price * x.Quantity);
 
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = _unitOfWork.BeginTransaction();
 
             order.TotalAmount = totalAmount;
             order.Status = OrderStatus.Completed;
@@ -64,66 +74,61 @@ namespace EMenu.Application.Services
                 TotalAmount = totalAmount
             };
 
-            _context.Invoices.Add(invoice);
-            _context.SaveChanges();
+            _paymentRepository.AddInvoice(invoice);
 
             var payment = new Payment
             {
-                InvoiceID = invoice.InvoiceID,
+                Invoice = invoice,
                 Method = "Cash",
                 Amount = invoice.TotalAmount,
                 Status = 1,
                 PaymentTime = DateTime.Now
             };
 
-            _context.Payments.Add(payment);
+            _paymentRepository.AddPayment(payment);
 
-            session.Status = 0;
-            session.EndTime = DateTime.Now;
-            table.Status = 0;
+            CloseSession(session, table);
 
-            _context.SaveChanges();
+            _unitOfWork.SaveChanges();
 
             transaction.Commit();
         }
 
         public void EndSession(int sessionId)
         {
-            var session = _context.OrderSessions.Find(sessionId);
+            var session = _sessionRepository.GetById(sessionId);
 
             if (session == null)
                 throw new InvalidOperationException("Session not found.");
 
-            var table = _context.RestaurantTables.Find(session.TableID);
+            var table = _tableRepository.GetById(session.TableID);
 
             if (table == null)
                 throw new InvalidOperationException("Table not found.");
 
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = _unitOfWork.BeginTransaction();
 
             CloseSession(session, table);
 
-            _context.SaveChanges();
+            _unitOfWork.SaveChanges();
 
             transaction.Commit();
         }
 
         public void PaymentSuccess(int orderId)
         {
-            var order = _context.Orders
-                .FirstOrDefault(x => x.OrderID == orderId);
+            var order = _orderRepository.GetById(orderId);
 
             if (order == null)
                 throw new InvalidOperationException("Order not found.");
 
-            if (_context.Invoices.Any(x => x.OrderID == orderId))
+            if (_paymentRepository.GetInvoiceByOrderId(orderId) != null)
                 return;
 
-            var totalAmount = _context.OrderProducts
-                .Where(x => x.OrderID == orderId && x.Status != OrderItemStatus.Cancelled)
-                .Sum(x => x.Price * x.Quantity);
+            var items = _orderItemRepository.GetBillableByOrderId(orderId);
+            var totalAmount = items.Sum(x => x.Price * x.Quantity);
 
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = _unitOfWork.BeginTransaction();
 
             var invoice = new Invoice
             {
@@ -132,26 +137,32 @@ namespace EMenu.Application.Services
                 TotalAmount = totalAmount
             };
 
-            _context.Invoices.Add(invoice);
+            _paymentRepository.AddInvoice(invoice);
+            _paymentRepository.AddPayment(new Payment
+            {
+                Invoice = invoice,
+                Method = "VNPay",
+                Amount = totalAmount,
+                Status = 1,
+                PaymentTime = DateTime.Now
+            });
 
             order.TotalAmount = totalAmount;
             order.Status = OrderStatus.Completed;
 
-            var session = _context.OrderSessions
-                .FirstOrDefault(x => x.OrderSessionID == order.OrderSessionID);
+            var session = _sessionRepository.GetById(order.OrderSessionID);
 
             if (session == null)
                 throw new InvalidOperationException("Session not found.");
 
-            var table = _context.RestaurantTables
-                .FirstOrDefault(x => x.TableID == session.TableID);
+            var table = _tableRepository.GetById(session.TableID);
 
             if (table == null)
                 throw new InvalidOperationException("Table not found.");
 
             CloseSession(session, table);
 
-            _context.SaveChanges();
+            _unitOfWork.SaveChanges();
 
             transaction.Commit();
         }

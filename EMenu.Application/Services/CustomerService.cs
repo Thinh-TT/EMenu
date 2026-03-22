@@ -1,20 +1,20 @@
-﻿using EMenu.Domain.Entities;
-using EMenu.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
+using EMenu.Domain.Entities;
 
 namespace EMenu.Application.Services
 {
     public class CustomerService
     {
-        private readonly AppDbContext _context;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CustomerService(AppDbContext context)
+        public CustomerService(
+            ICustomerRepository customerRepository,
+            IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _customerRepository = customerRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public Customer Create(string name, string? phone, string? email)
@@ -27,16 +27,15 @@ namespace EMenu.Application.Services
                 CreatedAt = DateTime.Now
             };
 
-            _context.Customers.Add(customer);
-
-            _context.SaveChanges();
+            _customerRepository.Add(customer);
+            _unitOfWork.SaveChanges();
 
             return customer;
         }
 
         public Customer GetById(int id)
         {
-            return _context.Customers.Find(id);
+            return _customerRepository.GetById(id);
         }
     }
 }

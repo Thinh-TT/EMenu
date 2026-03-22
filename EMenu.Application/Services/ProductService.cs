@@ -1,61 +1,61 @@
-﻿using EMenu.Domain.Entities;
-using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
+using EMenu.Domain.Entities;
 
 namespace EMenu.Application.Services
 {
     public class ProductService
     {
-        private readonly AppDbContext _context;
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductService(AppDbContext context)
+        public ProductService(
+            IProductRepository productRepository,
+            ICategoryRepository categoryRepository,
+            IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public List<Product> GetAll()
         {
-            return _context.Products
-                .Include(x => x.Category)
-                .ToList();
+            return _productRepository.GetAllWithCategory().ToList();
         }
 
         public Product GetById(int id)
         {
-            return _context.Products.Find(id);
+            return _productRepository.GetById(id);
         }
 
         public void Create(Product product)
         {
-            _context.Products.Add(product);
-            _context.SaveChanges();
+            _productRepository.Add(product);
+            _unitOfWork.SaveChanges();
         }
 
         public void Update(Product product)
         {
-            _context.Products.Update(product);
-            _context.SaveChanges();
+            _productRepository.Update(product);
+            _unitOfWork.SaveChanges();
         }
 
         public void Delete(int id)
         {
-            var product = _context.Products.Find(id);
+            var product = _productRepository.GetById(id);
 
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-                _context.SaveChanges();
-            }
+            if (product == null)
+                return;
+
+            _productRepository.Remove(product);
+            _unitOfWork.SaveChanges();
         }
 
         public List<Category> GetCategories()
         {
-            return _context.Categories.ToList();
+            return _categoryRepository.GetAll().ToList();
         }
     }
 }

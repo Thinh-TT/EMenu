@@ -1,5 +1,15 @@
 loadOrders();
 
+function pickValue(source, keys) {
+  for (const key of keys) {
+    if (source[key] !== undefined && source[key] !== null) {
+      return source[key];
+    }
+  }
+
+  return undefined;
+}
+
 function loadOrders() {
   fetch("/api/kitchen/pending")
     .then((res) => res.json())
@@ -21,21 +31,39 @@ No pending orders right now.
 
   let orders = {};
 
-  items.forEach((item) => {
-    if (!orders[item.orderID]) {
-      orders[item.orderID] = [];
+  items.forEach((rawItem) => {
+    const item = {
+      orderId: pickValue(rawItem, ["orderId", "orderID", "OrderId", "OrderID"]),
+      orderProductId: pickValue(rawItem, [
+        "orderProductId",
+        "orderProductID",
+        "OrderProductId",
+        "OrderProductID",
+      ]),
+      productName: pickValue(rawItem, ["productName", "ProductName"]),
+      quantity: pickValue(rawItem, ["quantity", "Quantity"]),
+      status: pickValue(rawItem, ["status", "Status"]),
+    };
+
+    if (item.orderId === undefined || item.orderProductId === undefined) {
+      console.warn("Kitchen item missing identifiers:", rawItem);
+      return;
     }
 
-    orders[item.orderID].push(item);
+    if (!orders[item.orderId]) {
+      orders[item.orderId] = [];
+    }
+
+    orders[item.orderId].push(item);
   });
 
-  for (let orderID in orders) {
-    let orderItems = orders[orderID];
+  for (let orderId in orders) {
+    let orderItems = orders[orderId];
 
     let html = `
 <div class="order-card">
 
-<h4>Order #${orderID}</h4>
+<h4>Order #${orderId}</h4>
 <hr>
 `;
 
@@ -68,7 +96,7 @@ No pending orders right now.
 <span>${i.productName} x${i.quantity}</span>
 
 <button class="status-btn ${statusClass}"
-onclick="updateStatus(${i.orderProductID},${nextStatus})">
+onclick="updateStatus(${i.orderProductId},${nextStatus})">
 
 ${buttonText}
 
@@ -106,6 +134,15 @@ function showKitchenNotification(message) {
 }
 
 function updateStatus(orderProductID, status) {
+  if (
+    orderProductID === undefined ||
+    orderProductID === null ||
+    Number.isNaN(Number(orderProductID))
+  ) {
+    alert("Order item id is invalid. Please refresh page.");
+    return;
+  }
+
   console.log("clicked", orderProductID, status);
 
   fetch(
@@ -140,7 +177,8 @@ connection.on("NewOrder", function () {
 });
 
 connection.on("OrderSubmitted", function (payload) {
-  const tableLabel = payload.tableName || `Table ${payload.tableID}`;
+  const tableId = payload.tableId ?? payload.tableID;
+  const tableLabel = payload.tableName || `Table ${tableId}`;
   const itemCount = payload.itemCount || 0;
 
   showKitchenNotification(

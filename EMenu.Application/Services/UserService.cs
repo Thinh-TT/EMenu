@@ -1,38 +1,41 @@
+using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Entities;
-using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace EMenu.Application.Services
 {
     public class UserService
     {
-        private readonly AppDbContext _context;
+        private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly PasswordService _passwordService;
 
-        public UserService(AppDbContext context, PasswordService passwordService)
+        public UserService(
+            IUserRepository userRepository,
+            IRoleRepository roleRepository,
+            IUnitOfWork unitOfWork,
+            PasswordService passwordService)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _roleRepository = roleRepository;
+            _unitOfWork = unitOfWork;
             _passwordService = passwordService;
         }
 
         public List<User> GetAll()
         {
-            return _context.Users
-                .Include(x => x.UserRoles)
-                .ThenInclude(x => x.Role)
-                .ToList();
+            return _userRepository.GetAllWithRoles().ToList();
         }
 
         public User GetById(int id)
         {
-            return _context.Users
-                .Include(x => x.UserRoles)
-                .FirstOrDefault(x => x.UserID == id);
+            return _userRepository.GetByIdWithRoles(id);
         }
 
         public List<Role> GetRoles()
         {
-            return _context.Roles.ToList();
+            return _roleRepository.GetAll().ToList();
         }
 
         public void Create(User user, int roleId, string? confirmPassword)
@@ -40,7 +43,7 @@ namespace EMenu.Application.Services
             if (string.IsNullOrWhiteSpace(user.UserName))
                 throw new ArgumentException("Username is required.");
 
-            if (_context.Users.Any(x => x.UserName == user.UserName))
+            if (_userRepository.ExistsByUsername(user.UserName))
                 throw new ArgumentException("Username already exists.");
 
             _passwordService.EnsureValidPassword(
@@ -52,24 +55,25 @@ namespace EMenu.Application.Services
             user.IsActive = true;
             user.Password = _passwordService.HashPassword(user.Password);
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            using var transaction = _unitOfWork.BeginTransaction();
+
+            _userRepository.Add(user);
 
             var userRole = new UserRole
             {
-                UserID = user.UserID,
+                User = user,
                 RoleID = roleId
             };
 
-            _context.UserRoles.Add(userRole);
-            _context.SaveChanges();
+            _userRepository.AddUserRole(userRole);
+            _unitOfWork.SaveChanges();
+
+            transaction.Commit();
         }
 
         public void Update(User user, int roleId, string? confirmPassword)
         {
-            var dbUser = _context.Users
-                .Include(x => x.UserRoles)
-                .FirstOrDefault(x => x.UserID == user.UserID);
+            var dbUser = _userRepository.GetByIdWithRoles(user.UserID);
 
             if (dbUser == null)
                 throw new Exception("User not found");
@@ -77,7 +81,7 @@ namespace EMenu.Application.Services
             if (string.IsNullOrWhiteSpace(user.UserName))
                 throw new ArgumentException("Username is required.");
 
-            if (_context.Users.Any(x => x.UserID != user.UserID && x.UserName == user.UserName))
+            if (_userRepository.ExistsByUsernameExceptId(user.UserID, user.UserName))
                 throw new ArgumentException("Username already exists.");
 
             dbUser.UserName = user.UserName;
@@ -92,26 +96,39 @@ namespace EMenu.Application.Services
                 dbUser.Password = _passwordService.HashPassword(user.Password);
             }
 
-            _context.Users.Update(dbUser);
-            _context.SaveChanges();
+            using var transaction = _unitOfWork.BeginTransaction();
 
-            var userRole = _context.UserRoles
-                .FirstOrDefault(x => x.UserID == dbUser.UserID);
+            _userRepository.Update(dbUser);
+
+            var userRole = _userRepository.GetUserRoleByUserId(dbUser.UserID);
 
             if (userRole != null)
             {
                 userRole.RoleID = roleId;
-                _context.SaveChanges();
             }
+            else
+            {
+                _userRepository.AddUserRole(new UserRole
+                {
+                    UserID = dbUser.UserID,
+                    RoleID = roleId
+                });
+            }
+
+            _unitOfWork.SaveChanges();
+            transaction.Commit();
         }
 
         public void ToggleStatus(int id)
         {
-            var user = _context.Users.Find(id);
+            var user = _userRepository.GetById(id);
+
+            if (user == null)
+                throw new InvalidOperationException("User not found.");
 
             user.IsActive = !user.IsActive;
 
-            _context.SaveChanges();
+            _unitOfWork.SaveChanges();
         }
     }
 }

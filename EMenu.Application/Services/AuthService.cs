@@ -1,29 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Entities;
-using EMenu.Infrastructure.Data;
 
 namespace EMenu.Application.Services
 {
     public class AuthService
     {
-        private readonly AppDbContext _context;
+        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly PasswordService _passwordService;
 
-        public AuthService(AppDbContext context)
+        public AuthService(
+            IUserRepository userRepository,
+            IUnitOfWork unitOfWork,
+            PasswordService passwordService)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
+            _passwordService = passwordService;
         }
 
-        public User Login(string username, string password)
+        public User? Login(string username, string password)
         {
-            return _context.Users
-                .FirstOrDefault(x =>
-                    x.UserName == username &&
-                    x.Password == password &&
-                    x.IsActive);
+            var user = _userRepository.GetByUsernameWithRoles(username);
+
+            if (user == null || !user.IsActive)
+                return null;
+
+            var validPassword = _passwordService.VerifyPassword(password, user.Password);
+
+            if (!validPassword)
+                return null;
+
+            if (!_passwordService.IsHashed(user.Password))
+            {
+                user.Password = _passwordService.HashPassword(password);
+                _unitOfWork.SaveChanges();
+            }
+
+            return user;
         }
     }
 }

@@ -1,56 +1,56 @@
-﻿using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EMenu.Application.Abstractions.DTOs;
+using EMenu.Application.Abstractions.Repositories;
 
 namespace EMenu.Application.Services
 {
     public class DashboardService
     {
-        private readonly AppDbContext _context;
+        private const int DefaultTopProductsCount = 5;
 
-        public DashboardService(AppDbContext context)
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly ITableRepository _tableRepository;
+
+        public DashboardService(
+            IPaymentRepository paymentRepository,
+            IOrderItemRepository orderItemRepository,
+            IOrderRepository orderRepository,
+            ITableRepository tableRepository)
         {
-            _context = context;
+            _paymentRepository = paymentRepository;
+            _orderItemRepository = orderItemRepository;
+            _orderRepository = orderRepository;
+            _tableRepository = tableRepository;
         }
 
         public decimal GetTodayRevenue()
         {
-            var today = DateTime.Today;
-
-            return _context.Invoices
-                .Where(x => x.CreatedDate.Date == today)
-                .Sum(x => (decimal?)x.TotalAmount) ?? 0;
+            return _paymentRepository.GetRevenueByDate(DateTime.Today);
         }
 
-        public List<object> GetTopProducts()
+        public IReadOnlyList<DashboardTopProductDto> GetTopProducts()
         {
-            return _context.OrderProducts
-                .Include(x => x.Product)
-                .GroupBy(x => x.Product.ProductName)
-                .Select(g => new
-                {
-                    Product = g.Key,
-                    Quantity = g.Sum(x => x.Quantity)
-                })
-                .OrderByDescending(x => x.Quantity)
-                .Take(5)
-                .ToList<object>();
+            return _orderItemRepository.GetTopProducts(DefaultTopProductsCount);
         }
 
-        public object GetTableStatus()
+        public TableStatusSummaryDto GetTableStatus()
         {
-            var total = _context.RestaurantTables.Count();
-            var occupied = _context.RestaurantTables.Count(x => x.Status == 1);
-
-            return new
+            return new TableStatusSummaryDto
             {
-                totalTables = total,
-                occupiedTables = occupied
+                TotalTables = _tableRepository.Count(),
+                OccupiedTables = _tableRepository.CountInUse()
             };
+        }
+
+        public int GetTodayOrderCount()
+        {
+            return _orderRepository.CountByCreatedDate(DateTime.Today);
+        }
+
+        public int GetTablesInUseCount()
+        {
+            return _tableRepository.CountInUse();
         }
     }
 }

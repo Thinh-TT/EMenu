@@ -1,24 +1,25 @@
 using EMenu.Application.DTOs;
+using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Enums;
-using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace EMenu.Application.Services
 {
     public class BillService
     {
-        private readonly AppDbContext _context;
+        private readonly ISessionRepository _sessionRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public BillService(AppDbContext context)
+        public BillService(
+            ISessionRepository sessionRepository,
+            IOrderRepository orderRepository)
         {
-            _context = context;
+            _sessionRepository = sessionRepository;
+            _orderRepository = orderRepository;
         }
 
         public int GetOrderIdBySession(int sessionId)
         {
-            var order = _context.Orders
-                .OrderByDescending(o => o.OrderID)
-                .FirstOrDefault(o => o.OrderSessionID == sessionId);
+            var order = _orderRepository.GetLatestBySession(sessionId);
 
             if (order == null)
                 throw new InvalidOperationException("Order not found.");
@@ -28,18 +29,12 @@ namespace EMenu.Application.Services
 
         public BillDto GetBillBySessionId(int sessionId)
         {
-            var session = _context.OrderSessions
-                .Include(x => x.RestaurantTable)
-                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+            var session = _sessionRepository.GetByIdWithTable(sessionId);
 
             if (session == null)
                 throw new InvalidOperationException("Session not found.");
 
-            var orders = _context.Orders
-                .Where(x => x.OrderSessionID == sessionId)
-                .Include(x => x.OrderProducts)
-                .ThenInclude(x => x.Product)
-                .ToList();
+            var orders = _orderRepository.GetBySessionWithDetails(sessionId);
 
             if (!orders.Any())
                 throw new InvalidOperationException("Order not found.");
@@ -69,12 +64,7 @@ namespace EMenu.Application.Services
 
         public BillDto GetBillByOrderId(int orderId)
         {
-            var order = _context.Orders
-                .Include(o => o.OrderSession)
-                .ThenInclude(x => x.RestaurantTable)
-                .Include(o => o.OrderProducts)
-                .ThenInclude(op => op.Product)
-                .FirstOrDefault(o => o.OrderID == orderId);
+            var order = _orderRepository.GetByIdWithDetails(orderId);
 
             if (order == null)
                 throw new InvalidOperationException("Order not found.");

@@ -1,53 +1,53 @@
-﻿using EMenu.Domain.Entities;
-using EMenu.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
+using EMenu.Domain.Entities;
 
 namespace EMenu.Application.Services
 {
     public class CategoryService
     {
-        private readonly AppDbContext _context;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryService(AppDbContext context)
+        public CategoryService(
+            ICategoryRepository categoryRepository,
+            IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _categoryRepository = categoryRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public List<Category> GetAll()
         {
-            return _context.Categories.ToList();
+            return _categoryRepository.GetAll().ToList();
         }
 
         public Category GetById(int id)
         {
-            return _context.Categories.Find(id);
+            return _categoryRepository.GetById(id);
         }
 
         public void Create(Category category)
         {
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            _categoryRepository.Add(category);
+            _unitOfWork.SaveChanges();
         }
 
         public void Update(Category category)
         {
-            _context.Categories.Update(category);
-            _context.SaveChanges();
+            _categoryRepository.Update(category);
+            _unitOfWork.SaveChanges();
         }
 
         public void Delete(int id)
         {
-            var category = _context.Categories.Find(id);
+            var category = _categoryRepository.GetById(id);
 
-            if (category != null)
-            {
-                _context.Categories.Remove(category);
-                _context.SaveChanges();
-            }
+            if (category == null)
+                return;
+
+            _categoryRepository.Remove(category);
+            _unitOfWork.SaveChanges();
         }
     }
 }

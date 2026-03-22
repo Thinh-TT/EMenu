@@ -7,17 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EMenu.Application.Abstractions\EMenu.Application.Abstractions.csproj" />
     <ProjectReference Include="..\EMenu.Domain\EMenu.Domain.csproj" />
-    <ProjectReference Include="..\EMenu.Infrastructure\EMenu.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="QRCoder" Version="1.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
   </ItemGroup>
 
 </Project>

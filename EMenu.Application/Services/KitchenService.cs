@@ -1,41 +1,31 @@
+using EMenu.Application.Abstractions.DTOs;
+using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Enums;
-using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace EMenu.Application.Services
 {
     public class KitchenService
     {
-        private readonly AppDbContext _context;
+        private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public KitchenService(AppDbContext context)
+        public KitchenService(
+            IOrderItemRepository orderItemRepository,
+            IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _orderItemRepository = orderItemRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public List<object> GetPendingItems()
+        public IReadOnlyList<KitchenPendingItemDto> GetPendingItems()
         {
-            var items = _context.OrderProducts
-                .Include(x => x.Product)
-                .Include(x => x.Order)
-                .Where(x => x.Status == OrderItemStatus.Pending
-                         || x.Status == OrderItemStatus.Preparing)
-                .Select(x => new
-                {
-                    x.OrderProductID,
-                    ProductName = x.Product.ProductName,
-                    x.Quantity,
-                    x.Status,
-                    x.Order.OrderID
-                })
-                .ToList<object>();
-
-            return items;
+            return _orderItemRepository.GetPendingKitchenItems();
         }
 
         public void UpdateStatus(int orderProductId, OrderItemStatus status)
         {
-            var item = _context.OrderProducts.Find(orderProductId);
+            var item = _orderItemRepository.GetById(orderProductId);
 
             if (item == null)
                 throw new InvalidOperationException("Order item not found.");
@@ -45,7 +35,7 @@ namespace EMenu.Application.Services
 
             item.Status = status;
 
-            _context.SaveChanges();
+            _unitOfWork.SaveChanges();
         }
 
         private static bool IsValidStatusTransition(OrderItemStatus currentStatus, OrderItemStatus nextStatus)

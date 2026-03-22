@@ -1,24 +1,36 @@
 using EMenu.Application.DTOs;
+using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Entities;
 using EMenu.Domain.Enums;
-using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace EMenu.Application.Services
 {
     public class OrderService
     {
-        private readonly AppDbContext _context;
+        private readonly ISessionRepository _sessionRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly IStaffRepository _staffRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public OrderService(AppDbContext context)
+        public OrderService(
+            ISessionRepository sessionRepository,
+            IOrderRepository orderRepository,
+            IProductRepository productRepository,
+            IStaffRepository staffRepository,
+            IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _sessionRepository = sessionRepository;
+            _orderRepository = orderRepository;
+            _productRepository = productRepository;
+            _staffRepository = staffRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public Order CreateOrder(int sessionId, int staffId)
         {
-            var session = _context.OrderSessions
-                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+            var session = _sessionRepository.GetById(sessionId);
 
             if (session == null || session.Status != 1)
                 throw new InvalidOperationException("Session is not active.");
@@ -37,8 +49,8 @@ namespace EMenu.Application.Services
                 TotalAmount = 0
             };
 
-            _context.Orders.Add(order);
-            _context.SaveChanges();
+            _orderRepository.Add(order);
+            _unitOfWork.SaveChanges();
 
             return order;
         }
@@ -48,14 +60,12 @@ namespace EMenu.Application.Services
             if (quantity <= 0)
                 throw new ArgumentException("Quantity must be greater than 0.");
 
-            var session = _context.OrderSessions
-                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+            var session = _sessionRepository.GetById(sessionId);
 
             if (session == null || session.Status != 1)
                 throw new InvalidOperationException("Session is not active.");
 
-            var product = _context.Products
-                .FirstOrDefault(x => x.ProductID == productId);
+            var product = _productRepository.GetById(productId);
 
             if (product == null)
                 throw new InvalidOperationException("Product not found.");
@@ -63,7 +73,7 @@ namespace EMenu.Application.Services
             if (!product.IsAvailable)
                 throw new InvalidOperationException("Product is not available.");
 
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = _unitOfWork.BeginTransaction();
 
             var order = GetEditableOrder(sessionId);
 
@@ -78,11 +88,10 @@ namespace EMenu.Application.Services
                     TotalAmount = 0
                 };
 
-                _context.Orders.Add(order);
-                _context.SaveChanges();
+                _orderRepository.Add(order);
             }
 
-            if (_context.Invoices.Any(x => x.OrderID == order.OrderID))
+            if (_orderRepository.HasInvoice(order.OrderID))
                 throw new InvalidOperationException("Order is already paid.");
 
             if (order.Status == OrderStatus.Completed || order.Status == OrderStatus.Cancelled)
@@ -90,17 +99,16 @@ namespace EMenu.Application.Services
 
             var orderProduct = new OrderProduct
             {
-                OrderID = order.OrderID,
+                Order = order,
                 ProductID = productId,
                 Quantity = quantity,
                 Price = product.Price,
                 Status = OrderItemStatus.Pending
             };
 
-            _context.OrderProducts.Add(orderProduct);
-            _context.SaveChanges();
-
-            RecalculateOrderTotal(order.OrderID);
+            _orderRepository.AddOrderProduct(orderProduct);
+            order.TotalAmount += orderProduct.Price * orderProduct.Quantity;
+            _unitOfWork.SaveChanges();
 
             transaction.Commit();
         }
@@ -112,13 +120,12 @@ namespace EMenu.Application.Services
             if (!cartItems.Any())
                 throw new InvalidOperationException("Cart is empty.");
 
-            var session = _context.OrderSessions
-                .FirstOrDefault(x => x.OrderSessionID == sessionId);
+            var session = _sessionRepository.GetById(sessionId);
 
             if (session == null || session.Status != 1)
                 throw new InvalidOperationException("Session is not active.");
 
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = _unitOfWork.BeginTransaction();
 
             var order = GetEditableOrder(sessionId);
 
@@ -133,23 +140,23 @@ namespace EMenu.Application.Services
                     TotalAmount = 0
                 };
 
-                _context.Orders.Add(order);
-                _context.SaveChanges();
+                _orderRepository.Add(order);
             }
 
-            if (_context.Invoices.Any(x => x.OrderID == order.OrderID))
+            if (_orderRepository.HasInvoice(order.OrderID))
                 throw new InvalidOperationException("Order is already paid.");
 
             if (order.Status == OrderStatus.Completed || order.Status == OrderStatus.Cancelled)
                 throw new InvalidOperationException("Order can no longer be modified.");
+
+            decimal addedAmount = 0;
 
             foreach (var item in cartItems)
             {
                 if (item.Quantity <= 0)
                     throw new ArgumentException("Quantity must be greater than 0.");
 
-                var product = _context.Products
-                    .FirstOrDefault(x => x.ProductID == item.ProductId);
+                var product = _productRepository.GetById(item.ProductId);
 
                 if (product == null)
                     throw new InvalidOperationException("Product not found.");
@@ -157,37 +164,33 @@ namespace EMenu.Application.Services
                 if (!product.IsAvailable)
                     throw new InvalidOperationException("Product is not available.");
 
-                _context.OrderProducts.Add(new OrderProduct
+                var orderProduct = new OrderProduct
                 {
-                    OrderID = order.OrderID,
+                    Order = order,
                     ProductID = item.ProductId,
                     Quantity = item.Quantity,
                     Price = product.Price,
                     Status = OrderItemStatus.Pending
-                });
+                };
+
+                _orderRepository.AddOrderProduct(orderProduct);
+                addedAmount += orderProduct.Price * orderProduct.Quantity;
             }
 
-            _context.SaveChanges();
-
-            RecalculateOrderTotal(order.OrderID);
+            order.TotalAmount += addedAmount;
+            _unitOfWork.SaveChanges();
 
             transaction.Commit();
         }
 
         public BillDto GetSessionBill(int sessionId)
         {
-            var session = _context.OrderSessions
-                .Include(s => s.RestaurantTable)
-                .FirstOrDefault(s => s.OrderSessionID == sessionId);
+            var session = _sessionRepository.GetByIdWithTable(sessionId);
 
             if (session == null)
                 throw new InvalidOperationException("Session not found.");
 
-            var orders = _context.Orders
-                .Where(o => o.OrderSessionID == sessionId)
-                .Include(o => o.OrderProducts)
-                .ThenInclude(op => op.Product)
-                .ToList();
+            var orders = _orderRepository.GetBySessionWithDetails(sessionId);
 
             if (!orders.Any())
                 throw new InvalidOperationException("Order not found.");
@@ -216,45 +219,27 @@ namespace EMenu.Application.Services
 
         private Order? GetEditableOrder(int sessionId)
         {
-            return _context.Orders
-                .OrderByDescending(x => x.OrderID)
-                .FirstOrDefault(x =>
-                    x.OrderSessionID == sessionId &&
-                    x.Status != OrderStatus.Completed &&
-                    x.Status != OrderStatus.Cancelled &&
-                    !_context.Invoices.Any(i => i.OrderID == x.OrderID));
-        }
-
-        private void RecalculateOrderTotal(int orderId)
-        {
-            var order = _context.Orders
-                .Include(x => x.OrderProducts)
-                .FirstOrDefault(x => x.OrderID == orderId);
-
-            if (order == null)
-                throw new InvalidOperationException("Order not found.");
-
-            order.TotalAmount = order.OrderProducts
-                .Where(x => x.Status != OrderItemStatus.Cancelled)
-                .Sum(x => x.Price * x.Quantity);
-
-            _context.SaveChanges();
+            return _orderRepository.GetEditableBySession(sessionId);
         }
 
         private int ResolveStaffId(int? staffId = null)
         {
             if (staffId.HasValue && staffId.Value > 0)
-                return staffId.Value;
+            {
+                var staff = _staffRepository.GetById(staffId.Value);
 
-            var systemStaff = _context.Staffs
-                .FirstOrDefault(x => x.StaffName == "System");
+                if (staff == null)
+                    throw new InvalidOperationException("Staff not found.");
+
+                return staff.StaffID;
+            }
+
+            var systemStaff = _staffRepository.GetSystemStaff();
 
             if (systemStaff != null)
                 return systemStaff.StaffID;
 
-            var firstStaff = _context.Staffs
-                .OrderBy(x => x.StaffID)
-                .FirstOrDefault();
+            var firstStaff = _staffRepository.GetFirstStaff();
 
             if (firstStaff == null)
                 throw new InvalidOperationException("No staff account configured.");

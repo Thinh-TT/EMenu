@@ -1,5 +1,5 @@
-using EMenu.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using EMenu.Application.Abstractions.Persistence;
+using EMenu.Application.Abstractions.Repositories;
 using System.Text.RegularExpressions;
 
 namespace EMenu.Application.Services
@@ -7,6 +7,16 @@ namespace EMenu.Application.Services
     public class PasswordService
     {
         private const int MinimumLength = 8;
+        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public PasswordService(
+            IUserRepository userRepository,
+            IUnitOfWork unitOfWork)
+        {
+            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
+        }
 
         public string PolicyDescription =>
             "Password must be at least 8 characters long and include at least 1 letter and 1 number.";
@@ -59,11 +69,9 @@ namespace EMenu.Application.Services
                 throw new ArgumentException("Password must include at least 1 number.");
         }
 
-        public int MigrateLegacyPasswords(AppDbContext context)
+        public int MigrateLegacyPasswords()
         {
-            var legacyUsers = context.Users
-                .Where(x => !string.IsNullOrWhiteSpace(x.Password) && !x.Password.StartsWith("$2"))
-                .ToList();
+            var legacyUsers = _userRepository.GetLegacyPasswordUsers();
 
             if (!legacyUsers.Any())
                 return 0;
@@ -73,7 +81,7 @@ namespace EMenu.Application.Services
                 user.Password = HashPassword(user.Password);
             }
 
-            context.SaveChanges();
+            _unitOfWork.SaveChanges();
 
             return legacyUsers.Count;
         }
