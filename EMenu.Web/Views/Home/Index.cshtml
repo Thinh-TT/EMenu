@@ -1,6 +1,10 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var antiforgeryTokens = Antiforgery.GetAndStoreTokens(Context);
+}
 
 <section class="home-hero">
     <div class="home-hero-copy">
@@ -10,10 +14,20 @@
             Learn about
             <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.
         </p>
-        <div class="hero-actions">
-            <a class="btn btn-primary" asp-controller="Menu" asp-action="Index">Open Menu</a>
-            <a class="btn btn-warning" asp-controller="Auth" asp-action="Login">Login</a>
-        </div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+        {
+            <div class="hero-actions">
+                <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Index">Open Dashboard</a>
+                <a class="btn btn-warning" asp-controller="Table" asp-action="Index">Manage Tables</a>
+            </div>
+        }
+        else
+        {
+            <div class="hero-actions">
+                <a class="btn btn-primary" asp-controller="Menu" asp-action="Index">Review Menu</a>
+                <a class="btn btn-warning" asp-controller="Auth" asp-action="Login">Login</a>
+            </div>
+        }
         <div class="hero-feature-grid">
             <div class="feature-card">
                 <strong>Fast service flow</strong>
@@ -25,19 +39,36 @@
             </div>
         </div>
     </div>
-    <div class="flow-card">
-        <h3>Business Flow</h3>
-        <ul class="flow-list">
-            <li>QR</li>
-            <li>Menu</li>
-            <li>Cart</li>
-            <li>Order</li>
-            <li>Kitchen</li>
-            <li>Tracking</li>
-            <li>Bill</li>
-            <li>Checkout</li>
-            <li>Payment</li>
-            <li>End session</li>
-        </ul>
-    </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+    {
+        <div class="flow-card">
+            <h3>Business Flow</h3>
+            <ul class="flow-list">
+                <li>QR</li>
+                <li>Menu</li>
+                <li>Cart</li>
+                <li>Order</li>
+                <li>Kitchen</li>
+                <li>Tracking</li>
+                <li>Bill</li>
+                <li>Checkout</li>
+                <li>Payment</li>
+                <li>End session</li>
+            </ul>
+        </div>
+    }
+    @if (!User.IsInRole("Admin") && !User.IsInRole("Staff"))
+    {
+        <div class="flow-card">
+            <h3>Customer Guide</h3>
+            <ul class="flow-list">
+                <li>Sit at your table</li>
+                <li>Scan the QR code at the table</li>
+                <li>Enter your name and start order</li>
+                <li>Choose food and add to cart</li>
+                <li>Submit order and track status</li>
+                <li>Request bill and complete payment</li>
+            </ul>
+        </div>
+    }
 </section>

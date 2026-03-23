@@ -1,8 +1,12 @@
 const params = new URLSearchParams(window.location.search);
 
 const sessionId = params.get("sessionId");
+const hasValidSessionInUrl =
+  sessionId && Number.isInteger(Number(sessionId)) && Number(sessionId) > 0;
+const SESSION_NOT_FOUND_MESSAGE =
+  "Session not found! Please start a new order. By scanning the QR code at the table.";
 
-if (sessionId) {
+if (hasValidSessionInUrl) {
   const previousSessionId = sessionStorage.getItem("sessionId");
 
   if (previousSessionId && previousSessionId !== sessionId) {
@@ -10,13 +14,17 @@ if (sessionId) {
   }
 
   sessionStorage.setItem("sessionId", sessionId);
+} else {
+  // No session in URL means customer entered menu outside QR/session flow.
+  sessionStorage.removeItem("sessionId");
+  sessionStorage.removeItem("cart");
 }
 
 function addToOrder(productId) {
   const sessionId = sessionStorage.getItem("sessionId");
 
   if (!sessionId) {
-    alert("Session not found");
+    alert(SESSION_NOT_FOUND_MESSAGE);
     return;
   }
 

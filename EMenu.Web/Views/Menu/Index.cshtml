@@ -4,6 +4,12 @@
 <section class="page-intro">
     <h2>Restaurant Menu</h2>
     <p>Browse products by category, review combos quickly and keep the cart visible while ordering.</p>
+    @if (ViewBag.HasValidSession != true)
+    {
+        <div class="alert alert-warning mb-0">
+            @ViewBag.SessionWarning
+        </div>
+    }
 </section>
 
 <div class="menu-layout">

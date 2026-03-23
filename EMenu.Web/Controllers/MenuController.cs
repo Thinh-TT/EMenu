@@ -13,11 +13,17 @@ namespace EMenu.Web.Controllers
         }
 
         public IActionResult Index(
-                int tableId,
-                int sessionId)
+                int? tableId,
+                int? sessionId)
         {
+            var hasValidSession = sessionId.HasValue && sessionId.Value > 0;
+
             ViewBag.TableId = tableId;
             ViewBag.SessionId = sessionId;
+            ViewBag.HasValidSession = hasValidSession;
+            ViewBag.SessionWarning = hasValidSession
+                ? null
+                : "Session not found! Please start a new order. By scanning the QR code at the table.";
 
             var menu = _service.GetMenu();
 
