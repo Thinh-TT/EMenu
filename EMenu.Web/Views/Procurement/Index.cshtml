@@ -1,0 +1,124 @@
+@model EMenu.Web.ViewModels.SupplierIndexViewModel
+
+<h2>Supplier Management</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="d-flex gap-2 mb-3">
+    <a asp-action="CreateReceipt" class="btn btn-primary">Create Receipt</a>
+    <a asp-action="ReceiptHistory" class="btn btn-outline-primary">Receipt History</a>
+</div>
+
+<form method="get" asp-action="Index" class="row g-3 align-items-end mb-4">
+    <div class="col-md-6">
+        <label class="form-label">Keyword</label>
+        <input type="text"
+               class="form-control"
+               name="keyword"
+               value="@Model.Keyword"
+               placeholder="Supplier name..." />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
+    </div>
+    <div class="col-md-2">
+        <a asp-action="Index" class="btn btn-outline-dark w-100">Reset</a>
+    </div>
+</form>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Create Supplier</h5>
+        <form method="post" asp-action="CreateSupplier" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-control" name="name" required />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Phone</label>
+                <input type="text" class="form-control" name="phone" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success w-100">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th style="min-width: 420px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Suppliers.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">No suppliers found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var supplier in Model.Suppliers)
+            {
+                <tr>
+                    <td>@supplier.SupplierID</td>
+                    <td>@supplier.Name</td>
+                    <td>@supplier.Phone</td>
+                    <td>@supplier.Email</td>
+                    <td>
+                        <form method="post" asp-action="UpdateSupplier" class="row g-2 mb-2">
+                            <input type="hidden" name="supplierId" value="@supplier.SupplierID" />
+                            <input type="hidden" name="keyword" value="@Model.Keyword" />
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control form-control-sm"
+                                       name="name"
+                                       value="@supplier.Name"
+                                       required />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text"
+                                       class="form-control form-control-sm"
+                                       name="phone"
+                                       value="@supplier.Phone" />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="email"
+                                       class="form-control form-control-sm"
+                                       name="email"
+                                       value="@supplier.Email" />
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-sm btn-warning w-100">Update</button>
+                            </div>
+                        </form>
+
+                        <form method="post" asp-action="DeleteSupplier">
+                            <input type="hidden" name="supplierId" value="@supplier.SupplierID" />
+                            <input type="hidden" name="keyword" value="@Model.Keyword" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

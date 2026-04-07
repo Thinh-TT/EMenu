@@ -1,0 +1,123 @@
+@model EMenu.Web.ViewModels.ProcurementReceiptHistoryViewModel
+
+<h2>Receipt History</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="d-flex gap-2 mb-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">Suppliers</a>
+    <a asp-action="CreateReceipt" class="btn btn-primary">Create Receipt</a>
+</div>
+
+<form method="get" asp-action="ReceiptHistory" class="row g-3 align-items-end mb-4">
+    <div class="col-md-3">
+        <label class="form-label">From date</label>
+        <input type="date"
+               class="form-control"
+               name="fromDate"
+               value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">To date</label>
+        <input type="date"
+               class="form-control"
+               name="toDate"
+               value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Supplier</label>
+        <select class="form-select" name="supplierId">
+            @if (!Model.SupplierId.HasValue)
+            {
+                <option value="" selected>All suppliers</option>
+            }
+            else
+            {
+                <option value="">All suppliers</option>
+            }
+
+            @foreach (var supplier in Model.Suppliers)
+            {
+                if (Model.SupplierId == supplier.SupplierID)
+                {
+                    <option value="@supplier.SupplierID" selected>@supplier.Name</option>
+                }
+                else
+                {
+                    <option value="@supplier.SupplierID">@supplier.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+    </div>
+</form>
+
+<div class="alert alert-info">
+    <strong>Total import value:</strong> @Model.TotalAmount.ToString("N0")
+</div>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Receipt</th>
+            <th>Date</th>
+            <th>Supplier</th>
+            <th>Staff</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Detail</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Receipts.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">No receipt data found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var receipt in Model.Receipts)
+            {
+                <tr>
+                    <td>#@receipt.ReceiptId</td>
+                    <td>@receipt.CreatedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@receipt.SupplierName</td>
+                    <td>@receipt.StaffName</td>
+                    <td>@receipt.ItemCount</td>
+                    <td>@receipt.TotalAmount.ToString("N0")</td>
+                    <td>
+                        @if (!receipt.Items.Any())
+                        {
+                            <span class="text-muted">No detail</span>
+                        }
+                        else
+                        {
+                            <ul class="mb-0 ps-3">
+                                @foreach (var item in receipt.Items)
+                                {
+                                    <li>
+                                        @item.IngredientName:
+                                        @item.Quantity.ToString("N2")
+                                        x
+                                        @item.Price.ToString("N2")
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

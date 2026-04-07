@@ -46,6 +46,7 @@ builder.Services.AddScoped<ComboService>();
 builder.Services.AddScoped<QrService>();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<BillService>();
+builder.Services.AddScoped<ProcurementService>();
 builder.Services.AddScoped<VNPayService>();
 builder.Services.AddScoped<PaymentService>();
 

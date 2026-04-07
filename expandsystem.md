@@ -104,24 +104,24 @@
 
 ### C1. Backend foundation
 
-- [ ] Tao interfaces:
+- [x] Tao interfaces:
 - `ISupplierRepository`, `IReceiptRepository`.
-- [ ] `ProcurementService`:
+- [x] `ProcurementService`:
 - Tao phieu nhap.
 - Them chi tiet nguyen lieu.
 - Cap nhat ton kho sau khi nhap (transaction).
 
 ### C2. Nghiep vu phieu nhap
 
-- [ ] Validate supplier/staff ton tai.
-- [ ] Validate quantity/price > 0.
-- [ ] Tinh tong gia tri phieu nhap.
+- [x] Validate supplier/staff ton tai.
+- [x] Validate quantity/price > 0.
+- [x] Tinh tong gia tri phieu nhap.
 
 ### C3. Frontend
 
-- [ ] CRUD supplier.
-- [ ] Tao phieu nhap + chi tiet dong.
-- [ ] Trang lich su nhap hang + loc theo ngay/supplier.
+- [x] CRUD supplier.
+- [x] Tao phieu nhap + chi tiet dong.
+- [x] Trang lich su nhap hang + loc theo ngay/supplier.
 
 ## Epic D - Reservation
 
@@ -137,7 +137,7 @@
 
 - [ ] `ReservationController`:
 - Admin/Staff: quan ly dat ban.
-- (Tuy chon) Customer tao dat ban online.
+- Customer tao dat ban online.
 
 ### D3. Frontend
 
@@ -186,7 +186,7 @@
 ## Phase 1 (P0 - bat buoc)
 
 - [x] Epic B (Inventory foundation).
-- [ ] Epic C (Import + cap nhat ton kho).
+- [x] Epic C (Import + cap nhat ton kho).
 - [ ] Epic D (Reservation co ban).
 - [x] Epic A (Timekeeping co ban).
 
@@ -220,8 +220,8 @@
 - [x] BE-INV-01: CRUD Ingredient + canh bao ton thap.
 - [x] BE-INV-02: Mapping IngredientProduct.
 - [x] FE-INV-01: Man hinh ton kho.
-- [ ] BE-PRC-01: Tao Receipt + ReceiptIngredient (transaction).
-- [ ] FE-PRC-01: Form nhap hang.
+- [x] BE-PRC-01: Tao Receipt + ReceiptIngredient (transaction).
+- [x] FE-PRC-01: Form nhap hang.
 - [ ] BE-RSV-01: ReservationService + conflict check.
 - [ ] FE-RSV-01: Man hinh reservation list/calendar.
 - [ ] BE-DB-01: Dashboard metrics cho module moi.

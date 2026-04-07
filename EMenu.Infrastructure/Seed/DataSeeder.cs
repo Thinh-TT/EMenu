@@ -48,6 +48,7 @@ namespace EMenu.Infrastructure.Seed
             var products = EnsureProducts(context, categories);
             EnsureComboProducts(context, products);
             EnsureIngredients(context);
+            EnsureSuppliers(context);
         }
 
         private static void EnsureRoles(AppDbContext context)
@@ -532,6 +533,38 @@ namespace EMenu.Infrastructure.Seed
             context.SaveChanges();
         }
 
+        private static void EnsureSuppliers(AppDbContext context)
+        {
+            var supplierSeeds = new[]
+            {
+                new SupplierSeed("FreshFarm Ingredients", "0908000001", "sales@freshfarm.local"),
+                new SupplierSeed("Ocean Harvest Supply", "0908000002", "contact@oceanharvest.local"),
+                new SupplierSeed("GreenLeaf Food Trading", "0908000003", "hello@greenleaf.local")
+            };
+
+            var existingNames = context.Suppliers
+                .Select(x => x.Name)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var newSuppliers = supplierSeeds
+                .Where(seed => !existingNames.Contains(seed.Name))
+                .Select(seed => new Supplier
+                {
+                    Name = seed.Name,
+                    Phone = seed.Phone,
+                    Email = seed.Email
+                })
+                .ToList();
+
+            if (newSuppliers.Count == 0)
+            {
+                return;
+            }
+
+            context.Suppliers.AddRange(newSuppliers);
+            context.SaveChanges();
+        }
+
         private sealed record CustomerSeed(
             string Name,
             string Sex,
@@ -560,5 +593,10 @@ namespace EMenu.Infrastructure.Seed
             string Unit,
             decimal StockQuantity,
             decimal MinStock);
+
+        private sealed record SupplierSeed(
+            string Name,
+            string Phone,
+            string Email);
     }
 }

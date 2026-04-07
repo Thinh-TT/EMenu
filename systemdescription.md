@@ -22,6 +22,7 @@
 - `AppDbContext` voi SQL Server.
 - Repository implementations qua `AddInfrastructureRepositories()`.
 - Application services: `AuthService`, `OrderService`, `SessionService`, `PaymentService`, `KitchenService`, `DashboardService`, ...
+- Application services: `AuthService`, `OrderService`, `SessionService`, `PaymentService`, `KitchenService`, `DashboardService`, `ProcurementService`, ...
 - Cookie authentication (`CookieAuth`) va phan quyen theo role.
 - Swagger (development), SignalR (`/orderHub`), antiforgery token header `RequestVerificationToken`.
 - Auto validate antiforgery cho controller/view requests.
@@ -35,6 +36,8 @@
 - `BillService`: tong hop bill tu order items.
 - `DashboardService`: doanh thu ngay, top mon, thong ke ban.
 - `UserService`, `StaffService`, `CategoryService`, `ProductService`, `ComboService`: CRUD va validation lien quan.
+- `UserService`, `StaffService`, `CategoryService`, `ProductService`, `ComboService`: CRUD va validation lien quan.
+- `ProcurementService`: quan ly nha cung cap, tao phieu nhap nguyen lieu, cap nhat ton kho theo transaction.
 
 ### 3.3 Data access pattern
 - Application layer chi lam viec voi interfaces:
@@ -52,10 +55,13 @@
 - `PUT /api/kitchen/update-status` (bep cap nhat mon).
 - `POST /api/session/start|end` (mo/dong phien).
 - `POST /Payment/Cash`, `POST /Payment/VNPay`.
+- `GET /Procurement/Index`, `GET|POST /Procurement/CreateReceipt`, `GET /Procurement/ReceiptHistory`.
+- `GET /api/procurement/suppliers`, `GET /api/procurement/receipts`.
 
 ## 4. Frontend architecture
 ### 4.1 Presentation stack
 - Razor Views theo module: `Auth`, `Table`, `Menu`, `Kitchen`, `Dashboard`, `BillPage`, `Checkout`, `Qr`, ...
+- Razor Views theo module: `Auth`, `Table`, `Menu`, `Kitchen`, `Dashboard`, `BillPage`, `Checkout`, `Qr`, `Procurement`, ...
 - Layout chung `_Layout.cshtml`:
 - Navbar dong theo role dang dang nhap.
 - Tich hop antiforgery token vao meta.
@@ -69,6 +75,7 @@
 - `bill.js`: tai bill va checkout API.
 - `dashboard.js`: goi API thong ke va ve chart.
 - `antiforgery.js`: dong bo token vao request headers.
+- Man hinh `Procurement/CreateReceipt` su dung form dong (line items) de them nhieu nguyen lieu trong 1 phieu nhap.
 
 ### 4.3 Realtime
 - SignalR hub `OrderHub` tai endpoint `/orderHub`.
@@ -98,6 +105,13 @@
 - Pending -> Preparing -> Ready -> Served.
 - Co the cancel neu chua served.
 - Trang thai phat realtime cho cac man hinh dang theo doi.
+
+### 5.4 Luong nhap hang (supplier & import)
+- Staff/Admin vao `Procurement/Index` de CRUD nha cung cap.
+- Tao phieu nhap tai `Procurement/CreateReceipt` voi nhieu dong nguyen lieu.
+- He thong validate supplier/staff/nguyen lieu va quantity/price > 0.
+- Khi luu phieu nhap: tao `Receipt` + `ReceiptIngredients`, dong thoi tang `Ingredient.StockQuantity` trong cung transaction.
+- Theo doi lich su phieu nhap theo ngay/nha cung cap tai `Procurement/ReceiptHistory`.
 
 ## 6. Security va phan quyen
 - Xac thuc bang cookie auth.

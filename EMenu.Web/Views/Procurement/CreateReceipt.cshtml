@@ -1,0 +1,226 @@
+@model EMenu.Web.ViewModels.ProcurementCreateReceiptViewModel
+
+<h2>Create Receipt</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="d-flex gap-2 mb-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">Suppliers</a>
+    <a asp-action="ReceiptHistory" class="btn btn-outline-primary">Receipt History</a>
+</div>
+
+@if (!Model.Suppliers.Any() || !Model.Staffs.Any() || !Model.Ingredients.Any())
+{
+    <div class="alert alert-warning">
+        Missing master data. Ensure at least one supplier, staff, and ingredient exists before creating a receipt.
+    </div>
+}
+else
+{
+    <form method="post" asp-action="CreateReceipt" id="receiptForm">
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Supplier</label>
+                <select class="form-select" name="supplierId" required>
+                    @foreach (var supplier in Model.Suppliers)
+                    {
+                        if (Model.SupplierId == supplier.SupplierID)
+                        {
+                            <option value="@supplier.SupplierID" selected>@supplier.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@supplier.SupplierID">@supplier.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Staff</label>
+                <select class="form-select" name="staffId" required>
+                    @foreach (var staff in Model.Staffs)
+                    {
+                        if (Model.StaffId == staff.StaffID)
+                        {
+                            <option value="@staff.StaffID" selected>@staff.StaffName (@staff.StaffID)</option>
+                        }
+                        else
+                        {
+                            <option value="@staff.StaffID">@staff.StaffName (@staff.StaffID)</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Created Date</label>
+                <input type="datetime-local"
+                       class="form-control"
+                       name="createdDate"
+                       value="@Model.CreatedDate.ToString("yyyy-MM-ddTHH:mm")" />
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Receipt Details</h5>
+            <button type="button" id="addRowBtn" class="btn btn-sm btn-outline-success">+ Add Item</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped align-middle" id="receiptItemsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 45%;">Ingredient</th>
+                        <th style="width: 20%;">Quantity</th>
+                        <th style="width: 20%;">Price</th>
+                        <th style="width: 15%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var rows = Model.Items?.Count > 0 ? Model.Items : [new EMenu.Web.ViewModels.ProcurementReceiptLineInputViewModel()];
+                    }
+                    @for (var i = 0; i < rows.Count; i++)
+                    {
+                        <tr class="line-item-row">
+                            <td>
+                                <select class="form-select" name="items[@i].IngredientId" required>
+                                    @foreach (var ingredient in Model.Ingredients)
+                                    {
+                                        if (rows[i].IngredientId == ingredient.IngredientID)
+                                        {
+                                            <option value="@ingredient.IngredientID" selected>
+                                                @ingredient.Name (@ingredient.Unit)
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@ingredient.IngredientID">
+                                                @ingredient.Name (@ingredient.Unit)
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number"
+                                       name="items[@i].Quantity"
+                                       class="form-control"
+                                       min="0.01"
+                                       step="0.01"
+                                       value="@(rows[i].Quantity <= 0 ? 1 : rows[i].Quantity)"
+                                       required />
+                            </td>
+                            <td>
+                                <input type="number"
+                                       name="items[@i].Price"
+                                       class="form-control"
+                                       min="0.01"
+                                       step="0.01"
+                                       value="@(rows[i].Price <= 0 ? 1 : rows[i].Price)"
+                                       required />
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Receipt</button>
+    </form>
+
+    <template id="receiptItemTemplate">
+        <tr class="line-item-row">
+            <td>
+                <select class="form-select ingredient-select" required>
+                    @foreach (var ingredient in Model.Ingredients)
+                    {
+                        <option value="@ingredient.IngredientID">@ingredient.Name (@ingredient.Unit)</option>
+                    }
+                </select>
+            </td>
+            <td>
+                <input type="number"
+                       class="form-control quantity-input"
+                       min="0.01"
+                       step="0.01"
+                       value="1"
+                       required />
+            </td>
+            <td>
+                <input type="number"
+                       class="form-control price-input"
+                       min="0.01"
+                       step="0.01"
+                       value="1"
+                       required />
+            </td>
+            <td>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn">Remove</button>
+            </td>
+        </tr>
+    </template>
+}
+
+@section Scripts
+{
+    <script>
+        (function () {
+            const form = document.getElementById("receiptForm");
+            if (!form) {
+                return;
+            }
+
+            const addRowBtn = document.getElementById("addRowBtn");
+            const tableBody = document.querySelector("#receiptItemsTable tbody");
+            const template = document.getElementById("receiptItemTemplate");
+
+            function updateIndexes() {
+                const rows = tableBody.querySelectorAll(".line-item-row");
+                rows.forEach((row, index) => {
+                    const ingredientSelect = row.querySelector("select");
+                    const quantityInput = row.querySelector(".quantity-input, input[name*='.Quantity']");
+                    const priceInput = row.querySelector(".price-input, input[name*='.Price']");
+
+                    ingredientSelect.name = `items[${index}].IngredientId`;
+                    quantityInput.name = `items[${index}].Quantity`;
+                    priceInput.name = `items[${index}].Price`;
+                });
+            }
+
+            function removeRow(button) {
+                const rows = tableBody.querySelectorAll(".line-item-row");
+                if (rows.length <= 1) {
+                    return;
+                }
+
+                button.closest(".line-item-row").remove();
+                updateIndexes();
+            }
+
+            addRowBtn.addEventListener("click", () => {
+                const clone = template.content.cloneNode(true);
+                tableBody.appendChild(clone);
+                updateIndexes();
+            });
+
+            tableBody.addEventListener("click", (event) => {
+                if (event.target.classList.contains("remove-row-btn")) {
+                    removeRow(event.target);
+                }
+            });
+
+            updateIndexes();
+        })();
+    </script>
+}
