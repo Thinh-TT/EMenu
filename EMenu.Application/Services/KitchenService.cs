@@ -23,7 +23,7 @@ namespace EMenu.Application.Services
             return _orderItemRepository.GetPendingKitchenItems();
         }
 
-        public void UpdateStatus(int orderProductId, OrderItemStatus status)
+        public bool UpdateStatus(int orderProductId, OrderItemStatus status)
         {
             var item = _orderItemRepository.GetById(orderProductId);
 
@@ -33,9 +33,14 @@ namespace EMenu.Application.Services
             if (!IsValidStatusTransition(item.Status, status))
                 throw new InvalidOperationException("Invalid kitchen status transition.");
 
+            var justServed = item.Status != OrderItemStatus.Served &&
+                status == OrderItemStatus.Served;
+
             item.Status = status;
 
             _unitOfWork.SaveChanges();
+
+            return justServed;
         }
 
         private static bool IsValidStatusTransition(OrderItemStatus currentStatus, OrderItemStatus nextStatus)

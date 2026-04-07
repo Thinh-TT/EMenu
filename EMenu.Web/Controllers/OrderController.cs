@@ -17,6 +17,7 @@ namespace EMenu.Web.Controllers
     {
         private readonly OrderService _orderService;
         private readonly KitchenService _kitchenService;
+        private readonly InventoryService _inventoryService;
         private readonly IHubContext<OrderHub> _hub;
         private readonly SessionService _sessionService;
         private readonly AppDbContext _context;
@@ -25,6 +26,7 @@ namespace EMenu.Web.Controllers
         public OrderController(
             OrderService orderService,
             KitchenService kitchenService,
+            InventoryService inventoryService,
             SessionService sessionService,
             IHubContext<OrderHub> hub,
             AppDbContext context,
@@ -32,6 +34,7 @@ namespace EMenu.Web.Controllers
         {
             _orderService = orderService;
             _kitchenService = kitchenService;
+            _inventoryService = inventoryService;
             _sessionService = sessionService;
             _hub = hub;
             _context = context;
@@ -210,7 +213,12 @@ namespace EMenu.Web.Controllers
         {
             try
             {
-                _kitchenService.UpdateStatus(orderProductId, (OrderItemStatus)status);
+                var justServed = _kitchenService.UpdateStatus(orderProductId, (OrderItemStatus)status);
+
+                if (justServed)
+                {
+                    _inventoryService.DeductStockForServedOrderItem(orderProductId);
+                }
 
                 _logger.LogInformation(
                     "Order item status updated by user {UserId} ({Username}) roles {Roles}: order item {OrderProductId}, status {Status}.",

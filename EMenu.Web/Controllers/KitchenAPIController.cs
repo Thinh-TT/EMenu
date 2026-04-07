@@ -15,15 +15,18 @@ namespace EMenu.Web.Controllers
     public class KitchenAPIController : ControllerBase
     {
         private readonly KitchenService _kitchenService;
+        private readonly InventoryService _inventoryService;
         private readonly IHubContext<OrderHub> _hub;
         private readonly ILogger<KitchenAPIController> _logger;
 
         public KitchenAPIController(
             KitchenService kitchenService,
+            InventoryService inventoryService,
             IHubContext<OrderHub> hub,
             ILogger<KitchenAPIController> logger)
         {
             _kitchenService = kitchenService;
+            _inventoryService = inventoryService;
             _hub = hub;
             _logger = logger;
         }
@@ -41,7 +44,12 @@ namespace EMenu.Web.Controllers
         {
             try
             {
-                _kitchenService.UpdateStatus(orderProductId, status);
+                var justServed = _kitchenService.UpdateStatus(orderProductId, status);
+
+                if (justServed)
+                {
+                    _inventoryService.DeductStockForServedOrderItem(orderProductId);
+                }
 
                 _logger.LogInformation(
                     "Kitchen status updated by user {UserId} ({Username}) roles {Roles}: order item {OrderProductId}, status {Status}.",

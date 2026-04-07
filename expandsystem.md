@@ -78,27 +78,27 @@
 
 ### B1. Backend foundation
 
-- [ ] Tao interfaces:
+- [x] Tao interfaces:
 - `IIngredientRepository`, `IIngredientProductRepository`.
-- [ ] Implement query:
+- [x] Implement query:
 - Ton kho hien tai.
 - Nguyen lieu theo mon.
 - Mon su dung nguyen lieu nao.
-- [ ] `InventoryService`:
+- [x] `InventoryService`:
 - CRUD ingredient.
 - Gan/dieu chinh dinh muc nguyen lieu cho mon.
 
 ### B2. Nghiep vu ton kho
 
-- [ ] Ham tinh ton kho sau khi nhap hang.
-- [ ] Ham canh bao ton kho thap (`StockQuantity <= MinStock`).
-- [ ] (P1) Tru ton kho theo order da served.
+- [x] Ham tinh ton kho sau khi nhap hang.
+- [x] Ham canh bao ton kho thap (`StockQuantity <= MinStock`).
+- [x] (P1) Tru ton kho theo order da served.
 
 ### B3. Frontend
 
-- [ ] Man hinh danh sach ingredient + canh bao.
-- [ ] Man hinh mapping ingredient-product.
-- [ ] Filter/sort theo muc ton.
+- [x] Man hinh danh sach ingredient + canh bao.
+- [x] Man hinh mapping ingredient-product.
+- [x] Filter/sort theo muc ton.
 
 ## Epic C - Supplier & Import (Supplier, Receipt, ReceiptIngredient)
 
@@ -185,10 +185,10 @@
 
 ## Phase 1 (P0 - bat buoc)
 
-- [ ] Epic B (Inventory foundation).
+- [x] Epic B (Inventory foundation).
 - [ ] Epic C (Import + cap nhat ton kho).
 - [ ] Epic D (Reservation co ban).
-- [ ] Epic A (Timekeeping co ban).
+- [x] Epic A (Timekeeping co ban).
 
 ## Phase 2 (P1 - nang cao)
 
@@ -214,12 +214,12 @@
 
 ## 6. Backlog task mau (de vao board Jira/Trello)
 
-- [ ] BE-HR-01: Tao repository va service Timekeeping.
-- [ ] BE-HR-02: API check-in/check-out + validation.
-- [ ] FE-HR-01: View cham cong theo staff.
-- [ ] BE-INV-01: CRUD Ingredient + canh bao ton thap.
-- [ ] BE-INV-02: Mapping IngredientProduct.
-- [ ] FE-INV-01: Man hinh ton kho.
+- [x] BE-HR-01: Tao repository va service Timekeeping.
+- [x] BE-HR-02: API check-in/check-out + validation.
+- [x] FE-HR-01: View cham cong theo staff.
+- [x] BE-INV-01: CRUD Ingredient + canh bao ton thap.
+- [x] BE-INV-02: Mapping IngredientProduct.
+- [x] FE-INV-01: Man hinh ton kho.
 - [ ] BE-PRC-01: Tao Receipt + ReceiptIngredient (transaction).
 - [ ] FE-PRC-01: Form nhap hang.
 - [ ] BE-RSV-01: ReservationService + conflict check.

@@ -14,6 +14,8 @@ namespace EMenu.Infrastructure.DependencyInjection
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IComboRepository, ComboRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IIngredientProductRepository, IngredientProductRepository>();
+            services.AddScoped<IIngredientRepository, IngredientRepository>();
             services.AddScoped<ITimekeepingRepository, TimekeepingRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();

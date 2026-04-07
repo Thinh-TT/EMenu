@@ -1,0 +1,113 @@
+@model EMenu.Web.ViewModels.InventoryMappingViewModel
+
+<h2>Ingredient Product Mapping</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (!Model.Products.Any())
+{
+    <div class="alert alert-warning">No products found. Please create products before mapping ingredients.</div>
+    <a asp-action="Index" class="btn btn-outline-primary">Back to Inventory</a>
+}
+else
+{
+    <form method="get" asp-action="Mapping" class="row g-2 align-items-end mb-4">
+        <div class="col-md-6">
+            <label class="form-label">Product</label>
+            <select class="form-select" name="productId">
+                @foreach (var product in Model.Products)
+                {
+                    if (Model.SelectedProductId == product.ProductID)
+                    {
+                        <option value="@product.ProductID" selected>@product.ProductName (@product.ProductID)</option>
+                    }
+                    else
+                    {
+                        <option value="@product.ProductID">@product.ProductName (@product.ProductID)</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Load</button>
+        </div>
+        <div class="col-md-2">
+            <a asp-action="Index" class="btn btn-outline-secondary w-100">Ingredients</a>
+        </div>
+    </form>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Add / Update Recipe Item</h5>
+            <form method="post" asp-action="UpsertMapping" class="row g-2 align-items-end">
+                <input type="hidden" name="productId" value="@Model.SelectedProductId" />
+                <div class="col-md-6">
+                    <label class="form-label">Ingredient</label>
+                    <select class="form-select" name="ingredientId" required>
+                        @foreach (var ingredient in Model.Ingredients)
+                        {
+                            <option value="@ingredient.IngredientID">
+                                @ingredient.Name (@ingredient.Unit)
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" class="form-control" name="quantity" min="0.01" step="0.01" required />
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success w-100">Save Mapping</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h4>Current Recipe</h4>
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Ingredient</th>
+                <th>Unit</th>
+                <th>Quantity / Product</th>
+                <th style="width: 140px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Mappings.Any())
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        No ingredients mapped for this product.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var mapping in Model.Mappings)
+                {
+                    <tr>
+                        <td>@mapping.Ingredient?.Name</td>
+                        <td>@mapping.Ingredient?.Unit</td>
+                        <td>@mapping.Quantity.ToString("N2")</td>
+                        <td>
+                            <form method="post" asp-action="RemoveMapping">
+                                <input type="hidden" name="id" value="@mapping.Id" />
+                                <input type="hidden" name="productId" value="@Model.SelectedProductId" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}

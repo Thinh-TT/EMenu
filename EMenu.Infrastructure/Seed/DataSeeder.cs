@@ -47,6 +47,7 @@ namespace EMenu.Infrastructure.Seed
 
             var products = EnsureProducts(context, categories);
             EnsureComboProducts(context, products);
+            EnsureIngredients(context);
         }
 
         private static void EnsureRoles(AppDbContext context)
@@ -446,6 +447,91 @@ namespace EMenu.Infrastructure.Seed
             context.SaveChanges();
         }
 
+        private static void EnsureIngredients(AppDbContext context)
+        {
+            var ingredientSeeds = new List<IngredientSeed>
+            {
+                // Burger / Pizza / Pasta core
+                new("Burger Bun", "pcs", 120m, 30m),
+                new("Ground Beef", "kg", 55m, 12m),
+                new("Lettuce", "kg", 35m, 8m),
+                new("Tomato", "kg", 40m, 10m),
+                new("Onion", "kg", 35m, 8m),
+                new("Mozzarella Cheese", "kg", 30m, 7m),
+                new("Pizza Dough", "pcs", 90m, 20m),
+                new("Tomato Sauce", "L", 45m, 10m),
+                new("Spaghetti Pasta", "kg", 40m, 10m),
+                new("Bacon", "kg", 30m, 7m),
+                new("Parmesan Cheese", "kg", 20m, 5m),
+
+                // Vietnamese and rice dishes
+                new("Jasmine Rice", "kg", 120m, 25m),
+                new("Pork", "kg", 65m, 15m),
+                new("Beef Slice", "kg", 50m, 12m),
+                new("Rice Noodles", "kg", 60m, 15m),
+                new("Beef Broth", "L", 80m, 20m),
+                new("Fish Sauce", "L", 30m, 8m),
+                new("Sugar", "kg", 70m, 15m),
+                new("Salt", "kg", 50m, 10m),
+                new("Black Pepper", "kg", 12m, 3m),
+                new("Mixed Herbs", "kg", 30m, 7m),
+
+                // Fried and side dishes
+                new("Chicken", "kg", 80m, 20m),
+                new("Potato", "kg", 90m, 20m),
+                new("Cooking Oil", "L", 100m, 25m),
+                new("Spring Roll Wrapper", "pcs", 500m, 120m),
+                new("Carrot", "kg", 35m, 8m),
+                new("Cucumber", "kg", 30m, 7m),
+
+                // Seafood dishes
+                new("Shrimp", "kg", 35m, 8m),
+                new("Squid", "kg", 25m, 6m),
+
+                // Drinks
+                new("Coke Syrup", "L", 40m, 10m),
+                new("Sprite Syrup", "L", 40m, 10m),
+                new("Tea Leaves", "kg", 20m, 5m),
+                new("Coffee Beans", "kg", 25m, 6m),
+                new("Orange", "kg", 55m, 12m),
+                new("Lemon", "kg", 45m, 10m),
+                new("Peach Syrup", "L", 30m, 7m),
+                new("Mango", "kg", 40m, 9m),
+                new("Mineral Water Bottle", "bottle", 400m, 100m),
+                new("Ice", "kg", 200m, 50m)
+            };
+
+            var ingredientNames = ingredientSeeds
+                .Select(x => x.Name)
+                .ToList();
+
+            var existingIngredients = context.Ingredients
+                .Where(x => ingredientNames.Contains(x.Name))
+                .ToDictionary(x => x.Name, x => x, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var seed in ingredientSeeds)
+            {
+                if (!existingIngredients.TryGetValue(seed.Name, out var ingredient))
+                {
+                    context.Ingredients.Add(new Ingredient
+                    {
+                        Name = seed.Name,
+                        Unit = seed.Unit,
+                        StockQuantity = seed.StockQuantity,
+                        MinStock = seed.MinStock
+                    });
+
+                    continue;
+                }
+
+                ingredient.Unit = seed.Unit;
+                ingredient.StockQuantity = seed.StockQuantity;
+                ingredient.MinStock = seed.MinStock;
+            }
+
+            context.SaveChanges();
+        }
+
         private sealed record CustomerSeed(
             string Name,
             string Sex,
@@ -468,5 +554,11 @@ namespace EMenu.Infrastructure.Seed
         private sealed record ComboSeed(string ComboName, ComboItemSeed[] Items);
 
         private sealed record ComboItemSeed(string ProductName, int Quantity);
+
+        private sealed record IngredientSeed(
+            string Name,
+            string Unit,
+            decimal StockQuantity,
+            decimal MinStock);
     }
 }
