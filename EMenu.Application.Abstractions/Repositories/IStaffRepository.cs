@@ -7,6 +7,7 @@ namespace EMenu.Application.Abstractions.Repositories
         IReadOnlyList<Staff> GetAllWithUser();
         Staff? GetById(int staffId);
         Staff? GetByIdWithUser(int staffId);
+        Staff? GetByUserId(int userId);
         Staff? GetSystemStaff();
         Staff? GetFirstStaff();
         void Add(Staff staff);

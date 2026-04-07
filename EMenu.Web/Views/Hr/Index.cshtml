@@ -1,0 +1,161 @@
+@model EMenu.Web.ViewModels.HrIndexViewModel
+
+<h2>HR Timekeeping</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form method="get" asp-action="Index" class="row g-3 align-items-end mb-3">
+    @if (Model.IsAdmin)
+    {
+        <div class="col-md-4">
+            <label class="form-label">Staff</label>
+            <select class="form-select" name="staffId">
+                @foreach (var staff in Model.Staffs)
+                {
+                    if (Model.SelectedStaffId == staff.StaffID)
+                    {
+                        <option value="@staff.StaffID" selected>@staff.StaffName (@staff.StaffID)</option>
+                    }
+                    else
+                    {
+                        <option value="@staff.StaffID">@staff.StaffName (@staff.StaffID)</option>
+                    }
+                }
+            </select>
+        </div>
+    }
+
+    <div class="col-md-2">
+        <label class="form-label">Month</label>
+        <input class="form-control" type="number" min="1" max="12" name="month" value="@Model.Month" />
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Year</label>
+        <input class="form-control" type="number" min="2000" max="9999" name="year" value="@Model.Year" />
+    </div>
+
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Apply</button>
+    </div>
+</form>
+
+<div class="d-flex gap-2 mb-4">
+    <form method="post" asp-action="CheckIn">
+        <input type="hidden" name="staffId" value="@Model.SelectedStaffId" />
+        <input type="hidden" name="month" value="@Model.Month" />
+        <input type="hidden" name="year" value="@Model.Year" />
+        <button type="submit" class="btn btn-success">Quick Check-in</button>
+    </form>
+
+    <form method="post" asp-action="CheckOut">
+        <input type="hidden" name="staffId" value="@Model.SelectedStaffId" />
+        <input type="hidden" name="month" value="@Model.Month" />
+        <input type="hidden" name="year" value="@Model.Year" />
+        <button type="submit" class="btn btn-warning">Quick Check-out</button>
+    </form>
+</div>
+
+@if (Model.StaffSummary != null)
+{
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Monthly Summary - @Model.StaffSummary.StaffName (@Model.Month/@Model.Year)</h5>
+            <div class="row">
+                <div class="col-md-3"><strong>Work Days:</strong> @Model.StaffSummary.WorkDays</div>
+                <div class="col-md-3"><strong>Total Hours:</strong> @Model.StaffSummary.TotalHours.ToString("N2")</div>
+                <div class="col-md-3"><strong>Base Salary:</strong> @Model.StaffSummary.BaseSalary.ToString("N0")</div>
+                <div class="col-md-3"><strong>Estimated Wage:</strong> @Model.StaffSummary.EstimatedWage.ToString("N0")</div>
+            </div>
+        </div>
+    </div>
+}
+
+<h4>Timekeeping Records</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Worked Hours</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Timekeepings.Any())
+        {
+            <tr>
+                <td colspan="4" class="text-center text-muted">No timekeeping records found for this period.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model.Timekeepings)
+            {
+                var workedHours = item.CheckOut.HasValue && item.CheckOut.Value > item.CheckIn
+                    ? Math.Round((decimal)(item.CheckOut.Value - item.CheckIn).TotalHours, 2)
+                    : 0m;
+
+                <tr>
+                    <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                    <td>@item.CheckIn.ToString("HH:mm:ss")</td>
+                    <td>@(item.CheckOut?.ToString("HH:mm:ss") ?? "-")</td>
+                    <td>@workedHours.ToString("N2")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (Model.IsAdmin)
+{
+    <h4>Monthly Report (All Staff)</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Staff</th>
+                <th>Work Days</th>
+                <th>Total Hours</th>
+                <th>Base Salary</th>
+                <th>Hourly Rate</th>
+                <th>Estimated Wage</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.MonthlySummary.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No data.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var report in Model.MonthlySummary)
+                {
+                    <tr>
+                        <td>@report.StaffName (@report.StaffId)</td>
+                        <td>@report.WorkDays</td>
+                        <td>@report.TotalHours.ToString("N2")</td>
+                        <td>@report.BaseSalary.ToString("N0")</td>
+                        <td>@report.HourlyRate.ToString("N0")</td>
+                        <td>@report.EstimatedWage.ToString("N0")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}

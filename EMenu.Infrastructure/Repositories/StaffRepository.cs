@@ -33,6 +33,13 @@ namespace EMenu.Infrastructure.Repositories
                 .FirstOrDefault(x => x.StaffID == staffId);
         }
 
+        public Staff? GetByUserId(int userId)
+        {
+            return _context.Staffs
+                .Include(x => x.User)
+                .FirstOrDefault(x => x.UserID == userId);
+        }
+
         public Staff? GetSystemStaff()
         {
             return _context.Staffs.FirstOrDefault(x => x.StaffName == "System");

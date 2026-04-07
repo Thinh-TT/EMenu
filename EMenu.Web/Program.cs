@@ -36,6 +36,7 @@ builder.Services.AddScoped<KitchenService>();
 builder.Services.AddScoped<DashboardService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<HrService>();
 builder.Services.AddScoped<StaffService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TableService>();

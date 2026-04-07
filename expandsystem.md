@@ -46,33 +46,33 @@
 
 ### A1. Backend foundation
 
-- [ ] Tao interfaces:
+- [x] Tao interfaces:
 - `ITimekeepingRepository`, `IWageRepository`.
-- [ ] Implement repositories EF (CRUD + query theo staff/ngay/thang).
-- [ ] Tao `HrService` (hoac `TimekeepingService` + `WageService`).
-- [ ] Nghiep vu:
+- [x] Implement repositories EF (CRUD + query theo staff/ngay/thang).
+- [x] Tao `HrService` (hoac `TimekeepingService` + `WageService`).
+- [x] Nghiep vu:
 - Check-in/Check-out theo ngay.
 - Khong cho check-out truoc check-in.
 - Moi staff chi co 1 wage profile.
 
 ### A2. API/MVC
 
-- [ ] `HrController` (Admin/Staff):
+- [x] `HrController` (Admin/Staff):
 - Check-in, check-out, xem cham cong.
-- [ ] `WageController` (Admin):
+- [x] `WageController` (Admin):
 - Tao/cap nhat muc luong.
-- [ ] Them audit log thong tin user thao tac.
+- [x] Them audit log thong tin user thao tac.
 
 ### A3. Frontend
 
-- [ ] View cham cong theo ngay/thang.
-- [ ] View quan ly wage profile.
-- [ ] Quick action check-in/out cho staff.
+- [x] View cham cong theo ngay/thang.
+- [x] View quan ly wage profile.
+- [x] Quick action check-in/out cho staff.
 
 ### A4. Bao cao
 
-- [ ] Tong gio lam theo staff/thang.
-- [ ] Uoc tinh luong: `BaseSalary + HourlyRate * Hours`.
+- [x] Tong gio lam theo staff/thang.
+- [x] Uoc tinh luong: `BaseSalary + HourlyRate * Hours`.
 
 ## Epic B - Inventory (Ingredient, IngredientProduct)
 
