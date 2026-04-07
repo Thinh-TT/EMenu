@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local .NET CLI telemetry/cache artifacts
+.dotnet/.dotnet/TelemetryStorageService/
+.dotnet/.dotnet/*.trn
+.dotnet/.dotnet/*Sentinel*
+.dotnet/.dotnet/*.dotnetUserLevelCache
+.dotnet/.dotnet/*.sentinel
