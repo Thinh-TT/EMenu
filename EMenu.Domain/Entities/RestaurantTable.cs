@@ -19,5 +19,7 @@ namespace EMenu.Domain.Entities
 
         [JsonIgnore]
         public ICollection<OrderSession> OrderSessions { get; set; }
+
+        public ICollection<Reservation> Reservations { get; set; }
     }
 }

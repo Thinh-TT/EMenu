@@ -30,5 +30,7 @@ namespace EMenu.Domain.Entities
         public ICollection<ComboProduct> ComboProducts { get; set; }
 
         public ICollection<ComboProduct> ComboItems { get; set; }
+
+        public ICollection<IngredientProduct> IngredientProducts { get; set; }
     }
 }

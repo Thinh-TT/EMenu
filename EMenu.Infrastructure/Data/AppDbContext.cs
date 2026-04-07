@@ -24,12 +24,20 @@ namespace EMenu.Infrastructure.Data
 
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<ShiftLog> ShiftLogs { get; set; }
+        public DbSet<Timekeeping> Timekeepings { get; set; }
+        public DbSet<Wage> Wages { get; set; }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ComboProduct> ComboProducts { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<IngredientProduct> IngredientProducts { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Receipt> Receipts { get; set; }
+        public DbSet<ReceiptIngredient> ReceiptIngredients { get; set; }
 
         public DbSet<RestaurantTable> RestaurantTables { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
 
         public DbSet<Customer> Customers { get; set; }
         public DbSet<OrderSession> OrderSessions { get; set; }

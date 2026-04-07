@@ -23,5 +23,7 @@ namespace EMenu.Domain.Entities
         public DateTime CreatedAt { get; set; }
 
         public ICollection<OrderSession> OrderSessions { get; set; }
+
+        public ICollection<Reservation> Reservations { get; set; }
     }
 }

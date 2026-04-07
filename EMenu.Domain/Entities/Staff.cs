@@ -23,5 +23,11 @@ namespace EMenu.Domain.Entities
         public ICollection<ShiftLog> ShiftLogs { get; set; }
 
         public ICollection<Order> Orders { get; set; }
+
+        public ICollection<Timekeeping> Timekeepings { get; set; }
+
+        public Wage Wage { get; set; }
+
+        public ICollection<Receipt> Receipts { get; set; }
     }
 }
