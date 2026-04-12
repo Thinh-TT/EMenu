@@ -100,22 +100,33 @@ a:hover {
 }
 
 .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1200;
     padding: 20px 0 0;
 }
 
 .app-navbar {
+    position: relative;
+    z-index: 1201;
     width: min(1380px, calc(100% - 24px));
     margin: 0 auto;
     padding: 0;
 }
 
 .app-navbar-inner {
+    position: relative;
+    z-index: 1202;
     padding: 16px 22px;
     border: 1px solid rgba(255, 255, 255, 0.72);
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.84);
     box-shadow: var(--shadow-md);
     backdrop-filter: blur(14px);
+}
+
+.app-nav-links .dropdown-menu {
+    z-index: 1300;
 }
 
 .app-brand {
@@ -703,6 +714,53 @@ form:not(.d-inline) .form-group {
     min-height: 280px;
 }
 
+.alert-widget-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.alert-widget-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.warning-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.warning-list__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(191, 219, 254, 0.9);
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+}
+
+.warning-list__item strong {
+    color: var(--blue-900);
+}
+
+.warning-list__item span {
+    color: var(--blue-700);
+    font-size: 0.92rem;
+    text-align: right;
+}
+
+.warning-list__item--empty {
+    justify-content: center;
+    color: var(--blue-700);
+    font-weight: 600;
+}
+
 .home-hero {
     display: grid;
     grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
@@ -899,6 +957,19 @@ form:not(.d-inline) .form-group {
     .hero-feature-grid,
     .chart-grid {
         grid-template-columns: 1fr;
+    }
+
+    .alert-widget-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .warning-list__item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .warning-list__item span {
+        text-align: left;
     }
 
     .footer-inner {

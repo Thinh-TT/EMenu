@@ -17,6 +17,8 @@ namespace EMenu.Web.Controllers
             _service = service;
         }
 
+        [HttpGet("/Dashboard")]
+        [HttpGet("/Dashboard/Index")]
         public IActionResult Index()
         {
             return View();
@@ -50,6 +52,38 @@ namespace EMenu.Web.Controllers
         public IActionResult TablesInUse()
         {
             return Ok(_service.GetTablesInUseCount());
+        }
+
+        [HttpGet("summary")]
+        public IActionResult GetSummary()
+        {
+            return Ok(_service.GetExtendedSummary());
+        }
+
+        [HttpGet("import-trend")]
+        public IActionResult GetImportTrend(int days = 7)
+        {
+            try
+            {
+                return Ok(_service.GetImportTrend(days));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("alerts")]
+        public IActionResult GetAlerts(int lowStockLimit = 5, int clashLookaheadDays = 7)
+        {
+            try
+            {
+                return Ok(_service.GetAlerts(lowStockLimit, clashLookaheadDays));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

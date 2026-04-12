@@ -22,6 +22,7 @@ namespace EMenu.Infrastructure.DependencyInjection
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IReceiptRepository, ReceiptRepository>();
+            services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddScoped<IStaffRepository, StaffRepository>();

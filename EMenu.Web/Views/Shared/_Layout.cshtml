@@ -1,6 +1,9 @@
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
     var antiforgeryTokens = Antiforgery.GetAndStoreTokens(Context);
+    var isAdmin = User.IsInRole("Admin");
+    var isStaff = User.IsInRole("Staff");
+    var isKitchen = User.IsInRole("Kitchen");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -36,80 +39,94 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @if (User.IsInRole("Admin"))
+
+                        @if (isAdmin)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Operations
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">Table</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Reservation" asp-action="Index">Reservation</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">Menu</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">Kitchen</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Category" asp-action="Index">Category</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Menu Setup
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Category" asp-action="Index">Category</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Product" asp-action="Index">Product</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Combo" asp-action="Index">Combo</a></li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Product" asp-action="Index">Product</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Inventory & Supply
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">Inventory</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Procurement" asp-action="Index">Procurement</a></li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Combo" asp-action="Index">Combo</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Staff" asp-action="Index">Staff</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Hr" asp-action="Index">Timekeeping</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Wage" asp-action="Index">Wage</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Inventory" asp-action="Index">Inventory</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Procurement" asp-action="Index">Procurement</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Workforce
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Staff" asp-action="Index">Staff</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Hr" asp-action="Index">Timekeeping</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Wage" asp-action="Index">Wage</a></li>
+                                </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="User" asp-action="Index">User</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Table" asp-action="Index">Table</a>
+                        }
+
+                        @if (!isAdmin && isStaff)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Operations
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">Table</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Reservation" asp-action="Index">Reservation</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">Menu</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">Kitchen</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Menu" asp-action="Index">Menu</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Inventory & Supply
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">Inventory</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Procurement" asp-action="Index">Procurement</a></li>
+                                </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Hr" asp-action="Index">Timekeeping</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Qr" asp-action="Index">QR</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Inventory" asp-action="Index">Inventory</a>
-                            </li>
                         }
-                        @if (User.IsInRole("Staff"))
+
+                        @if (!isAdmin && !isStaff && isKitchen)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Table" asp-action="Index">Table</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Menu" asp-action="Index">Menu</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Qr" asp-action="Index">QR</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Procurement" asp-action="Index">Procurement</a>
+                                <a class="nav-link" asp-controller="Kitchen" asp-action="Index">Kitchen Board</a>
                             </li>
                         }
+
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home"                             asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto app-user-nav">

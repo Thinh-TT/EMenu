@@ -1,3 +1,5 @@
+using EMenu.Domain.Enums;
+
 namespace EMenu.Domain.Entities
 {
     public class Reservation
@@ -12,7 +14,7 @@ namespace EMenu.Domain.Entities
 
         public int NumberOfGuests { get; set; }
 
-        public int Status { get; set; }
+        public ReservationStatus Status { get; set; }
 
         public Customer Customer { get; set; }
 

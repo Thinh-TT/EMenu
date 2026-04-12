@@ -1,0 +1,307 @@
+@model EMenu.Web.ViewModels.ReservationIndexViewModel
+@using EMenu.Domain.Enums
+
+@{
+    static string GetStatusBadgeClass(ReservationStatus status)
+    {
+        return status switch
+        {
+            ReservationStatus.Pending => "bg-secondary",
+            ReservationStatus.Confirmed => "bg-success",
+            ReservationStatus.Cancelled => "bg-danger",
+            _ => "bg-dark"
+        };
+    }
+
+    static string GetStatusText(ReservationStatus status)
+    {
+        return status switch
+        {
+            ReservationStatus.Pending => "Pending",
+            ReservationStatus.Confirmed => "Confirmed",
+            ReservationStatus.Cancelled => "Cancelled",
+            _ => status.ToString()
+        };
+    }
+}
+
+<h2>Reservation Management</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="d-flex gap-2 mb-3">
+    <a asp-action="Book" class="btn btn-outline-primary">Open Customer Booking Page</a>
+</div>
+
+<form method="get" asp-action="Index" class="row g-3 align-items-end mb-4">
+    <div class="col-md-3">
+        <label class="form-label">From date</label>
+        <input type="date"
+               class="form-control"
+               name="fromDate"
+               value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">To date</label>
+        <input type="date"
+               class="form-control"
+               name="toDate"
+               value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Table</label>
+        <select name="tableId" class="form-select">
+            @if (!Model.TableId.HasValue)
+            {
+                <option value="" selected>All tables</option>
+            }
+            else
+            {
+                <option value="">All tables</option>
+            }
+
+            @foreach (var table in Model.Tables)
+            {
+                if (Model.TableId == table.TableID)
+                {
+                    <option value="@table.TableID" selected>@table.TableName (Capacity @table.Capacity)</option>
+                }
+                else
+                {
+                    <option value="@table.TableID">@table.TableName (Capacity @table.Capacity)</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+            @if (!Model.Status.HasValue)
+            {
+                <option value="" selected>All statuses</option>
+            }
+            else
+            {
+                <option value="">All statuses</option>
+            }
+
+            @foreach (var status in Enum.GetValues<ReservationStatus>())
+            {
+                if (Model.Status == (int)status)
+                {
+                    <option value="@((int)status)" selected>@GetStatusText(status)</option>
+                }
+                else
+                {
+                    <option value="@((int)status)">@GetStatusText(status)</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+    <div class="col-md-2">
+        <a asp-action="Index" class="btn btn-outline-dark w-100">Reset</a>
+    </div>
+</form>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Create Reservation</h5>
+        <form method="post" asp-action="Create" class="js-reservation-form row g-3">
+            <input type="hidden" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+            <input type="hidden" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+            <input type="hidden" name="filterTableId" value="@Model.TableId" />
+            <input type="hidden" name="filterStatus" value="@Model.Status" />
+
+            <div class="col-md-3">
+                <label class="form-label">Customer name</label>
+                <input type="text"
+                       class="form-control"
+                       name="customerName"
+                       value="@Model.CustomerName"
+                       required />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Phone</label>
+                <input type="text"
+                       class="form-control"
+                       name="customerPhone"
+                       value="@Model.CustomerPhone" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Email</label>
+                <input type="email"
+                       class="form-control"
+                       name="customerEmail"
+                       value="@Model.CustomerEmail" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Table</label>
+                <select name="tableId" class="form-select" required>
+                    @foreach (var table in Model.Tables)
+                    {
+                        if (Model.CreateTableId == table.TableID)
+                        {
+                            <option value="@table.TableID" selected>@table.TableName</option>
+                        }
+                        else
+                        {
+                            <option value="@table.TableID">@table.TableName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Guests</label>
+                <input type="number"
+                       class="form-control"
+                       name="numberOfGuests"
+                       min="1"
+                       value="@Model.NumberOfGuests"
+                       required />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Reservation time</label>
+                <input type="datetime-local"
+                       class="form-control"
+                       name="reservationTime"
+                       value="@Model.ReservationTime.ToString("yyyy-MM-ddTHH:mm")"
+                       required />
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">Create (Pending)</button>
+            </div>
+            <div class="col-12">
+                <div class="small text-danger js-conflict-feedback"></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<h4>Calendar View</h4>
+
+@if (!Model.Reservations.Any())
+{
+    <div class="alert alert-light border">No reservation found for selected filter.</div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        @foreach (var dayGroup in Model.Reservations.GroupBy(x => x.ReservationTime.Date).OrderBy(x => x.Key))
+        {
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>@dayGroup.Key.ToString("yyyy-MM-dd")</strong>
+                        <span class="badge bg-primary">@dayGroup.Count() bookings</span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var reservation in dayGroup.OrderBy(x => x.ReservationTime))
+                        {
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        @reservation.ReservationTime.ToString("HH:mm")
+                                        -
+                                        @reservation.RestaurantTable?.TableName
+                                    </span>
+                                    <span class="badge @GetStatusBadgeClass(reservation.Status)">
+                                        @GetStatusText(reservation.Status)
+                                    </span>
+                                </div>
+                                <div class="small text-muted">
+                                    @(reservation.Customer?.Name ?? $"Customer {reservation.CustomerID}") |
+                                    Guests: @reservation.NumberOfGuests
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<h4>Reservation List</h4>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Time</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Table</th>
+            <th>Guests</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Reservations.Any())
+        {
+            <tr>
+                <td colspan="8" class="text-center text-muted">No reservation found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var reservation in Model.Reservations)
+            {
+                <tr>
+                    <td>#@reservation.ReservationID</td>
+                    <td>@reservation.ReservationTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@(reservation.Customer?.Name ?? $"Customer {reservation.CustomerID}")</td>
+                    <td>@(reservation.Customer?.Phone ?? "-")</td>
+                    <td>@(reservation.RestaurantTable?.TableName ?? $"Table {reservation.TableID}")</td>
+                    <td>@reservation.NumberOfGuests</td>
+                    <td>
+                        <span class="badge @GetStatusBadgeClass(reservation.Status)">
+                            @GetStatusText(reservation.Status)
+                        </span>
+                    </td>
+                    <td class="d-flex gap-2">
+                        @if (reservation.Status == ReservationStatus.Pending)
+                        {
+                            <form method="post" asp-action="Confirm">
+                                <input type="hidden" name="reservationId" value="@reservation.ReservationID" />
+                                <input type="hidden" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+                                <input type="hidden" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+                                <input type="hidden" name="tableId" value="@Model.TableId" />
+                                <input type="hidden" name="status" value="@Model.Status" />
+                                <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                            </form>
+                        }
+
+                        @if (reservation.Status != ReservationStatus.Cancelled)
+                        {
+                            <form method="post" asp-action="Cancel">
+                                <input type="hidden" name="reservationId" value="@reservation.ReservationID" />
+                                <input type="hidden" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+                                <input type="hidden" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+                                <input type="hidden" name="tableId" value="@Model.TableId" />
+                                <input type="hidden" name="status" value="@Model.Status" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script src="~/js/reservation.js" asp-append-version="true"></script>
+}

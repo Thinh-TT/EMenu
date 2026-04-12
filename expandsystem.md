@@ -127,37 +127,37 @@
 
 ### D1. Backend foundation
 
-- [ ] Tao `IReservationRepository`.
-- [ ] `ReservationService`:
+- [x] Tao `IReservationRepository`.
+- [x] `ReservationService`:
 - Tao dat ban.
 - Xac nhan/huy dat ban.
 - Check trung lich theo ban/thoi diem.
 
 ### D2. API/MVC
 
-- [ ] `ReservationController`:
+- [x] `ReservationController`:
 - Admin/Staff: quan ly dat ban.
 - Customer tao dat ban online.
 
 ### D3. Frontend
 
-- [ ] Calendar/list view dat ban.
-- [ ] Form dat ban: customer, table, time, guests.
-- [ ] Trang thai: Pending/Confirmed/Cancelled.
+- [x] Calendar/list view dat ban.
+- [x] Form dat ban: customer, table, time, guests.
+- [x] Trang thai: Pending/Confirmed/Cancelled.
 
 ## Epic E - Dashboard mo rong
 
 ### E1. KPI moi
 
-- [ ] Ton kho thap.
-- [ ] Gia tri nhap hang theo ngay/thang.
-- [ ] So ban dat truoc trong ngay.
-- [ ] Tong gio lam nhan vien hom nay.
+- [x] Ton kho thap.
+- [x] Gia tri nhap hang theo ngay/thang.
+- [x] So ban dat truoc trong ngay.
+- [x] Tong gio lam nhan vien hom nay.
 
 ### E2. UI/UX
 
-- [ ] The KPI + chart xu huong.
-- [ ] Widget canh bao (low stock, reservation clash).
+- [x] The KPI + chart xu huong.
+- [x] Widget canh bao (low stock, reservation clash).
 
 ## Epic F - Security, Quality, Ops
 
@@ -187,12 +187,12 @@
 
 - [x] Epic B (Inventory foundation).
 - [x] Epic C (Import + cap nhat ton kho).
-- [ ] Epic D (Reservation co ban).
+- [x] Epic D (Reservation co ban).
 - [x] Epic A (Timekeeping co ban).
 
 ## Phase 2 (P1 - nang cao)
 
-- [ ] Dashboard mo rong (Epic E).
+- [x] Dashboard mo rong (Epic E).
 - [ ] Bao cao wage/tong hop inventory.
 - [ ] UI polish cho module moi.
 
@@ -222,9 +222,9 @@
 - [x] FE-INV-01: Man hinh ton kho.
 - [x] BE-PRC-01: Tao Receipt + ReceiptIngredient (transaction).
 - [x] FE-PRC-01: Form nhap hang.
-- [ ] BE-RSV-01: ReservationService + conflict check.
-- [ ] FE-RSV-01: Man hinh reservation list/calendar.
-- [ ] BE-DB-01: Dashboard metrics cho module moi.
+- [x] BE-RSV-01: ReservationService + conflict check.
+- [x] FE-RSV-01: Man hinh reservation list/calendar.
+- [x] BE-DB-01: Dashboard metrics cho module moi.
 - [ ] SEC-01: Chuyen secrets ra env.
 - [ ] QA-01: Integration tests cho 3 workflow critical.
 

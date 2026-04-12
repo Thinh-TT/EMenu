@@ -1,8 +1,13 @@
 <section class="dashboard-surface">
     <h2>Restaurant Dashboard</h2>
-    <p>Track operational activity and keep an eye on table usage and revenue trends.</p>
+    <p>Track operations in real time with expanded KPIs, import trend, and active alerts.</p>
 
     <div class="dashboard-grid">
+        <div class="metric-card text-center">
+            <h4 id="revenueToday">0</h4>
+            <p>Revenue Today</p>
+        </div>
+
         <div class="metric-card text-center">
             <h4 id="ordersToday">0</h4>
             <p>Orders Today</p>
@@ -12,13 +17,38 @@
             <h4 id="tablesInUse">0</h4>
             <p>Tables In Use</p>
         </div>
+
+        <div class="metric-card text-center">
+            <h4 id="lowStockCount">0</h4>
+            <p>Low Stock Items</p>
+        </div>
+
+        <div class="metric-card text-center">
+            <h4 id="importValueToday">0</h4>
+            <p>Import Value Today</p>
+        </div>
+
+        <div class="metric-card text-center">
+            <h4 id="importValueMonth">0</h4>
+            <p>Import Value This Month</p>
+        </div>
+
+        <div class="metric-card text-center">
+            <h4 id="reservationsToday">0</h4>
+            <p>Reservations Today</p>
+        </div>
+
+        <div class="metric-card text-center">
+            <h4 id="staffHoursToday">0</h4>
+            <p>Staff Hours Today</p>
+        </div>
     </div>
 </section>
 
 <div class="chart-grid">
     <section class="chart-card">
-        <h3>Revenue Overview</h3>
-        <canvas id="revenueChart"></canvas>
+        <h3>Import Trend (Last 7 Days)</h3>
+        <canvas id="importTrendChart"></canvas>
     </section>
 
     <section class="chart-card">
@@ -26,6 +56,22 @@
         <canvas id="productChart"></canvas>
     </section>
 </div>
+
+<section class="alert-widget-grid">
+    <article class="chart-card alert-widget-card">
+        <h3>Low Stock Warnings</h3>
+        <p class="text-muted mb-3">Ingredients that are at or below minimum stock.</p>
+        <ul id="lowStockWarningList" class="warning-list mb-0"></ul>
+        <a class="btn btn-sm btn-outline-primary mt-3" href="/Inventory/Index?lowStockOnly=true">Open Inventory Alerts</a>
+    </article>
+
+    <article class="chart-card alert-widget-card">
+        <h3>Reservation Clash Warnings</h3>
+        <p class="text-muted mb-3">Potential double-booking in the next 7 days.</p>
+        <ul id="reservationClashList" class="warning-list mb-0"></ul>
+        <a class="btn btn-sm btn-outline-primary mt-3" href="/Reservation/Index">Open Reservation Management</a>
+    </article>
+</section>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/dashboard.js"></script>

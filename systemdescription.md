@@ -22,7 +22,7 @@
 - `AppDbContext` voi SQL Server.
 - Repository implementations qua `AddInfrastructureRepositories()`.
 - Application services: `AuthService`, `OrderService`, `SessionService`, `PaymentService`, `KitchenService`, `DashboardService`, ...
-- Application services: `AuthService`, `OrderService`, `SessionService`, `PaymentService`, `KitchenService`, `DashboardService`, `ProcurementService`, ...
+- Application services: `AuthService`, `OrderService`, `SessionService`, `PaymentService`, `KitchenService`, `DashboardService`, `ProcurementService`, `ReservationService`, ...
 - Cookie authentication (`CookieAuth`) va phan quyen theo role.
 - Swagger (development), SignalR (`/orderHub`), antiforgery token header `RequestVerificationToken`.
 - Auto validate antiforgery cho controller/view requests.
@@ -34,10 +34,11 @@
 - `KitchenService`: cap nhat trang thai mon theo workflow.
 - `PaymentService`: thanh toan tien mat/VNPay success flow, tao invoice + payment, dong session.
 - `BillService`: tong hop bill tu order items.
-- `DashboardService`: doanh thu ngay, top mon, thong ke ban.
+- `DashboardService`: doanh thu ngay, top mon, thong ke ban, KPI mo rong (ton kho thap, gia tri nhap hang, reservation hom nay, tong gio lam hom nay), import trend va widget canh bao.
 - `UserService`, `StaffService`, `CategoryService`, `ProductService`, `ComboService`: CRUD va validation lien quan.
 - `UserService`, `StaffService`, `CategoryService`, `ProductService`, `ComboService`: CRUD va validation lien quan.
 - `ProcurementService`: quan ly nha cung cap, tao phieu nhap nguyen lieu, cap nhat ton kho theo transaction.
+- `ReservationService`: tao/xac nhan/huy dat ban, validate suc chua ban va check trung lich theo ban-thoi diem.
 
 ### 3.3 Data access pattern
 - Application layer chi lam viec voi interfaces:
@@ -57,11 +58,14 @@
 - `POST /Payment/Cash`, `POST /Payment/VNPay`.
 - `GET /Procurement/Index`, `GET|POST /Procurement/CreateReceipt`, `GET /Procurement/ReceiptHistory`.
 - `GET /api/procurement/suppliers`, `GET /api/procurement/receipts`.
+- `GET /Reservation/Index`, `POST /Reservation/Create|Confirm|Cancel`, `GET|POST /Reservation/Book`.
+- `GET /api/reservation`, `POST /api/reservation/create`, `POST /api/reservation/{id}/confirm`, `POST /api/reservation/{id}/cancel`, `GET /api/reservation/check-conflict`.
+- `GET /api/dashboard/summary`, `GET /api/dashboard/import-trend`, `GET /api/dashboard/alerts`.
 
 ## 4. Frontend architecture
 ### 4.1 Presentation stack
 - Razor Views theo module: `Auth`, `Table`, `Menu`, `Kitchen`, `Dashboard`, `BillPage`, `Checkout`, `Qr`, ...
-- Razor Views theo module: `Auth`, `Table`, `Menu`, `Kitchen`, `Dashboard`, `BillPage`, `Checkout`, `Qr`, `Procurement`, ...
+- Razor Views theo module: `Auth`, `Table`, `Menu`, `Kitchen`, `Dashboard`, `BillPage`, `Checkout`, `Qr`, `Procurement`, `Reservation`, ...
 - Layout chung `_Layout.cshtml`:
 - Navbar dong theo role dang dang nhap.
 - Tich hop antiforgery token vao meta.
@@ -73,8 +77,9 @@
 - `table.js`: mo/dong ban tu giao dien staff.
 - `kitchen.js`: hien thi mon cho bep, cap nhat status, nhan event realtime.
 - `bill.js`: tai bill va checkout API.
-- `dashboard.js`: goi API thong ke va ve chart.
+- `dashboard.js`: goi API KPI mo rong, ve import trend + top products, va render widget canh bao low-stock/reservation-clash.
 - `antiforgery.js`: dong bo token vao request headers.
+- `reservation.js`: check trung lich dat ban realtime cho form staff/customer.
 - Man hinh `Procurement/CreateReceipt` su dung form dong (line items) de them nhieu nguyen lieu trong 1 phieu nhap.
 
 ### 4.3 Realtime
@@ -113,12 +118,21 @@
 - Khi luu phieu nhap: tao `Receipt` + `ReceiptIngredients`, dong thoi tang `Ingredient.StockQuantity` trong cung transaction.
 - Theo doi lich su phieu nhap theo ngay/nha cung cap tai `Procurement/ReceiptHistory`.
 
+### 5.5 Luong dat ban (reservation)
+- Staff/Admin quan ly dat ban tai `Reservation/Index`:
+- Loc theo khoang ngay/ban/trang thai, tao dat ban moi, xac nhan/huy dat ban.
+- Khach hang co the tao dat ban online tai `Reservation/Book`.
+- He thong check trung lich theo `TableID + ReservationTime` (bo qua booking da `Cancelled`).
+- Trang thai dat ban: `Pending -> Confirmed -> Cancelled`.
+
 ## 6. Security va phan quyen
 - Xac thuc bang cookie auth.
 - Role constants:
 - `Admin`, `Staff`, `Kitchen`.
 - Khu vuc admin: user, staff, category, product, combo.
 - Khu vuc van hanh: dashboard/table/menu/kitchen/qr theo role duoc cap.
+- Khu vuc reservation:
+- `Admin/Staff` quan ly dat ban, `AllowAnonymous` cho customer tao dat ban online.
 - Co antiforgery token cho form va fetch API.
 
 ## 7. Tich hop ngoai
@@ -126,7 +140,7 @@
 - Tao payment URL tu cau hinh (`TmnCode`, `HashSecret`, `ReturnUrl`).
 - Co action `VNPayReturn` de nhan ket qua redirect.
 - Chart.js:
-- Hien thi doanh thu va top product tren dashboard.
+- Hien thi import trend va top product tren dashboard (kem KPI cards + alert widgets).
 
 ## 8. Nhan xet ky thuat hien tai
 - Uu diem:
