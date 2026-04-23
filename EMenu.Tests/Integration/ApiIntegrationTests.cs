@@ -175,6 +175,108 @@ public class ApiIntegrationTests
         Assert.Equal(0, session.Status);
     }
 
+    [Fact]
+    public async Task SessionTransfer_MovesOrdersAndUpdatesTableStates()
+    {
+        using var factory = new CustomWebApplicationFactory();
+        using var client = CreateClient(factory);
+        AddAuth(client, "Staff");
+
+        var seed = await SeedTransferScenario(factory);
+
+        var response = await client.PostAsJsonAsync("/api/session/transfer", new
+        {
+            sourceTableId = seed.sourceTableId,
+            targetTableId = seed.targetTableId,
+            actor = "integration-test"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var sourceTable = await db.RestaurantTables.FirstAsync(x => x.TableID == seed.sourceTableId);
+        var targetTable = await db.RestaurantTables.FirstAsync(x => x.TableID == seed.targetTableId);
+        var sourceSession = await db.OrderSessions.FirstAsync(x => x.OrderSessionID == seed.sourceSessionId);
+        var targetSession = await db.OrderSessions
+            .Where(x => x.TableID == seed.targetTableId && x.Status == 1)
+            .OrderByDescending(x => x.OrderSessionID)
+            .FirstAsync();
+
+        var order = await db.Orders.FirstAsync(x => x.OrderID == seed.sourceOrderId);
+
+        Assert.Equal(0, sourceTable.Status);
+        Assert.Equal(1, targetTable.Status);
+        Assert.Equal(0, sourceSession.Status);
+        Assert.Equal(targetSession.OrderSessionID, order.OrderSessionID);
+    }
+
+    [Fact]
+    public async Task SessionMerge_OccupiedTarget_UsesTargetSessionAndClosesSource()
+    {
+        using var factory = new CustomWebApplicationFactory();
+        using var client = CreateClient(factory);
+        AddAuth(client, "Staff");
+
+        var seed = await SeedMergeOccupiedScenario(factory);
+
+        var response = await client.PostAsJsonAsync("/api/session/merge", new
+        {
+            sourceTableId = seed.sourceTableId,
+            targetTableId = seed.targetTableId,
+            actor = "integration-test"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var sourceSession = await db.OrderSessions.FirstAsync(x => x.OrderSessionID == seed.sourceSessionId);
+        var targetSession = await db.OrderSessions.FirstAsync(x => x.OrderSessionID == seed.targetSessionId);
+        var sourceOrder = await db.Orders.FirstAsync(x => x.OrderID == seed.sourceOrderId);
+        var sourceTable = await db.RestaurantTables.FirstAsync(x => x.TableID == seed.sourceTableId);
+        var targetTable = await db.RestaurantTables.FirstAsync(x => x.TableID == seed.targetTableId);
+
+        Assert.Equal(0, sourceSession.Status);
+        Assert.Equal(1, targetSession.Status);
+        Assert.Equal(seed.targetCustomerId, targetSession.CustomerID);
+        Assert.Equal(seed.targetSessionId, sourceOrder.OrderSessionID);
+        Assert.Equal(0, sourceTable.Status);
+        Assert.Equal(1, targetTable.Status);
+    }
+
+    [Fact]
+    public async Task SessionMerge_ReservedTarget_ReturnsBadRequest_AndLeavesSourceUnchanged()
+    {
+        using var factory = new CustomWebApplicationFactory();
+        using var client = CreateClient(factory);
+        AddAuth(client, "Staff");
+
+        var seed = await SeedMergeReservedTargetScenario(factory);
+
+        var response = await client.PostAsJsonAsync("/api/session/merge", new
+        {
+            sourceTableId = seed.sourceTableId,
+            targetTableId = seed.targetTableId,
+            actor = "integration-test"
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var sourceSession = await db.OrderSessions.FirstAsync(x => x.OrderSessionID == seed.sourceSessionId);
+        var sourceOrder = await db.Orders.FirstAsync(x => x.OrderID == seed.sourceOrderId);
+        var sourceTable = await db.RestaurantTables.FirstAsync(x => x.TableID == seed.sourceTableId);
+
+        Assert.Equal(1, sourceSession.Status);
+        Assert.Equal(seed.sourceSessionId, sourceOrder.OrderSessionID);
+        Assert.Equal(1, sourceTable.Status);
+    }
+
     private static HttpClient CreateClient(CustomWebApplicationFactory factory)
     {
         return factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions
@@ -289,6 +391,200 @@ public class ApiIntegrationTests
         await db.SaveChangesAsync();
 
         return (session.OrderSessionID, order.OrderID);
+    }
+
+    private static async Task<(int sourceTableId, int targetTableId, int sourceSessionId, int sourceOrderId)> SeedTransferScenario(
+        CustomWebApplicationFactory factory)
+    {
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var tables = await db.RestaurantTables
+            .Where(x => x.Status == 0)
+            .OrderBy(x => x.TableID)
+            .Take(2)
+            .ToListAsync();
+
+        var sourceTable = tables[0];
+        var targetTable = tables[1];
+
+        var customer = await db.Customers.FirstAsync();
+        var staff = await db.Staffs.FirstAsync();
+        var product = await db.Products.FirstAsync(x => x.IsAvailable);
+
+        sourceTable.Status = 1;
+
+        var sourceSession = new OrderSession
+        {
+            TableID = sourceTable.TableID,
+            CustomerID = customer.CustomerID,
+            StartTime = DateTime.Now,
+            Status = 1
+        };
+
+        db.OrderSessions.Add(sourceSession);
+        await db.SaveChangesAsync();
+
+        var sourceOrder = new Order
+        {
+            OrderSessionID = sourceSession.OrderSessionID,
+            StaffID = staff.StaffID,
+            Status = OrderStatus.Pending,
+            TotalAmount = product.Price,
+            CreatedTime = DateTime.Now
+        };
+
+        db.Orders.Add(sourceOrder);
+        await db.SaveChangesAsync();
+
+        db.OrderProducts.Add(new OrderProduct
+        {
+            OrderID = sourceOrder.OrderID,
+            ProductID = product.ProductID,
+            Quantity = 1,
+            Price = product.Price,
+            Status = OrderItemStatus.Pending
+        });
+        await db.SaveChangesAsync();
+
+        return (sourceTable.TableID, targetTable.TableID, sourceSession.OrderSessionID, sourceOrder.OrderID);
+    }
+
+    private static async Task<(
+        int sourceTableId,
+        int targetTableId,
+        int sourceSessionId,
+        int targetSessionId,
+        int sourceOrderId,
+        int targetCustomerId)> SeedMergeOccupiedScenario(CustomWebApplicationFactory factory)
+    {
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var tables = await db.RestaurantTables
+            .Where(x => x.Status == 0)
+            .OrderBy(x => x.TableID)
+            .Take(2)
+            .ToListAsync();
+
+        var sourceTable = tables[0];
+        var targetTable = tables[1];
+
+        var customers = await db.Customers.OrderBy(x => x.CustomerID).Take(2).ToListAsync();
+        var sourceCustomer = customers[0];
+        var targetCustomer = customers[1];
+        var staff = await db.Staffs.FirstAsync();
+        var product = await db.Products.FirstAsync(x => x.IsAvailable);
+
+        sourceTable.Status = 1;
+        targetTable.Status = 1;
+
+        var sourceSession = new OrderSession
+        {
+            TableID = sourceTable.TableID,
+            CustomerID = sourceCustomer.CustomerID,
+            StartTime = DateTime.Now,
+            Status = 1
+        };
+
+        var targetSession = new OrderSession
+        {
+            TableID = targetTable.TableID,
+            CustomerID = targetCustomer.CustomerID,
+            StartTime = DateTime.Now,
+            Status = 1
+        };
+
+        db.OrderSessions.AddRange(sourceSession, targetSession);
+        await db.SaveChangesAsync();
+
+        var sourceOrder = new Order
+        {
+            OrderSessionID = sourceSession.OrderSessionID,
+            StaffID = staff.StaffID,
+            Status = OrderStatus.Pending,
+            TotalAmount = product.Price,
+            CreatedTime = DateTime.Now
+        };
+
+        db.Orders.Add(sourceOrder);
+        await db.SaveChangesAsync();
+
+        db.OrderProducts.Add(new OrderProduct
+        {
+            OrderID = sourceOrder.OrderID,
+            ProductID = product.ProductID,
+            Quantity = 1,
+            Price = product.Price,
+            Status = OrderItemStatus.Pending
+        });
+        await db.SaveChangesAsync();
+
+        return (
+            sourceTable.TableID,
+            targetTable.TableID,
+            sourceSession.OrderSessionID,
+            targetSession.OrderSessionID,
+            sourceOrder.OrderID,
+            targetCustomer.CustomerID);
+    }
+
+    private static async Task<(int sourceTableId, int targetTableId, int sourceSessionId, int sourceOrderId)> SeedMergeReservedTargetScenario(
+        CustomWebApplicationFactory factory)
+    {
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var tables = await db.RestaurantTables
+            .Where(x => x.Status == 0)
+            .OrderBy(x => x.TableID)
+            .Take(2)
+            .ToListAsync();
+
+        var sourceTable = tables[0];
+        var targetTable = tables[1];
+
+        var customer = await db.Customers.FirstAsync();
+        var staff = await db.Staffs.FirstAsync();
+        var product = await db.Products.FirstAsync(x => x.IsAvailable);
+
+        sourceTable.Status = 1;
+        targetTable.Status = 2;
+
+        var sourceSession = new OrderSession
+        {
+            TableID = sourceTable.TableID,
+            CustomerID = customer.CustomerID,
+            StartTime = DateTime.Now,
+            Status = 1
+        };
+
+        db.OrderSessions.Add(sourceSession);
+        await db.SaveChangesAsync();
+
+        var sourceOrder = new Order
+        {
+            OrderSessionID = sourceSession.OrderSessionID,
+            StaffID = staff.StaffID,
+            Status = OrderStatus.Pending,
+            TotalAmount = product.Price,
+            CreatedTime = DateTime.Now
+        };
+
+        db.Orders.Add(sourceOrder);
+        await db.SaveChangesAsync();
+
+        db.OrderProducts.Add(new OrderProduct
+        {
+            OrderID = sourceOrder.OrderID,
+            ProductID = product.ProductID,
+            Quantity = 1,
+            Price = product.Price,
+            Status = OrderItemStatus.Pending
+        });
+        await db.SaveChangesAsync();
+
+        return (sourceTable.TableID, targetTable.TableID, sourceSession.OrderSessionID, sourceOrder.OrderID);
     }
 }
 

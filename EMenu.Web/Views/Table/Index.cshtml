@@ -1,6 +1,24 @@
+@using System.Text.Json
+@model IReadOnlyList<EMenu.Domain.Entities.RestaurantTable>
+
+@{
+    var tableClientData = Model.Select(table => new
+    {
+        id = table.TableID,
+        name = table.TableName,
+        status = table.Status
+    });
+
+    var pageDataJson = JsonSerializer.Serialize(new
+    {
+        tables = tableClientData,
+        actor = User.Identity?.Name ?? "Anonymous"
+    });
+}
+
 <section class="table-stage">
     <h2>Table Management</h2>
-    <p>Open or end sessions quickly with a clearer overview of table capacity and current status.</p>
+    <p>Open, transfer, merge, or close sessions with a clearer overview of capacity and live table states.</p>
 
     @if (TempData["Error"] != null)
     {
@@ -19,8 +37,12 @@
     <div class="table-grid">
         @foreach (var table in Model)
         {
-            var statusClass = table.Status == 1 ? "table-box table-box--busy" : "table-box table-box--free";
-            var statusText = table.Status == 1 ? "Busy" : "Available";
+            var (statusClass, statusText) = table.Status switch
+            {
+                1 => ("table-box table-box--busy", "Busy"),
+                2 => ("table-box table-box--reserved", "Reserved"),
+                _ => ("table-box table-box--free", "Available")
+            };
 
             <div class="@statusClass">
                 <div>
@@ -46,6 +68,14 @@
                                 onclick="window.location='/Table/Bill?tableId=@table.TableID'">
                             Bill
                         </button>
+
+                        <button onclick="openTransferModal(@table.TableID)">
+                            Transfer
+                        </button>
+
+                        <button onclick="openMergeModal(@table.TableID)">
+                            Merge
+                        </button>
                     }
                 </div>
             </div>
@@ -53,4 +83,29 @@
     </div>
 </section>
 
+<div id="tableActionModal"
+     class="combo-modal table-action-modal"
+     aria-hidden="true"
+     role="dialog"
+     aria-modal="true">
+    <div class="combo-modal-card">
+        <h3 id="tableActionTitle">Table Action</h3>
+        <p id="tableActionDescription" class="table-action-modal__meta"></p>
+
+        <label for="targetTableSelect">Target table</label>
+        <select id="targetTableSelect" class="form-select"></select>
+
+        <input id="tableActionType" type="hidden" />
+        <input id="sourceTableId" type="hidden" />
+
+        <div class="table-action-modal__actions">
+            <button type="button" class="btn btn-secondary" onclick="closeTableActionModal()">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="confirmTableAction()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.tableManagementData = @Html.Raw(pageDataJson);
+</script>
 <script src="/js/table.js"></script>

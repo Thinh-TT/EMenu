@@ -70,6 +70,13 @@ namespace EMenu.Infrastructure.Repositories
             return _context.Invoices.Any(x => x.OrderID == orderId);
         }
 
+        public bool HasInvoicedOrder(int sessionId)
+        {
+            return _context.Orders
+                .Where(x => x.OrderSessionID == sessionId)
+                .Any(order => _context.Invoices.Any(invoice => invoice.OrderID == order.OrderID));
+        }
+
         public bool HasUnpaidBillableOrder(int sessionId)
         {
             return _context.Orders
@@ -79,6 +86,22 @@ namespace EMenu.Infrastructure.Repositories
                         item.OrderID == order.OrderID &&
                         item.Status != OrderItemStatus.Cancelled) &&
                     !_context.Invoices.Any(invoice => invoice.OrderID == order.OrderID));
+        }
+
+        public int ReassignSession(int sourceSessionId, int targetSessionId)
+        {
+            var movableOrders = _context.Orders
+                .Where(x =>
+                    x.OrderSessionID == sourceSessionId &&
+                    !_context.Invoices.Any(invoice => invoice.OrderID == x.OrderID))
+                .ToList();
+
+            foreach (var order in movableOrders)
+            {
+                order.OrderSessionID = targetSessionId;
+            }
+
+            return movableOrders.Count;
         }
 
         public void Add(Order order)

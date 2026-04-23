@@ -470,6 +470,10 @@ form:not(.d-inline) .form-group {
     background: linear-gradient(160deg, #1d4ed8, #0f172a);
 }
 
+.table-box--reserved {
+    background: linear-gradient(160deg, #f59e0b, #b45309);
+}
+
 .table-box-actions {
     display: flex;
     flex-wrap: wrap;
@@ -613,6 +617,30 @@ form:not(.d-inline) .form-group {
 .combo-modal-card ul {
     padding-left: 18px;
     color: var(--ink-700);
+}
+
+.table-action-modal {
+    z-index: 1400;
+}
+
+.table-action-modal .combo-modal-card {
+    width: min(560px, 100%);
+}
+
+.table-action-modal__meta {
+    margin-bottom: 14px;
+}
+
+.table-action-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.table-action-modal .btn-secondary {
+    color: var(--blue-900);
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
 }
 
 .qr-grid {

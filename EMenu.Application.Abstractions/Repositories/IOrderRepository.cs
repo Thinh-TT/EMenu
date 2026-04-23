@@ -11,7 +11,9 @@ namespace EMenu.Application.Abstractions.Repositories
         IReadOnlyList<Order> GetBySessionWithDetails(int sessionId);
         int CountByCreatedDate(DateTime date);
         bool HasInvoice(int orderId);
+        bool HasInvoicedOrder(int sessionId);
         bool HasUnpaidBillableOrder(int sessionId);
+        int ReassignSession(int sourceSessionId, int targetSessionId);
         void Add(Order order);
         void AddOrderProduct(OrderProduct orderProduct);
     }

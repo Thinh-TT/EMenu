@@ -1,42 +1,268 @@
-function openTable(tableId) {
-    fetch(`/api/session/start?tableId=${tableId}&customerId=1`, {
-        method: "POST",
-        headers: window.emenu.getAntiforgeryHeaders()
-    })
-        .then(async res => {
-            if (!res.ok) {
-                const message = await res.text();
-                throw new Error(message || "Unable to start session");
+(function () {
+    const TABLE_STATUS_AVAILABLE = 0;
+    const TABLE_STATUS_OCCUPIED = 1;
+    const TABLE_STATUS_RESERVED = 2;
+    const tableData = window.tableManagementData || { tables: [], actor: "Anonymous" };
+
+    window.openTable = function (tableId) {
+        fetch(`/api/session/start?tableId=${tableId}&customerId=1`, {
+            method: "POST",
+            headers: window.emenu.getAntiforgeryHeaders()
+        })
+            .then(async res => {
+                if (!res.ok) {
+                    throw new Error(await readErrorMessage(res));
+                }
+
+                return res.json();
+            })
+            .then(data => {
+                alert("Session started");
+
+                window.location =
+                    `/Menu?tableId=${tableId}&sessionId=${data.orderSessionID}`;
+            })
+            .catch(err => {
+                alert(err.message || "Unable to start session");
+            });
+    };
+
+    window.endTable = function (tableId) {
+        fetch(`/api/session/end?tableId=${tableId}`, {
+            method: "POST",
+            headers: window.emenu.getAntiforgeryHeaders()
+        })
+            .then(async res => {
+                if (!res.ok) {
+                    throw new Error(await readErrorMessage(res));
+                }
+
+                alert("Session ended");
+                location.reload();
+            })
+            .catch(err => {
+                alert(err.message || "Unable to end session");
+            });
+    };
+
+    window.openTransferModal = function (sourceTableId) {
+        openTableActionModal("transfer", sourceTableId);
+    };
+
+    window.openMergeModal = function (sourceTableId) {
+        openTableActionModal("merge", sourceTableId);
+    };
+
+    window.closeTableActionModal = function () {
+        const modal = getModalElement();
+
+        if (!modal) {
+            return;
+        }
+
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+        resetActionForm();
+    };
+
+    window.confirmTableAction = function () {
+        const actionType = getValue("tableActionType");
+        const sourceTableId = Number.parseInt(getValue("sourceTableId"), 10);
+        const targetTableId = Number.parseInt(getValue("targetTableSelect"), 10);
+
+        if (!actionType || Number.isNaN(sourceTableId) || Number.isNaN(targetTableId)) {
+            alert("Please choose a valid target table.");
+            return;
+        }
+
+        const endpoint =
+            actionType === "transfer"
+                ? "/api/session/transfer"
+                : "/api/session/merge";
+
+        fetch(endpoint, {
+            method: "POST",
+            headers: window.emenu.getAntiforgeryHeaders({
+                "Content-Type": "application/json"
+            }),
+            body: JSON.stringify({
+                sourceTableId,
+                targetTableId,
+                actor: tableData.actor || "Anonymous"
+            })
+        })
+            .then(async res => {
+                if (!res.ok) {
+                    throw new Error(await readErrorMessage(res));
+                }
+
+                return res.json();
+            })
+            .then(result => {
+                const actionText = actionType === "transfer" ? "Transfer" : "Merge";
+                alert(`${actionText} successful. Moved orders: ${result.movedOrderCount}`);
+                location.reload();
+            })
+            .catch(err => {
+                alert(err.message || "Unable to complete table action");
+            });
+    };
+
+    document.addEventListener("keydown", event => {
+        if (event.key !== "Escape") {
+            return;
+        }
+
+        const modal = getModalElement();
+
+        if (modal && modal.style.display === "block") {
+            window.closeTableActionModal();
+        }
+    });
+
+    const modal = getModalElement();
+
+    if (modal) {
+        modal.addEventListener("click", event => {
+            if (event.target === modal) {
+                window.closeTableActionModal();
+            }
+        });
+    }
+
+    function openTableActionModal(actionType, sourceTableId) {
+        const sourceTable = tableData.tables.find(table => table.id === sourceTableId);
+
+        if (!sourceTable) {
+            alert("Source table not found.");
+            return;
+        }
+
+        const selectableTargets = tableData.tables.filter(table => {
+            if (table.id === sourceTableId) {
+                return false;
             }
 
-            return res.json();
-        })
-        .then(data => {
-            alert("Session started");
-
-            window.location =
-                `/Menu?tableId=${tableId}&sessionId=${data.orderSessionID}`;
-        })
-        .catch(err => {
-            alert(err.message || "Unable to start session");
-        });
-}
-
-function endTable(tableId) {
-    fetch(`/api/session/end?tableId=${tableId}`, {
-        method: "POST",
-        headers: window.emenu.getAntiforgeryHeaders()
-    })
-        .then(async res => {
-            if (!res.ok) {
-                const message = await res.text();
-                throw new Error(message || "Unable to end session");
+            if (table.status === TABLE_STATUS_RESERVED) {
+                return false;
             }
 
-            alert("Session ended");
-            location.reload();
-        })
-        .catch(err => {
-            alert(err.message || "Unable to end session");
+            if (actionType === "transfer") {
+                return table.status === TABLE_STATUS_AVAILABLE;
+            }
+
+            return table.status === TABLE_STATUS_AVAILABLE ||
+                table.status === TABLE_STATUS_OCCUPIED;
         });
-}
+
+        if (selectableTargets.length === 0) {
+            alert("No valid target table for this action.");
+            return;
+        }
+
+        setValue("tableActionType", actionType);
+        setValue("sourceTableId", sourceTableId);
+        renderTargets(selectableTargets);
+
+        const actionText = actionType === "transfer" ? "Transfer" : "Merge";
+        const title = document.getElementById("tableActionTitle");
+        const description = document.getElementById("tableActionDescription");
+
+        if (title) {
+            title.textContent = `${actionText} Table`;
+        }
+
+        if (description) {
+            description.textContent =
+                `${actionText} from ${sourceTable.name}. Select a valid target table below.`;
+        }
+
+        const modalElement = getModalElement();
+
+        if (modalElement) {
+            modalElement.style.display = "block";
+            modalElement.setAttribute("aria-hidden", "false");
+        }
+    }
+
+    function renderTargets(tables) {
+        const selectElement = document.getElementById("targetTableSelect");
+
+        if (!selectElement) {
+            return;
+        }
+
+        const options = tables
+            .map(table => {
+                const statusText = table.status === TABLE_STATUS_OCCUPIED
+                    ? "Busy"
+                    : "Available";
+
+                return `<option value="${table.id}">${table.name} (${statusText})</option>`;
+            })
+            .join("");
+
+        selectElement.innerHTML = options;
+    }
+
+    function getModalElement() {
+        return document.getElementById("tableActionModal");
+    }
+
+    function getValue(elementId) {
+        const element = document.getElementById(elementId);
+
+        if (!element) {
+            return "";
+        }
+
+        return element.value || "";
+    }
+
+    function setValue(elementId, value) {
+        const element = document.getElementById(elementId);
+
+        if (!element) {
+            return;
+        }
+
+        element.value = value;
+    }
+
+    function resetActionForm() {
+        setValue("tableActionType", "");
+        setValue("sourceTableId", "");
+
+        const selectElement = document.getElementById("targetTableSelect");
+
+        if (selectElement) {
+            selectElement.innerHTML = "";
+        }
+    }
+
+    async function readErrorMessage(response) {
+        const contentType = response.headers.get("content-type") || "";
+
+        if (contentType.includes("application/json")) {
+            try {
+                const payload = await response.json();
+
+                if (typeof payload === "string" && payload) {
+                    return payload;
+                }
+
+                if (payload && payload.message) {
+                    return payload.message;
+                }
+
+                if (payload && payload.title) {
+                    return payload.title;
+                }
+            } catch {
+            }
+        }
+
+        const text = await response.text();
+        return text || "Request failed.";
+    }
+})();
