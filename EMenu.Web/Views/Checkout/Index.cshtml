@@ -14,12 +14,24 @@
     </div>
 }
 
-<form asp-controller="Payment"
-      asp-action="Cash"
-      asp-route-sessionId="@ViewBag.SessionId"
-      method="post">
-	<button type="submit"
-	        class="btn btn-primary">
-		Cash Payment
-	</button>
-</form>
+<div class="checkout-actions">
+    <form asp-controller="Payment"
+          asp-action="Cash"
+          asp-route-sessionId="@ViewBag.SessionId"
+          method="post">
+        <button type="submit"
+                class="btn btn-primary">
+            Cash Payment
+        </button>
+    </form>
+
+    <form asp-controller="Payment"
+          asp-action="VNPay"
+          asp-route-sessionId="@ViewBag.SessionId"
+          method="post">
+        <button type="submit"
+                class="btn btn-warning">
+            VNPay Sandbox Payment
+        </button>
+    </form>
+</div>

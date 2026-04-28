@@ -592,6 +592,21 @@ form:not(.d-inline) .form-group {
     place-items: center;
 }
 
+.checkout-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.checkout-actions form {
+    max-width: none !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
 .remove-btn {
     background: linear-gradient(135deg, #fb7185, #ef4444);
 }

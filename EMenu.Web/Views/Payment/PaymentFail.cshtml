@@ -1,0 +1,47 @@
+@model EMenu.Web.ViewModels.VNPayResultViewModel
+
+<section class="page-intro">
+    <h2>VNPay Payment Failed</h2>
+    <p>@Model.Message</p>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Transaction Ref</th>
+                <td>@Model.TxnRef</td>
+            </tr>
+            <tr>
+                <th>Session</th>
+                <td>@Model.SessionId</td>
+            </tr>
+            <tr>
+                <th>Order</th>
+                <td>@Model.OrderId</td>
+            </tr>
+            <tr>
+                <th>Response Code</th>
+                <td>@Model.ResponseCode</td>
+            </tr>
+            <tr>
+                <th>Transaction Status</th>
+                <td>@Model.TransactionStatus</td>
+            </tr>
+            <tr>
+                <th>VNPay Transaction No</th>
+                <td>@Model.TransactionNo</td>
+            </tr>
+            <tr>
+                <th>Pay Date</th>
+                <td>@Model.PayDate</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="checkout-actions">
+        @if (Model.SessionId.HasValue)
+        {
+            <a class="btn btn-warning" href="/Checkout?sessionId=@Model.SessionId.Value">Back To Checkout</a>
+        }
+        <a class="btn btn-link" href="/Table">Back To Table</a>
+    </div>
+</section>

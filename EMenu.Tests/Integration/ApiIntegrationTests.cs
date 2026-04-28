@@ -1,8 +1,11 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using EMenu.Domain.Entities;
 using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -175,6 +178,131 @@ public class ApiIntegrationTests
         Assert.Equal(0, session.Status);
     }
 
+    [Fact]
+    public async Task PaymentVNPay_RedirectsToSandbox_WithSignedQuery()
+    {
+        using var factory = new CustomWebApplicationFactory();
+        using var client = CreateClient(factory);
+        AddAuth(client, "Staff");
+
+        var (sessionId, _) = await SeedCashCheckoutData(factory);
+
+        var response = await client.PostAsync($"/Payment/VNPay?sessionId={sessionId}", new StringContent(string.Empty));
+
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
+
+        var location = response.Headers.Location!.ToString();
+        Assert.StartsWith("https://sandbox.vnpayment.vn/paymentv2/vpcpay.html", location, StringComparison.OrdinalIgnoreCase);
+
+        var uri = new Uri(location);
+        var query = QueryHelpers.ParseQuery(uri.Query);
+
+        Assert.False(string.IsNullOrWhiteSpace(query["vnp_SecureHash"].ToString()));
+        Assert.False(string.IsNullOrWhiteSpace(query["vnp_TxnRef"].ToString()));
+    }
+
+    [Fact]
+    public async Task VNPayReturn_WithValidSignatureAndSuccessCode_FinalizesPayment()
+    {
+        using var factory = new CustomWebApplicationFactory();
+        using var client = CreateClient(factory);
+
+        var (sessionId, orderId) = await SeedCashCheckoutData(factory);
+        var txnRef = BuildTxnRefForTest(sessionId, orderId);
+        var callbackUrl = BuildSignedVnPayReturnUrl(new Dictionary<string, string>
+        {
+            ["vnp_Amount"] = "100000",
+            ["vnp_ResponseCode"] = "00",
+            ["vnp_TransactionStatus"] = "00",
+            ["vnp_TxnRef"] = txnRef,
+            ["vnp_TransactionNo"] = "246801357",
+            ["vnp_PayDate"] = DateTime.Now.ToString("yyyyMMddHHmmss"),
+            ["vnp_OrderInfo"] = $"Payment session {sessionId} order {orderId}"
+        });
+
+        var response = await client.GetAsync(callbackUrl);
+        var html = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("VNPay Payment Success", html, StringComparison.OrdinalIgnoreCase);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var invoice = await db.Invoices.FirstOrDefaultAsync(x => x.OrderID == orderId);
+        Assert.NotNull(invoice);
+
+        var payment = await db.Payments.FirstOrDefaultAsync(x => x.InvoiceID == invoice!.InvoiceID);
+        Assert.NotNull(payment);
+        Assert.Equal("VNPay", payment!.Method);
+
+        var session = await db.OrderSessions.FirstAsync(x => x.OrderSessionID == sessionId);
+        Assert.Equal(0, session.Status);
+    }
+
+    [Fact]
+    public async Task VNPayReturn_WithInvalidSignature_DoesNotFinalizePayment()
+    {
+        using var factory = new CustomWebApplicationFactory();
+        using var client = CreateClient(factory);
+
+        var (sessionId, orderId) = await SeedCashCheckoutData(factory);
+        var txnRef = BuildTxnRefForTest(sessionId, orderId);
+        var callbackUrl = BuildSignedVnPayReturnUrl(new Dictionary<string, string>
+        {
+            ["vnp_Amount"] = "100000",
+            ["vnp_ResponseCode"] = "00",
+            ["vnp_TransactionStatus"] = "00",
+            ["vnp_TxnRef"] = txnRef,
+            ["vnp_TransactionNo"] = "246801357",
+            ["vnp_PayDate"] = DateTime.Now.ToString("yyyyMMddHHmmss"),
+            ["vnp_OrderInfo"] = $"Payment session {sessionId} order {orderId}"
+        }, overrideSecureHash: "invalidhash");
+
+        var response = await client.GetAsync(callbackUrl);
+        var html = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("VNPay Payment Failed", html, StringComparison.OrdinalIgnoreCase);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var invoice = await db.Invoices.FirstOrDefaultAsync(x => x.OrderID == orderId);
+        Assert.Null(invoice);
+    }
+
+    [Fact]
+    public async Task VNPayReturn_DuplicateCallback_DoesNotCreateDuplicateInvoice()
+    {
+        using var factory = new CustomWebApplicationFactory();
+        using var client = CreateClient(factory);
+
+        var (sessionId, orderId) = await SeedCashCheckoutData(factory);
+        var txnRef = BuildTxnRefForTest(sessionId, orderId);
+        var callbackUrl = BuildSignedVnPayReturnUrl(new Dictionary<string, string>
+        {
+            ["vnp_Amount"] = "100000",
+            ["vnp_ResponseCode"] = "00",
+            ["vnp_TransactionStatus"] = "00",
+            ["vnp_TxnRef"] = txnRef,
+            ["vnp_TransactionNo"] = "246801357",
+            ["vnp_PayDate"] = DateTime.Now.ToString("yyyyMMddHHmmss"),
+            ["vnp_OrderInfo"] = $"Payment session {sessionId} order {orderId}"
+        });
+
+        var firstResponse = await client.GetAsync(callbackUrl);
+        var secondResponse = await client.GetAsync(callbackUrl);
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var invoiceCount = await db.Invoices.CountAsync(x => x.OrderID == orderId);
+        Assert.Equal(1, invoiceCount);
+    }
     [Fact]
     public async Task SessionTransfer_MovesOrdersAndUpdatesTableStates()
     {
@@ -586,5 +714,37 @@ public class ApiIntegrationTests
 
         return (sourceTable.TableID, targetTable.TableID, sourceSession.OrderSessionID, sourceOrder.OrderID);
     }
+
+    private static string BuildTxnRefForTest(int sessionId, int orderId)
+    {
+        return $"S{sessionId}O{orderId}T1234567890123R1234";
+    }
+
+    private static string BuildSignedVnPayReturnUrl(
+        Dictionary<string, string> parameters,
+        string? overrideSecureHash = null)
+    {
+        var signData = string.Join("&", parameters
+            .OrderBy(x => x.Key, StringComparer.Ordinal)
+            .Select(x => $"{WebUtility.UrlEncode(x.Key)}={WebUtility.UrlEncode(x.Value)}"));
+
+        var secureHash = overrideSecureHash ?? ComputeHmacSha512("TEST", signData);
+        parameters["vnp_SecureHash"] = secureHash;
+
+        return QueryHelpers.AddQueryString("/Payment/VNPayReturn", parameters);
+    }
+
+    private static string ComputeHmacSha512(string key, string data)
+    {
+        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(key));
+        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
+
+        return BitConverter.ToString(hash)
+            .Replace("-", "")
+            .ToLowerInvariant();
+    }
 }
+
+
+
 

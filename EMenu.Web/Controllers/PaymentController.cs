@@ -1,8 +1,10 @@
 using EMenu.Application.Services;
 using EMenu.Domain.Constants;
 using EMenu.Web.Extensions;
+using EMenu.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace EMenu.Web.Controllers
 {
@@ -33,10 +35,13 @@ namespace EMenu.Web.Controllers
             {
                 var orderId = _billService.GetOrderIdBySession(sessionId);
                 var bill = _billService.GetBillByOrderId(orderId);
+                var clientIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
                 var paymentUrl = _vnPayService.CreatePaymentUrl(
                     sessionId,
-                    bill.TotalAmount);
+                    orderId,
+                    bill.TotalAmount,
+                    clientIpAddress);
 
                 _logger.LogInformation(
                     "VNPay payment initialized by user {UserId} ({Username}) roles {Roles}: session {SessionId}, order {OrderId}, amount {Amount}.",
@@ -97,22 +102,145 @@ namespace EMenu.Web.Controllers
         [AllowAnonymous]
         public IActionResult VNPayReturn()
         {
-            var responseCode = Request.Query["vnp_ResponseCode"];
-            var sessionId = Request.Query["vnp_TxnRef"];
+            var returnData = BuildReturnData(Request.Query);
 
-            if (responseCode == "00")
+            if (!_vnPayService.TryParseTxnRef(returnData.TxnRef, out var sessionId, out var orderId))
             {
-                _logger.LogInformation(
-                    "VNPay return success for session reference {SessionReference}.",
-                    sessionId.ToString());
-                return View("PaymentSuccess");
+                _logger.LogWarning(
+                    "VNPay return rejected because TxnRef is invalid: {TxnRef}.",
+                    returnData.TxnRef);
+
+                return View("PaymentFail", BuildResult(
+                    isSuccess: false,
+                    message: "Invalid VNPay transaction reference.",
+                    returnData,
+                    null,
+                    null));
             }
 
-            _logger.LogWarning(
-                "VNPay return failed for session reference {SessionReference} with response code {ResponseCode}.",
-                sessionId.ToString(),
-                responseCode.ToString());
-            return View("PaymentFail");
+            var signedParameters = ExtractSignParameters(Request.Query);
+            var validSignature = _vnPayService.ValidateSignature(signedParameters, returnData.SecureHash);
+
+            if (!validSignature)
+            {
+                _logger.LogWarning(
+                    "VNPay return rejected due to invalid signature: txnRef {TxnRef}, session {SessionId}, order {OrderId}.",
+                    returnData.TxnRef,
+                    sessionId,
+                    orderId);
+
+                return View("PaymentFail", BuildResult(
+                    isSuccess: false,
+                    message: "VNPay signature validation failed.",
+                    returnData,
+                    sessionId,
+                    orderId));
+            }
+
+            var isSuccessfulTransaction = VNPayService.IsSuccessfulTransaction(
+                returnData.ResponseCode,
+                returnData.TransactionStatus);
+
+            if (!isSuccessfulTransaction)
+            {
+                _logger.LogWarning(
+                    "VNPay return failed: txnRef {TxnRef}, session {SessionId}, order {OrderId}, responseCode {ResponseCode}, transactionStatus {TransactionStatus}.",
+                    returnData.TxnRef,
+                    sessionId,
+                    orderId,
+                    returnData.ResponseCode,
+                    returnData.TransactionStatus);
+
+                return View("PaymentFail", BuildResult(
+                    isSuccess: false,
+                    message: "VNPay reported an unsuccessful transaction.",
+                    returnData,
+                    sessionId,
+                    orderId));
+            }
+
+            try
+            {
+                _paymentService.PaymentSuccess(orderId);
+
+                _logger.LogInformation(
+                    "VNPay return success: txnRef {TxnRef}, session {SessionId}, order {OrderId}, transactionNo {TransactionNo}.",
+                    returnData.TxnRef,
+                    sessionId,
+                    orderId,
+                    returnData.TransactionNo ?? string.Empty);
+
+                return View("PaymentSuccess", BuildResult(
+                    isSuccess: true,
+                    message: "VNPay payment completed successfully.",
+                    returnData,
+                    sessionId,
+                    orderId));
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "VNPay return could not finalize payment: txnRef {TxnRef}, session {SessionId}, order {OrderId}.",
+                    returnData.TxnRef,
+                    sessionId,
+                    orderId);
+
+                return View("PaymentFail", BuildResult(
+                    isSuccess: false,
+                    message: ex.Message,
+                    returnData,
+                    sessionId,
+                    orderId));
+            }
+        }
+
+        private static VNPayReturnData BuildReturnData(IQueryCollection query)
+        {
+            return new VNPayReturnData
+            {
+                TxnRef = query["vnp_TxnRef"].ToString(),
+                ResponseCode = query["vnp_ResponseCode"].ToString(),
+                TransactionStatus = query["vnp_TransactionStatus"].ToString(),
+                SecureHash = query["vnp_SecureHash"].ToString(),
+                TransactionNo = query["vnp_TransactionNo"].ToString(),
+                PayDate = query["vnp_PayDate"].ToString()
+            };
+        }
+
+        private static Dictionary<string, string> ExtractSignParameters(IQueryCollection query)
+        {
+            return query
+                .Where(x =>
+                    x.Key.StartsWith("vnp_", StringComparison.OrdinalIgnoreCase) &&
+                    !x.Key.Equals("vnp_SecureHash", StringComparison.OrdinalIgnoreCase) &&
+                    !x.Key.Equals("vnp_SecureHashType", StringComparison.OrdinalIgnoreCase) &&
+                    !StringValues.IsNullOrEmpty(x.Value))
+                .ToDictionary(
+                    x => x.Key,
+                    x => x.Value.ToString(),
+                    StringComparer.Ordinal);
+        }
+
+        private static VNPayResultViewModel BuildResult(
+            bool isSuccess,
+            string message,
+            VNPayReturnData returnData,
+            int? sessionId,
+            int? orderId)
+        {
+            return new VNPayResultViewModel
+            {
+                IsSuccess = isSuccess,
+                Message = message,
+                TxnRef = returnData.TxnRef,
+                ResponseCode = returnData.ResponseCode,
+                TransactionStatus = returnData.TransactionStatus,
+                SessionId = sessionId,
+                OrderId = orderId,
+                TransactionNo = returnData.TransactionNo,
+                PayDate = returnData.PayDate
+            };
         }
     }
 }

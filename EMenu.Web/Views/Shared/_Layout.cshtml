@@ -29,153 +29,167 @@
                         <small>Restaurant operations made simple</small>
                     </span>
                 </a>
-                <button class="navbar-toggler app-toggler"    type="button"    data-bs-toggle="collapse"
-                        data-bs-target=".navbar-collapse"       aria-controls="navbarSupportedContent"       aria-expanded="false"
+                <button class="navbar-toggler app-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
                         aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse justify-content-between">
                     <ul class="navbar-nav flex-grow-1 app-nav-links">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-
                         @if (isAdmin)
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                       aria-expanded="false">
                                     Operations
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                    </li>
                                     <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">Table</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Reservation" asp-action="Index">Reservation</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">Menu</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">Kitchen</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Menu Setup
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Category" asp-action="Index">Category</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Product" asp-action="Index">Product</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Combo" asp-action="Index">Combo</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Inventory & Supply
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">Inventory</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Procurement" asp-action="Index">Procurement</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Workforce
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Staff" asp-action="Index">Staff</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Hr" asp-action="Index">Timekeeping</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Wage" asp-action="Index">Wage</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="User" asp-action="Index">User</a>
-                            </li>
-                        }
+                                    <li><a class="dropdown-item" asp-controller="Reservation"
+                                               asp-action="Index">Reservation</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">Menu</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
+                                        </li>
+                                        <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                        Menu Setup
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="Category" asp-action="Index">Category</a>
+                                        </li>
+                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="Index">Product</a>
+                                        </li>
+                                        <li><a class="dropdown-item" asp-controller="Combo" asp-action="Index">Combo</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                           aria-expanded="false">
+                                        Inventory & Supply
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">Inventory</a>
+                                        </li>
+                                        <li><a class="dropdown-item" asp-controller="Procurement"
+                                                   asp-action="Index">Procurement</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                               aria-expanded="false">
+                                            Workforce
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" asp-controller="Staff" asp-action="Index">Staff</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Hr" asp-action="Index">Timekeeping</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Wage" asp-action="Index">Wage</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="User" asp-action="Index">User</a>
+                                    </li>
+                                }
 
-                        @if (!isAdmin && isStaff)
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Operations
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">Table</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Reservation" asp-action="Index">Reservation</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">Menu</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">Kitchen</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Inventory & Supply
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">Inventory</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Procurement" asp-action="Index">Procurement</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Hr" asp-action="Index">Timekeeping</a>
-                            </li>
-                        }
+                                @if (!isAdmin && isStaff)
+                                {
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                               aria-expanded="false">
+                                            Operations
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                            </li>
+                                            <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">Table</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Reservation"
+                                                       asp-action="Index">Reservation</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">Menu</a></li>
+                                                <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
+                                                </li>
+                                                <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                                   aria-expanded="false">
+                                                Inventory & Supply
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">Inventory</a>
+                                                </li>
+                                                <li><a class="dropdown-item" asp-controller="Procurement"
+                                                           asp-action="Index">Procurement</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-controller="Hr" asp-action="Index">Timekeeping</a>
+                                            </li>
+                                        }
 
-                        @if (!isAdmin && !isStaff && isKitchen)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Kitchen" asp-action="Index">Kitchen Board</a>
-                            </li>
-                        }
+                                        @if (!isAdmin && !isStaff && isKitchen)
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-controller="Kitchen" asp-action="Index">Kitchen Board</a>
+                                            </li>
+                                        }
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto app-user-nav">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item">
-                                <span class="nav-link app-user-name">
-                                    Hello, @User.Identity.Name
-                                </span>
-                            </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                        </li>
+                                    </ul>
+                                    <ul class="navbar-nav ms-auto app-user-nav">
+                                        @if (User.Identity?.IsAuthenticated == true)
+                                        {
+                                            <li class="nav-item">
+                                                <span class="nav-link app-user-name">
+                                                    Hello, @User.Identity.Name
+                                                </span>
+                                            </li>
 
-                            <li class="nav-item">
-                                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
-                                    <button type="submit" class="nav-link btn btn-link app-logout-btn">
-                                        Logout
-                                    </button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link btn btn-primary text-white px-3" href="/Auth/Login">
-                                    Login
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container-xxl app-shell">
-        <main role="main" class="app-main">
-            @RenderBody()
-        </main>
-    </div>
+                                            <li class="nav-item">
+                                                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                                    <button type="submit" class="nav-link btn btn-link app-logout-btn">
+                                                        Logout
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link btn btn-primary text-white px-3" href="/Auth/Login">
+                                                    Login
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </header>
+                    <div class="container-xxl app-shell">
+                        <main role="main" class="app-main">
+                            @RenderBody()
+                        </main>
+                    </div>
 
-    <footer class="footer app-footer">
-        <div class="container-xxl footer-inner">
-            <span>&copy; 2026 - EMenu.Web</span>
-            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/antiforgery.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+                    <footer class="footer app-footer">
+                        <div class="container-xxl footer-inner">
+                            <span>&copy; 2026 - EMenu.Web</span>
+                            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </div>
+                    </footer>
+                    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+                    <script src="~/js/site.js" asp-append-version="true"></script>
+                    <script src="~/js/antiforgery.js" asp-append-version="true"></script>
+                    @await RenderSectionAsync("Scripts", required: false)
+                </body>
 
-</html>
+            </html>
