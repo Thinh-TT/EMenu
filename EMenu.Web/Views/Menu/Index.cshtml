@@ -1,13 +1,37 @@
 @model List<EMenu.Domain.Entities.Category>
 @using EMenu.Domain.Enums
+@using System.Text.Json
 @inject IViewLocalizer Localizer
 @{
     ViewData["Title"] = Localizer["Restaurant Menu"];
+    var menuPageData = JsonSerializer.Serialize(new
+    {
+        i18n = new
+        {
+            cart = Localizer["Cart"].Value,
+            yourOrder = Localizer["Your order"].Value,
+            openCart = Localizer["Open cart"].Value,
+            closeCart = Localizer["Close cart"].Value,
+            emptyCartTitle = Localizer["Your cart is empty."].Value,
+            emptyCartHint = Localizer["Add a few dishes to review them here before sending your order to the kitchen."].Value,
+            total = Localizer["Total:"].Value,
+            submitOrder = Localizer["Submit Order"].Value,
+            sessionNotFound = Localizer["Session not found! Please start a new order. By scanning the QR code at the table."].Value,
+            cartIsEmpty = Localizer["Cart is empty"].Value,
+            orderPlaced = Localizer["Order placed!"].Value,
+            unableToPlaceOrder = Localizer["Unable to place order"].Value,
+            decreaseQuantity = Localizer["Decrease quantity"].Value,
+            increaseQuantity = Localizer["Increase quantity"].Value,
+            removeItem = Localizer["Remove item"].Value,
+            itemCount = Localizer["{0} item(s)"].Value
+        }
+    });
 }
 
 <section class="page-intro">
     <h2>@Localizer["Restaurant Menu"]</h2>
-    <p>@Localizer["Browse products by category, review combos quickly and keep the cart visible while ordering."]</p>
+    <p>@Localizer["Browse products by category, review combos quickly and open your cart from anywhere while ordering."]
+    </p>
     @if (ViewBag.HasValidSession != true)
     {
         <div class="alert alert-warning mb-0">
@@ -16,7 +40,7 @@
     }
 </section>
 
-<div class="menu-layout">
+<div class="menu-layout menu-layout--single">
     <div class="menu-catalog">
         @foreach (var category in Model)
         {
@@ -54,15 +78,50 @@
             </section>
         }
     </div>
-
-    <aside class="cart-panel">
-        <h3>@Localizer["Cart"]</h3>
-        <div id="cartItems"></div>
-        <h4>@Localizer["Total:"] <span id="cartTotal">@((0m).ToVnd())</span></h4>
-        <button onclick="submitOrder()" class="btn btn-success">@Localizer["Submit Order"]</button>
-    </aside>
 </div>
 
+<button id="cartFab"   type="button"    class="cart-fab"     onclick="toggleCartDrawer()"     aria-controls="cartDrawer"
+        aria-expanded="false"  aria-label="@Localizer["Open cart"]">
+    <span class="cart-fab__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="M3 4h2.4l1.3 7.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5l1.3-4.7H7.3" />
+            <circle cx="10" cy="18.2" r="1.6" />
+            <circle cx="17" cy="18.2" r="1.6" />
+        </svg>
+    </span>
+    <span class="cart-fab__label">@Localizer["Cart"]</span>
+    <span id="cartBadge" class="cart-fab__badge" hidden>0</span>
+</button>
+
+<div id="cartBackdrop" class="cart-backdrop" hidden onclick="closeCartDrawer()"></div>
+
+<aside id="cartDrawer" class="cart-drawer" aria-hidden="true" aria-labelledby="cartDrawerTitle">
+    <div class="cart-drawer__header">
+        <div>
+            <p class="eyebrow">@Localizer["Your order"]</p>
+            <h3 id="cartDrawerTitle">@Localizer["Cart"]</h3>
+        </div>
+        <button type="button"           class="cart-drawer__close"           onclick="closeCartDrawer()"
+                aria-label="@Localizer["Close cart"]">
+            x
+        </button>
+    </div>
+
+    <div class="cart-drawer__meta">
+        <span id="cartCountLabel" class="category-count">@Localizer["0 item(s)"]</span>
+    </div>
+
+    <div id="cartItems" class="cart-drawer__items"></div>
+
+    <div class="cart-drawer__footer">
+        <h4>@Localizer["Total:"] <span id="cartTotal">@((0m).ToVnd())</span></h4>
+        <button type="button" onclick="submitOrder()" class="btn btn-success">@Localizer["Submit Order"]</button>
+    </div>
+</aside>
+
+<script>
+    window.customerMenuData = @Html.Raw(menuPageData);
+</script>
 <script src="/js/cart.js"></script>
 <script src="/js/menu.js"></script>
 

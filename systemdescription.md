@@ -1,6 +1,7 @@
 # System Description - EMenu
 
 ## 1. Tong quan he thong
+
 - `EMenu` la he thong quan ly van hanh nha hang theo mo hinh web MVC, gom:
 - `Frontend`: ASP.NET Core MVC + Razor Views + JavaScript (fetch API, SignalR, Chart.js).
 - `Backend`: ASP.NET Core controllers + Application Services + Repository/UoW.
@@ -10,6 +11,7 @@
 - Quan ly nhan su co ban (user, role, staff), danh muc san pham va combo.
 
 ## 2. Cau truc giai phap
+
 - `EMenu.Web`: presentation layer (controllers, views, static assets, auth cookie, SignalR hub).
 - `EMenu.Application`: business layer (cac service xu ly nghiep vu).
 - `EMenu.Application.Abstractions`: hop dong (repository interfaces, DTOs, UoW/transaction abstractions).
@@ -17,7 +19,9 @@
 - `EMenu.Infrastructure`: EF Core `AppDbContext`, repository implementations, migrations, seeding.
 
 ## 3. Backend architecture
+
 ### 3.1 Startup va DI
+
 - `Program.cs` dang ky:
 - `AppDbContext` voi SQL Server.
 - Repository implementations qua `AddInfrastructureRepositories()`.
@@ -28,6 +32,7 @@
 - Auto validate antiforgery cho controller/view requests.
 
 ### 3.2 Mo hinh xu ly nghiep vu
+
 - Service layer la trung tam xu ly:
 - `SessionService`: mo/dong phien tai ban.
 - `OrderService`: tao don, them mon, submit gio hang, tinh bill theo session.
@@ -41,12 +46,14 @@
 - `ReservationService`: tao/xac nhan/huy dat ban, validate suc chua ban va check trung lich theo ban-thoi diem.
 
 ### 3.3 Data access pattern
+
 - Application layer chi lam viec voi interfaces:
 - `IOrderRepository`, `ISessionRepository`, `IPaymentRepository`, `IUnitOfWork`, ...
 - Infrastructure trien khai EF Core repositories.
 - Cac use case quan trong su dung transaction qua `IUnitOfWork.BeginTransaction()`.
 
 ### 3.4 API va controller style
+
 - He thong dung ket hop:
 - MVC controllers tra ve views (man hinh quan tri/van hanh).
 - API-style endpoints cho JS frontend (`/api/order`, `/api/session`, `/api/kitchen`, `/api/dashboard`, `/api/bill`).
@@ -63,7 +70,9 @@
 - `GET /api/dashboard/summary`, `GET /api/dashboard/import-trend`, `GET /api/dashboard/alerts`.
 
 ## 4. Frontend architecture
+
 ### 4.1 Presentation stack
+
 - Razor Views theo module: `Auth`, `Table`, `Menu`, `Kitchen`, `Dashboard`, `BillPage`, `Checkout`, `Qr`, ...
 - Razor Views theo module: `Auth`, `Table`, `Menu`, `Kitchen`, `Dashboard`, `BillPage`, `Checkout`, `Qr`, `Procurement`, `Reservation`, ...
 - Layout chung `_Layout.cshtml`:
@@ -72,6 +81,7 @@
 - Load bootstrap, site CSS, JS global.
 
 ### 4.2 JavaScript modules
+
 - `menu.js`: quan ly session id theo URL, them mon nhanh.
 - `cart.js`: gio hang tren `sessionStorage`, submit don qua API.
 - `table.js`: mo/dong ban tu giao dien staff.
@@ -83,6 +93,7 @@
 - Man hinh `Procurement/CreateReceipt` su dung form dong (line items) de them nhieu nguyen lieu trong 1 phieu nhap.
 
 ### 4.3 Realtime
+
 - SignalR hub `OrderHub` tai endpoint `/orderHub`.
 - Event dang dung:
 - `OrderSubmitted`: thong bao don moi.
@@ -90,7 +101,9 @@
 - `OrderStatusUpdated`: dong bo trang thai mon realtime.
 
 ## 5. Luong nghiep vu chinh
+
 ### 5.1 Luong khach hang qua QR
+
 - Khach scan QR: `/Customer/Start?tableId=...`.
 - Nhap thong tin khach -> tao customer -> tao session gan voi table.
 - Chuyen sang `/Menu?tableId=...&sessionId=...`.
@@ -99,11 +112,13 @@
 - Khach theo doi trang thai tai `OrderPage/Tracking`.
 
 ### 5.2 Luong staff/admin tai ban
+
 - Staff/Admin vao man hinh `Table`.
 - Mo session, xem bill, checkout.
 - Thanh toan cash tao `Invoice` + `Payment`, dong session va tra ban ve available.
 
 ### 5.3 Luong kitchen
+
 - Kitchen vao `Kitchen/Index`.
 - Lay pending items qua API.
 - Chuyen trang thai mon theo thu tu:
@@ -112,6 +127,7 @@
 - Trang thai phat realtime cho cac man hinh dang theo doi.
 
 ### 5.4 Luong nhap hang (supplier & import)
+
 - Staff/Admin vao `Procurement/Index` de CRUD nha cung cap.
 - Tao phieu nhap tai `Procurement/CreateReceipt` voi nhieu dong nguyen lieu.
 - He thong validate supplier/staff/nguyen lieu va quantity/price > 0.
@@ -119,6 +135,7 @@
 - Theo doi lich su phieu nhap theo ngay/nha cung cap tai `Procurement/ReceiptHistory`.
 
 ### 5.5 Luong dat ban (reservation)
+
 - Staff/Admin quan ly dat ban tai `Reservation/Index`:
 - Loc theo khoang ngay/ban/trang thai, tao dat ban moi, xac nhan/huy dat ban.
 - Khach hang co the tao dat ban online tai `Reservation/Book`.
@@ -126,6 +143,7 @@
 - Trang thai dat ban: `Pending -> Confirmed -> Cancelled`.
 
 ## 6. Security va phan quyen
+
 - Xac thuc bang cookie auth.
 - Role constants:
 - `Admin`, `Staff`, `Kitchen`.
@@ -136,6 +154,7 @@
 - Co antiforgery token cho form va fetch API.
 
 ## 7. Tich hop ngoai
+
 - VNPay:
 - Tao payment URL tu cau hinh (`TmnCode`, `HashSecret`, `ReturnUrl`).
 - Co action `VNPayReturn` de nhan ket qua redirect.
@@ -143,6 +162,7 @@
 - Hien thi import trend va top product tren dashboard (kem KPI cards + alert widgets).
 
 ## 8. Nhan xet ky thuat hien tai
+
 - Uu diem:
 - Tach layer ro rang (Web/Application/Infrastructure/Domain).
 - Service layer bao phu nghiep vu cot loi.
@@ -155,11 +175,3 @@
 - Trong code co tham chieu view `PaymentSuccess`/`PaymentFail` nhung chua thay file view tuong ung.
 - `table.js` dang hard-code `customerId=1` khi mo ban tu giao dien table.
 - `appsettings.json` dang co connection string va VNPay secrets dang plain text (nen dua qua secret manager/ENV).
-
-## 9. San sang mo rong
-- Nen tang hien tai phu hop de mo rong them cac module:
-- HR (timekeeping/wage), inventory, supplier/receipt, reservation.
-- Huong mo rong it pha vo:
-- Them entity + configuration + repository + service theo pattern san co.
-- Uu tien giu nguyen contracts cu, bo sung contracts moi theo feature slice.
-- Neu can public API cho module moi, tiep tuc theo convention `/api/{module}` + antiforgery + role policy ro rang.
