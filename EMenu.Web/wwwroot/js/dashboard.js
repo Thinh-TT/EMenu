@@ -1,5 +1,7 @@
-const numberFormatter = new Intl.NumberFormat("vi-VN");
-const currencyFormatter = new Intl.NumberFormat("vi-VN", {
+const dashboardI18n = window.dashboardI18n || {};
+const currentLocale = dashboardI18n.locale || document.documentElement.lang || "en-US";
+const numberFormatter = new Intl.NumberFormat(currentLocale);
+const currencyFormatter = new Intl.NumberFormat(currentLocale, {
     style: "currency",
     currency: "VND",
     maximumFractionDigits: 0
@@ -26,12 +28,16 @@ function formatNumber(value) {
     return numberFormatter.format(value ?? 0);
 }
 
+function t(key, fallback) {
+    return dashboardI18n[key] || fallback;
+}
+
 async function fetchJson(url) {
     const response = await fetch(url);
 
     if (!response.ok) {
         const message = await response.text();
-        throw new Error(message || `Request failed: ${url}`);
+        throw new Error(message || `${t("requestFailedPrefix", "Request failed")}: ${url}`);
     }
 
     return response.json();
@@ -47,7 +53,7 @@ async function loadSummary() {
     setText("importValueToday", formatCurrency(summary.importValueToday));
     setText("importValueMonth", formatCurrency(summary.importValueThisMonth));
     setText("reservationsToday", formatNumber(summary.reservationsToday));
-    setText("staffHoursToday", `${formatNumber(summary.staffHoursToday)} h`);
+    setText("staffHoursToday", `${formatNumber(summary.staffHoursToday)} ${t("hourSuffix", "h")}`);
 }
 
 async function loadImportTrend() {
@@ -65,7 +71,7 @@ async function loadImportTrend() {
             labels,
             datasets: [
                 {
-                    label: "Import Value",
+                    label: t("importValueLabel", "Import Value"),
                     data: values,
                     fill: true,
                     borderColor: "#1d4ed8",
@@ -167,15 +173,15 @@ async function loadAlerts() {
     renderList(
         "lowStockWarningList",
         alerts.lowStockWarnings,
-        item => `<strong>${item.ingredientName}</strong><span>${formatNumber(item.stockQuantity)} ${item.unit} / Min ${formatNumber(item.minStock)} ${item.unit}</span>`,
-        "No low-stock warning."
+        item => `<strong>${item.ingredientName}</strong><span>${formatNumber(item.stockQuantity)} ${item.unit} / ${t("minLabel", "Min")} ${formatNumber(item.minStock)} ${item.unit}</span>`,
+        t("noLowStockWarning", "No low-stock warning.")
     );
 
     renderList(
         "reservationClashList",
         alerts.reservationClashes,
-        item => `<strong>${item.tableName}</strong><span>${new Date(item.reservationTime).toLocaleString("vi-VN")} - ${item.conflictCount} reservations</span>`,
-        "No reservation clash detected."
+        item => `<strong>${item.tableName}</strong><span>${new Date(item.reservationTime).toLocaleString(currentLocale)} - ${item.conflictCount} ${t("reservationsLabel", "reservations")}</span>`,
+        t("noReservationClashDetected", "No reservation clash detected.")
     );
 }
 

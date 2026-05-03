@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Reservation Management" xml:space="preserve">
+    <value>Quản lý đặt bàn</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Chờ xác nhận</value>
+  </data>
+  <data name="Confirmed" xml:space="preserve">
+    <value>Đã xác nhận</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Đã hủy</value>
+  </data>
+  <data name="Open Customer Booking Page" xml:space="preserve">
+    <value>Mở trang khách tự đặt bàn</value>
+  </data>
+  <data name="From date" xml:space="preserve">
+    <value>Từ ngày</value>
+  </data>
+  <data name="To date" xml:space="preserve">
+    <value>Đến ngày</value>
+  </data>
+  <data name="Table" xml:space="preserve">
+    <value>Bàn</value>
+  </data>
+  <data name="All tables" xml:space="preserve">
+    <value>Tất cả bàn</value>
+  </data>
+  <data name="{0} (Capacity {1})" xml:space="preserve">
+    <value>{0} (Sức chứa {1})</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Trạng thái</value>
+  </data>
+  <data name="All statuses" xml:space="preserve">
+    <value>Tất cả trạng thái</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Lọc</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Đặt lại</value>
+  </data>
+  <data name="Create Reservation" xml:space="preserve">
+    <value>Tạo đặt bàn</value>
+  </data>
+  <data name="Customer name" xml:space="preserve">
+    <value>Tên khách hàng</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Số điện thoại</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Guests" xml:space="preserve">
+    <value>Số khách</value>
+  </data>
+  <data name="Reservation time" xml:space="preserve">
+    <value>Thời gian đặt bàn</value>
+  </data>
+  <data name="Create (Pending)" xml:space="preserve">
+    <value>Tạo (Chờ xác nhận)</value>
+  </data>
+  <data name="Calendar View" xml:space="preserve">
+    <value>Lịch đặt bàn</value>
+  </data>
+  <data name="No reservation found for selected filter." xml:space="preserve">
+    <value>Không có đặt bàn phù hợp với bộ lọc đã chọn.</value>
+  </data>
+  <data name="{0} bookings" xml:space="preserve">
+    <value>{0} lượt đặt</value>
+  </data>
+  <data name="Guests: {0}" xml:space="preserve">
+    <value>Số khách: {0}</value>
+  </data>
+  <data name="Reservation List" xml:space="preserve">
+    <value>Danh sách đặt bàn</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>Mã</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Thời gian</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Khách hàng</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Thao tác</value>
+  </data>
+  <data name="No reservation found." xml:space="preserve">
+    <value>Không tìm thấy đặt bàn.</value>
+  </data>
+  <data name="Table {0}" xml:space="preserve">
+    <value>Bàn {0}</value>
+  </data>
+  <data name="Customer {0}" xml:space="preserve">
+    <value>Khách {0}</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Hủy</value>
+  </data>
+  <data name="Unable to validate reservation time." xml:space="preserve">
+    <value>Không thể kiểm tra thời gian đặt bàn.</value>
+  </data>
+  <data name="Selected table already has a reservation at this time." xml:space="preserve">
+    <value>Bàn đã chọn đã có lịch đặt tại thời điểm này.</value>
+  </data>
+  <data name="Unable to validate reservation time right now." xml:space="preserve">
+    <value>Hiện tại không thể kiểm tra thời gian đặt bàn.</value>
+  </data>
+</root>

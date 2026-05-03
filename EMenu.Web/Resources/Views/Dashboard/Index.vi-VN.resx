@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Bảng điều khiển</value>
+  </data>
+  <data name="Restaurant Dashboard" xml:space="preserve">
+    <value>Bảng điều khiển nhà hàng</value>
+  </data>
+  <data name="Track operations in real time with expanded KPIs, import trend, and active alerts." xml:space="preserve">
+    <value>Theo dõi vận hành theo thời gian thực với KPI mở rộng, xu hướng nhập hàng và cảnh báo đang hoạt động.</value>
+  </data>
+  <data name="Revenue Today" xml:space="preserve">
+    <value>Doanh thu hôm nay</value>
+  </data>
+  <data name="Orders Today" xml:space="preserve">
+    <value>Đơn hôm nay</value>
+  </data>
+  <data name="Tables In Use" xml:space="preserve">
+    <value>Bàn đang sử dụng</value>
+  </data>
+  <data name="Low Stock Items" xml:space="preserve">
+    <value>Mặt hàng sắp hết</value>
+  </data>
+  <data name="Import Value Today" xml:space="preserve">
+    <value>Giá trị nhập hôm nay</value>
+  </data>
+  <data name="Import Value This Month" xml:space="preserve">
+    <value>Giá trị nhập tháng này</value>
+  </data>
+  <data name="Reservations Today" xml:space="preserve">
+    <value>Lượt đặt bàn hôm nay</value>
+  </data>
+  <data name="Staff Hours Today" xml:space="preserve">
+    <value>Giờ làm hôm nay</value>
+  </data>
+  <data name="Import Trend (Last 7 Days)" xml:space="preserve">
+    <value>Xu hướng nhập hàng (7 ngày gần nhất)</value>
+  </data>
+  <data name="Top Products" xml:space="preserve">
+    <value>Món bán chạy</value>
+  </data>
+  <data name="Low Stock Warnings" xml:space="preserve">
+    <value>Cảnh báo tồn kho thấp</value>
+  </data>
+  <data name="Ingredients that are at or below minimum stock." xml:space="preserve">
+    <value>Nguyên liệu đang bằng hoặc thấp hơn mức tồn tối thiểu.</value>
+  </data>
+  <data name="Open Inventory Alerts" xml:space="preserve">
+    <value>Mở cảnh báo tồn kho</value>
+  </data>
+  <data name="Reservation Clash Warnings" xml:space="preserve">
+    <value>Cảnh báo trùng lịch đặt bàn</value>
+  </data>
+  <data name="Potential double-booking in the next 7 days." xml:space="preserve">
+    <value>Khả năng đặt trùng bàn trong 7 ngày tới.</value>
+  </data>
+  <data name="Open Reservation Management" xml:space="preserve">
+    <value>Mở quản lý đặt bàn</value>
+  </data>
+  <data name="Import Value" xml:space="preserve">
+    <value>Giá trị nhập</value>
+  </data>
+  <data name="No low-stock warning." xml:space="preserve">
+    <value>Không có cảnh báo tồn kho thấp.</value>
+  </data>
+  <data name="No reservation clash detected." xml:space="preserve">
+    <value>Không phát hiện trùng lịch đặt bàn.</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Tối thiểu</value>
+  </data>
+  <data name="reservations" xml:space="preserve">
+    <value>lượt đặt</value>
+  </data>
+  <data name="h" xml:space="preserve">
+    <value>giờ</value>
+  </data>
+  <data name="Request failed" xml:space="preserve">
+    <value>Yêu cầu thất bại</value>
+  </data>
+</root>

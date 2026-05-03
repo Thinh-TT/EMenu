@@ -1,13 +1,17 @@
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject IViewLocalizer Localizer
+@using System.Globalization
 @{
     var antiforgeryTokens = Antiforgery.GetAndStoreTokens(Context);
     var isAdmin = User.IsInRole("Admin");
     var isStaff = User.IsInRole("Staff");
     var isKitchen = User.IsInRole("Kitchen");
+    var currentCulture = CultureInfo.CurrentUICulture.Name;
+    var currentLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
 }
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="@currentLanguage">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,7 +20,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-
 <body>
     <div class="app-backdrop"></div>
     <header class="site-header">
@@ -26,12 +29,16 @@
                     <span class="brand-mark">E</span>
                     <span class="brand-copy">
                         <strong>EMenu</strong>
-                        <small>Restaurant operations made simple</small>
+                        <small>@Localizer["Restaurant operations made simple"]</small>
                     </span>
                 </a>
-                <button class="navbar-toggler app-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
-                        aria-label="Toggle navigation">
+                <button class="navbar-toggler app-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="@Localizer["Toggle navigation"]">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse justify-content-between">
@@ -39,157 +46,154 @@
                         @if (isAdmin)
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                       aria-expanded="false">
-                                    Operations
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @Localizer["Operations"]
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                                    </li>
-                                    <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">Table</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Reservation"
-                                               asp-action="Index">Reservation</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">Menu</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
-                                        </li>
-                                        <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                           aria-expanded="false">
-                                        Menu Setup
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-controller="Category" asp-action="Index">Category</a>
-                                        </li>
-                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="Index">Product</a>
-                                        </li>
-                                        <li><a class="dropdown-item" asp-controller="Combo" asp-action="Index">Combo</a></li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                           aria-expanded="false">
-                                        Inventory & Supply
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">Inventory</a>
-                                        </li>
-                                        <li><a class="dropdown-item" asp-controller="Procurement"
-                                                   asp-action="Index">Procurement</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                               aria-expanded="false">
-                                            Workforce
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" asp-controller="Staff" asp-action="Index">Staff</a></li>
-                                            <li><a class="dropdown-item" asp-controller="Hr" asp-action="Index">Timekeeping</a></li>
-                                            <li><a class="dropdown-item" asp-controller="Wage" asp-action="Index">Wage</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="User" asp-action="Index">User</a>
-                                    </li>
-                                }
+                                    <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">@Localizer["Dashboard"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">@Localizer["Table"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Reservation" asp-action="Index">@Localizer["Reservation"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">@Localizer["Menu"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">@Localizer["Kitchen"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @Localizer["Menu Setup"]
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Category" asp-action="Index">@Localizer["Category"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Product" asp-action="Index">@Localizer["Product"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Combo" asp-action="Index">@Localizer["Combo"]</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @Localizer["Inventory & Supply"]
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">@Localizer["Inventory"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Procurement" asp-action="Index">@Localizer["Procurement"]</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @Localizer["Workforce"]
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Staff" asp-action="Index">@Localizer["Staff"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Hr" asp-action="Index">@Localizer["Timekeeping"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Wage" asp-action="Index">@Localizer["Wage"]</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="User" asp-action="Index">@Localizer["User"]</a>
+                            </li>
+                        }
 
-                                @if (!isAdmin && isStaff)
-                                {
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                               aria-expanded="false">
-                                            Operations
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                                            </li>
-                                            <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">Table</a></li>
-                                            <li><a class="dropdown-item" asp-controller="Reservation"
-                                                       asp-action="Index">Reservation</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">Menu</a></li>
-                                                <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">Kitchen</a>
-                                                </li>
-                                                <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                                   aria-expanded="false">
-                                                Inventory & Supply
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">Inventory</a>
-                                                </li>
-                                                <li><a class="dropdown-item" asp-controller="Procurement"
-                                                           asp-action="Index">Procurement</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" asp-controller="Hr" asp-action="Index">Timekeeping</a>
-                                            </li>
-                                        }
+                        @if (!isAdmin && isStaff)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @Localizer["Operations"]
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Dashboard" asp-action="Index">@Localizer["Dashboard"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Table" asp-action="Index">@Localizer["Table"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Reservation" asp-action="Index">@Localizer["Reservation"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Menu" asp-action="Index">@Localizer["Menu"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Kitchen" asp-action="Index">@Localizer["Kitchen"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Qr" asp-action="Index">QR</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @Localizer["Inventory & Supply"]
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Index">@Localizer["Inventory"]</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Procurement" asp-action="Index">@Localizer["Procurement"]</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Hr" asp-action="Index">@Localizer["Timekeeping"]</a>
+                            </li>
+                        }
 
-                                        @if (!isAdmin && !isStaff && isKitchen)
-                                        {
-                                            <li class="nav-item">
-                                                <a class="nav-link" asp-controller="Kitchen" asp-action="Index">Kitchen Board</a>
-                                            </li>
-                                        }
+                        @if (!isAdmin && !isStaff && isKitchen)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Kitchen" asp-action="Index">@Localizer["Kitchen Board"]</a>
+                            </li>
+                        }
 
-                                        <li class="nav-item">
-                                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                                        </li>
-                                    </ul>
-                                    <ul class="navbar-nav ms-auto app-user-nav">
-                                        @if (User.Identity?.IsAuthenticated == true)
-                                        {
-                                            <li class="nav-item">
-                                                <span class="nav-link app-user-name">
-                                                    Hello, @User.Identity.Name
-                                                </span>
-                                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
+                        </li>
+                    </ul>
 
-                                            <li class="nav-item">
-                                                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
-                                                    <button type="submit" class="nav-link btn btn-link app-logout-btn">
-                                                        Logout
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        }
-                                        else
-                                        {
-                                            <li class="nav-item">
-                                                <a class="nav-link btn btn-primary text-white px-3" href="/Auth/Login">
-                                                    Login
-                                                </a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                        </nav>
-                    </header>
-                    <div class="container-xxl app-shell">
-                        <main role="main" class="app-main">
-                            @RenderBody()
-                        </main>
-                    </div>
+                    <ul class="navbar-nav ms-auto app-user-nav">
+                        <li class="nav-item d-flex align-items-center">
+                            <a class="nav-link @(currentCulture == "en-US" ? "fw-bold" : string.Empty)"
+                               asp-controller="Localization"
+                               asp-action="SetLanguage"
+                               asp-route-culture="en-US"
+                               asp-route-returnUrl="@returnUrl">EN</a>
+                            <span class="nav-link px-1">|</span>
+                            <a class="nav-link @(currentCulture == "vi-VN" ? "fw-bold" : string.Empty)"
+                               asp-controller="Localization"
+                               asp-action="SetLanguage"
+                               asp-route-culture="vi-VN"
+                               asp-route-returnUrl="@returnUrl">VI</a>
+                        </li>
 
-                    <footer class="footer app-footer">
-                        <div class="container-xxl footer-inner">
-                            <span>&copy; 2026 - EMenu.Web</span>
-                            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </div>
-                    </footer>
-                    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-                    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-                    <script src="~/js/site.js" asp-append-version="true"></script>
-                    <script src="~/js/antiforgery.js" asp-append-version="true"></script>
-                    @await RenderSectionAsync("Scripts", required: false)
-                </body>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link app-user-name">
+                                    @Localizer["Hello"], @User.Identity.Name
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="nav-link btn btn-link app-logout-btn">
+                                        @Localizer["Logout"]
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-primary text-white px-3" href="/Auth/Login">
+                                    @Localizer["Login"]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-            </html>
+    <div class="container-xxl app-shell">
+        <main role="main" class="app-main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer app-footer">
+        <div class="container-xxl footer-inner">
+            <span>&copy; 2026 - EMenu.Web</span>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["Privacy"]</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/antiforgery.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

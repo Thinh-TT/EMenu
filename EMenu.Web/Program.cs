@@ -4,8 +4,10 @@ using EMenu.Infrastructure.Data;
 using EMenu.Infrastructure.DependencyInjection;
 using EMenu.Infrastructure.Seed;
 using EMenu.Web.Hubs;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,10 +68,16 @@ builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "RequestVerificationToken";
 });
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Resources";
+});
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 })
+.AddViewLocalization()
+.AddDataAnnotationsLocalization()
 .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler =
@@ -77,6 +85,25 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 var app = builder.Build();
+
+var supportedCultures = new[]
+{
+    new CultureInfo("en-US"),
+    new CultureInfo("vi-VN")
+};
+
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en-US"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
+
+localizationOptions.RequestCultureProviders = new IRequestCultureProvider[]
+{
+    new CookieRequestCultureProvider(),
+    new QueryStringRequestCultureProvider()
+};
 
 if (app.Environment.IsDevelopment())
 {
@@ -94,6 +121,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRequestLocalization(localizationOptions);
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();

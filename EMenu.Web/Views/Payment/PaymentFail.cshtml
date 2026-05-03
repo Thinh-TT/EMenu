@@ -1,37 +1,41 @@
 @model EMenu.Web.ViewModels.VNPayResultViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["VNPay Payment Failed"];
+}
 
 <section class="page-intro">
-    <h2>VNPay Payment Failed</h2>
+    <h2>@Localizer["VNPay Payment Failed"]</h2>
     <p>@Model.Message</p>
 
     <table class="table">
         <tbody>
             <tr>
-                <th>Transaction Ref</th>
+                <th>@Localizer["Transaction Ref"]</th>
                 <td>@Model.TxnRef</td>
             </tr>
             <tr>
-                <th>Session</th>
+                <th>@Localizer["Session"]</th>
                 <td>@Model.SessionId</td>
             </tr>
             <tr>
-                <th>Order</th>
+                <th>@Localizer["Order"]</th>
                 <td>@Model.OrderId</td>
             </tr>
             <tr>
-                <th>Response Code</th>
+                <th>@Localizer["Response Code"]</th>
                 <td>@Model.ResponseCode</td>
             </tr>
             <tr>
-                <th>Transaction Status</th>
+                <th>@Localizer["Transaction Status"]</th>
                 <td>@Model.TransactionStatus</td>
             </tr>
             <tr>
-                <th>VNPay Transaction No</th>
+                <th>@Localizer["VNPay Transaction No"]</th>
                 <td>@Model.TransactionNo</td>
             </tr>
             <tr>
-                <th>Pay Date</th>
+                <th>@Localizer["Pay Date"]</th>
                 <td>@Model.PayDate</td>
             </tr>
         </tbody>
@@ -40,8 +44,8 @@
     <div class="checkout-actions">
         @if (Model.SessionId.HasValue)
         {
-            <a class="btn btn-warning" href="/Checkout?sessionId=@Model.SessionId.Value">Back To Checkout</a>
+            <a class="btn btn-warning" href="/Checkout?sessionId=@Model.SessionId.Value">@Localizer["Back To Checkout"]</a>
         }
-        <a class="btn btn-link" href="/Table">Back To Table</a>
+        <a class="btn btn-link" href="/Table">@Localizer["Back To Table"]</a>
     </div>
 </section>

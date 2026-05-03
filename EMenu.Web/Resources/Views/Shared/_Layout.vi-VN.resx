@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Restaurant operations made simple" xml:space="preserve">
+    <value>Quan ly nha hang don gian hon</value>
+  </data>
+  <data name="Toggle navigation" xml:space="preserve">
+    <value>Mo dong dieu huong</value>
+  </data>
+  <data name="Operations" xml:space="preserve">
+    <value>Van hanh</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Bang dieu khien</value>
+  </data>
+  <data name="Table" xml:space="preserve">
+    <value>Ban</value>
+  </data>
+  <data name="Reservation" xml:space="preserve">
+    <value>Dat ban</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Thuc don</value>
+  </data>
+  <data name="Kitchen" xml:space="preserve">
+    <value>Bep</value>
+  </data>
+  <data name="Menu Setup" xml:space="preserve">
+    <value>Thuc don</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Danh muc</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Mon an</value>
+  </data>
+  <data name="Combo" xml:space="preserve">
+    <value>Combo</value>
+  </data>
+  <data name="Inventory &amp; Supply" xml:space="preserve">
+    <value>Kho </value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Ton kho</value>
+  </data>
+  <data name="Procurement" xml:space="preserve">
+    <value>Nhap hang</value>
+  </data>
+  <data name="Workforce" xml:space="preserve">
+    <value>Nhan su</value>
+  </data>
+  <data name="Staff" xml:space="preserve">
+    <value>Nhan vien</value>
+  </data>
+  <data name="Timekeeping" xml:space="preserve">
+    <value>Cham cong</value>
+  </data>
+  <data name="Wage" xml:space="preserve">
+    <value>Luong</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Tai khoan</value>
+  </data>
+  <data name="Kitchen Board" xml:space="preserve">
+    <value>Man hinh bep</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Quyen rieng tu</value>
+  </data>
+  <data name="Hello" xml:space="preserve">
+    <value>Xin chao</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Dang xuat</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Dang nhap</value>
+  </data>
+</root>

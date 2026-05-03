@@ -3,6 +3,11 @@
     const TABLE_STATUS_OCCUPIED = 1;
     const TABLE_STATUS_RESERVED = 2;
     const tableData = window.tableManagementData || { tables: [], actor: "Anonymous" };
+    const i18n = tableData.i18n || {};
+
+    function t(key, fallback) {
+        return i18n[key] || fallback;
+    }
 
     window.openTable = function (tableId) {
         fetch(`/api/session/start?tableId=${tableId}&customerId=1`, {
@@ -17,13 +22,13 @@
                 return res.json();
             })
             .then(data => {
-                alert("Session started");
+                alert(t("sessionStarted", "Session started"));
 
                 window.location =
                     `/Menu?tableId=${tableId}&sessionId=${data.orderSessionID}`;
             })
             .catch(err => {
-                alert(err.message || "Unable to start session");
+                alert(err.message || t("unableToStartSession", "Unable to start session"));
             });
     };
 
@@ -37,11 +42,11 @@
                     throw new Error(await readErrorMessage(res));
                 }
 
-                alert("Session ended");
+                alert(t("sessionEnded", "Session ended"));
                 location.reload();
             })
             .catch(err => {
-                alert(err.message || "Unable to end session");
+                alert(err.message || t("unableToEndSession", "Unable to end session"));
             });
     };
 
@@ -71,7 +76,7 @@
         const targetTableId = Number.parseInt(getValue("targetTableSelect"), 10);
 
         if (!actionType || Number.isNaN(sourceTableId) || Number.isNaN(targetTableId)) {
-            alert("Please choose a valid target table.");
+            alert(t("chooseValidTargetTable", "Please choose a valid target table."));
             return;
         }
 
@@ -99,12 +104,14 @@
                 return res.json();
             })
             .then(result => {
-                const actionText = actionType === "transfer" ? "Transfer" : "Merge";
-                alert(`${actionText} successful. Moved orders: ${result.movedOrderCount}`);
+                const successTemplate = actionType === "transfer"
+                    ? t("transferSuccessful", "Transfer successful. Moved orders: {0}")
+                    : t("mergeSuccessful", "Merge successful. Moved orders: {0}");
+                alert(successTemplate.replace("{0}", result.movedOrderCount));
                 location.reload();
             })
             .catch(err => {
-                alert(err.message || "Unable to complete table action");
+                alert(err.message || t("unableToCompleteTableAction", "Unable to complete table action"));
             });
     };
 
@@ -134,7 +141,7 @@
         const sourceTable = tableData.tables.find(table => table.id === sourceTableId);
 
         if (!sourceTable) {
-            alert("Source table not found.");
+            alert(t("sourceTableNotFound", "Source table not found."));
             return;
         }
 
@@ -156,7 +163,7 @@
         });
 
         if (selectableTargets.length === 0) {
-            alert("No valid target table for this action.");
+            alert(t("noValidTargetTable", "No valid target table for this action."));
             return;
         }
 
@@ -164,17 +171,21 @@
         setValue("sourceTableId", sourceTableId);
         renderTargets(selectableTargets);
 
-        const actionText = actionType === "transfer" ? "Transfer" : "Merge";
+        const actionText = actionType === "transfer"
+            ? t("transfer", "Transfer")
+            : t("merge", "Merge");
         const title = document.getElementById("tableActionTitle");
         const description = document.getElementById("tableActionDescription");
 
         if (title) {
-            title.textContent = `${actionText} Table`;
+            title.textContent = `${actionText} ${t("tableAction", "Table Action")}`;
         }
 
         if (description) {
-            description.textContent =
-                `${actionText} from ${sourceTable.name}. Select a valid target table below.`;
+            const template = actionType === "transfer"
+                ? t("transferDescription", "Transfer from {0}. Select a valid target table below.")
+                : t("mergeDescription", "Merge from {0}. Select a valid target table below.");
+            description.textContent = template.replace("{0}", sourceTable.name);
         }
 
         const modalElement = getModalElement();
@@ -195,8 +206,8 @@
         const options = tables
             .map(table => {
                 const statusText = table.status === TABLE_STATUS_OCCUPIED
-                    ? "Busy"
-                    : "Available";
+                    ? t("busy", "Busy")
+                    : t("available", "Available");
 
                 return `<option value="${table.id}">${table.name} (${statusText})</option>`;
             })
@@ -263,6 +274,6 @@
         }
 
         const text = await response.text();
-        return text || "Request failed.";
+        return text || t("requestFailed", "Request failed.");
     }
 })();

@@ -1,4 +1,10 @@
 (function () {
+    const i18n = window.reservationI18n || {};
+
+    function t(key, fallback) {
+        return i18n[key] || fallback;
+    }
+
     const forms = document.querySelectorAll(".js-reservation-form");
 
     if (!forms.length) {
@@ -41,7 +47,7 @@
 
                 if (!response.ok) {
                     const message = await response.text();
-                    feedback.textContent = message || "Unable to validate reservation time.";
+                    feedback.textContent = message || t("unableToValidateReservationTime", "Unable to validate reservation time.");
                     submitButton.disabled = false;
                     return;
                 }
@@ -49,7 +55,7 @@
                 const result = await response.json();
 
                 if (result.hasConflict) {
-                    feedback.textContent = "Selected table already has a reservation at this time.";
+                    feedback.textContent = t("selectedTableHasReservation", "Selected table already has a reservation at this time.");
                     submitButton.disabled = true;
                     return;
                 }
@@ -61,7 +67,7 @@
                     return;
                 }
 
-                feedback.textContent = "Unable to validate reservation time right now.";
+                feedback.textContent = t("unableToValidateNow", "Unable to validate reservation time right now.");
                 submitButton.disabled = false;
             }
         };

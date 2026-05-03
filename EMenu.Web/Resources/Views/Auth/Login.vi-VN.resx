@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Login" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="Secure access" xml:space="preserve">
+    <value>Truy cập an toàn</value>
+  </data>
+  <data name="Sign in to manage tables, orders, kitchen flow and restaurant operations from one place." xml:space="preserve">
+    <value>Đăng nhập để quản lý bàn, đơn hàng, luồng bếp và vận hành nhà hàng tại một nơi.</value>
+  </data>
+  <data name="Bright, simple layout for daily staff usage" xml:space="preserve">
+    <value>Bố cục sáng, đơn giản cho vận hành hằng ngày</value>
+  </data>
+  <data name="Fast access to dashboard, tables, menu and billing" xml:space="preserve">
+    <value>Truy cập nhanh bảng điều khiển, bàn, thực đơn và hóa đơn</value>
+  </data>
+  <data name="Same workflow for admin and staff roles" xml:space="preserve">
+    <value>Luồng thao tác thống nhất cho quản trị và nhân viên</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Tên đăng nhập</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+</root>

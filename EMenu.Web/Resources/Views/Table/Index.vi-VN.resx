@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Table Management" xml:space="preserve">
+    <value>Quản lý bàn</value>
+  </data>
+  <data name="Open, transfer, merge, or close sessions with a clearer overview of capacity and live table states." xml:space="preserve">
+    <value>Mở, chuyển, gộp hoặc đóng phiên với góc nhìn rõ ràng hơn về sức chứa và trạng thái bàn theo thời gian thực.</value>
+  </data>
+  <data name="Session started" xml:space="preserve">
+    <value>Đã mở phiên</value>
+  </data>
+  <data name="Unable to start session" xml:space="preserve">
+    <value>Không thể mở phiên</value>
+  </data>
+  <data name="Session ended" xml:space="preserve">
+    <value>Đã kết thúc phiên</value>
+  </data>
+  <data name="Unable to end session" xml:space="preserve">
+    <value>Không thể kết thúc phiên</value>
+  </data>
+  <data name="Please choose a valid target table." xml:space="preserve">
+    <value>Vui lòng chọn bàn đích hợp lệ.</value>
+  </data>
+  <data name="Transfer successful. Moved orders: {0}" xml:space="preserve">
+    <value>Chuyển bàn thành công. Số đơn đã chuyển: {0}</value>
+  </data>
+  <data name="Merge successful. Moved orders: {0}" xml:space="preserve">
+    <value>Gộp bàn thành công. Số đơn đã chuyển: {0}</value>
+  </data>
+  <data name="Unable to complete table action" xml:space="preserve">
+    <value>Không thể hoàn thành thao tác bàn</value>
+  </data>
+  <data name="Source table not found." xml:space="preserve">
+    <value>Không tìm thấy bàn nguồn.</value>
+  </data>
+  <data name="No valid target table for this action." xml:space="preserve">
+    <value>Không có bàn đích hợp lệ cho thao tác này.</value>
+  </data>
+  <data name="Transfer" xml:space="preserve">
+    <value>Chuyển bàn</value>
+  </data>
+  <data name="Merge" xml:space="preserve">
+    <value>Gộp bàn</value>
+  </data>
+  <data name="Table Action" xml:space="preserve">
+    <value>Thao tác bàn</value>
+  </data>
+  <data name="Transfer from {0}. Select a valid target table below." xml:space="preserve">
+    <value>Chuyển từ {0}. Chọn bàn đích hợp lệ bên dưới.</value>
+  </data>
+  <data name="Merge from {0}. Select a valid target table below." xml:space="preserve">
+    <value>Gộp từ {0}. Chọn bàn đích hợp lệ bên dưới.</value>
+  </data>
+  <data name="Busy" xml:space="preserve">
+    <value>Đang dùng</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Trống</value>
+  </data>
+  <data name="Reserved" xml:space="preserve">
+    <value>Đã đặt</value>
+  </data>
+  <data name="Request failed." xml:space="preserve">
+    <value>Yêu cầu thất bại.</value>
+  </data>
+  <data name="Capacity: {0}" xml:space="preserve">
+    <value>Sức chứa: {0}</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Mở bàn</value>
+  </data>
+  <data name="End Session" xml:space="preserve">
+    <value>Kết thúc phiên</value>
+  </data>
+  <data name="Bill" xml:space="preserve">
+    <value>Hóa đơn</value>
+  </data>
+  <data name="Target table" xml:space="preserve">
+    <value>Bàn đích</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Hủy</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+</root>

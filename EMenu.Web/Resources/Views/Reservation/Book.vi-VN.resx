@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Book A Table" xml:space="preserve">
+    <value>Đặt bàn</value>
+  </data>
+  <data name="Submit your reservation online. Our staff will confirm as soon as possible." xml:space="preserve">
+    <value>Gửi yêu cầu đặt bàn trực tuyến. Nhân viên sẽ xác nhận sớm nhất có thể.</value>
+  </data>
+  <data name="Full name" xml:space="preserve">
+    <value>Họ và tên</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Số điện thoại</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Table" xml:space="preserve">
+    <value>Bàn</value>
+  </data>
+  <data name="{0} (Capacity {1})" xml:space="preserve">
+    <value>{0} (Sức chứa {1})</value>
+  </data>
+  <data name="Reservation time" xml:space="preserve">
+    <value>Thời gian đặt bàn</value>
+  </data>
+  <data name="Guests" xml:space="preserve">
+    <value>Số khách</value>
+  </data>
+  <data name="Submit Reservation" xml:space="preserve">
+    <value>Gửi đặt bàn</value>
+  </data>
+  <data name="Status flow: Pending -> Confirmed -> Cancelled" xml:space="preserve">
+    <value>Luồng trạng thái: Chờ xác nhận -> Đã xác nhận -> Đã hủy</value>
+  </data>
+  <data name="Unable to validate reservation time." xml:space="preserve">
+    <value>Không thể kiểm tra thời gian đặt bàn.</value>
+  </data>
+  <data name="Selected table already has a reservation at this time." xml:space="preserve">
+    <value>Bàn đã chọn đã có lịch đặt tại thời điểm này.</value>
+  </data>
+  <data name="Unable to validate reservation time right now." xml:space="preserve">
+    <value>Hiện tại không thể kiểm tra thời gian đặt bàn.</value>
+  </data>
+</root>

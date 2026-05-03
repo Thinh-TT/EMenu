@@ -1,7 +1,10 @@
 @model EMenu.Web.ViewModels.ReservationIndexViewModel
 @using EMenu.Domain.Enums
+@inject IViewLocalizer Localizer
 
 @{
+    ViewData["Title"] = Localizer["Reservation Management"];
+
     static string GetStatusBadgeClass(ReservationStatus status)
     {
         return status switch
@@ -13,19 +16,19 @@
         };
     }
 
-    static string GetStatusText(ReservationStatus status)
+    string GetStatusText(ReservationStatus status)
     {
         return status switch
         {
-            ReservationStatus.Pending => "Pending",
-            ReservationStatus.Confirmed => "Confirmed",
-            ReservationStatus.Cancelled => "Cancelled",
+            ReservationStatus.Pending => Localizer["Pending"].Value,
+            ReservationStatus.Confirmed => Localizer["Confirmed"].Value,
+            ReservationStatus.Cancelled => Localizer["Cancelled"].Value,
             _ => status.ToString()
         };
     }
 }
 
-<h2>Reservation Management</h2>
+<h2>@Localizer["Reservation Management"]</h2>
 
 @if (TempData["Error"] != null)
 {
@@ -38,59 +41,59 @@
 }
 
 <div class="d-flex gap-2 mb-3">
-    <a asp-action="Book" class="btn btn-outline-primary">Open Customer Booking Page</a>
+    <a asp-action="Book" class="btn btn-outline-primary">@Localizer["Open Customer Booking Page"]</a>
 </div>
 
 <form method="get" asp-action="Index" class="row g-3 align-items-end mb-4">
     <div class="col-md-3">
-        <label class="form-label">From date</label>
+        <label class="form-label">@Localizer["From date"]</label>
         <input type="date"
                class="form-control"
                name="fromDate"
                value="@Model.FromDate.ToString("yyyy-MM-dd")" />
     </div>
     <div class="col-md-3">
-        <label class="form-label">To date</label>
+        <label class="form-label">@Localizer["To date"]</label>
         <input type="date"
                class="form-control"
                name="toDate"
                value="@Model.ToDate.ToString("yyyy-MM-dd")" />
     </div>
     <div class="col-md-3">
-        <label class="form-label">Table</label>
+        <label class="form-label">@Localizer["Table"]</label>
         <select name="tableId" class="form-select">
             @if (!Model.TableId.HasValue)
             {
-                <option value="" selected>All tables</option>
+                <option value="" selected>@Localizer["All tables"]</option>
             }
             else
             {
-                <option value="">All tables</option>
+                <option value="">@Localizer["All tables"]</option>
             }
 
             @foreach (var table in Model.Tables)
             {
                 if (Model.TableId == table.TableID)
                 {
-                    <option value="@table.TableID" selected>@table.TableName (Capacity @table.Capacity)</option>
+                    <option value="@table.TableID" selected>@Localizer["{0} (Capacity {1})", table.TableName, table.Capacity]</option>
                 }
                 else
                 {
-                    <option value="@table.TableID">@table.TableName (Capacity @table.Capacity)</option>
+                    <option value="@table.TableID">@Localizer["{0} (Capacity {1})", table.TableName, table.Capacity]</option>
                 }
             }
         </select>
     </div>
     <div class="col-md-3">
-        <label class="form-label">Status</label>
+        <label class="form-label">@Localizer["Status"]</label>
         <select name="status" class="form-select">
             @if (!Model.Status.HasValue)
             {
-                <option value="" selected>All statuses</option>
+                <option value="" selected>@Localizer["All statuses"]</option>
             }
             else
             {
-                <option value="">All statuses</option>
+                <option value="">@Localizer["All statuses"]</option>
             }
 
             @foreach (var status in Enum.GetValues<ReservationStatus>())
@@ -107,16 +110,16 @@
         </select>
     </div>
     <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100">Filter</button>
+        <button type="submit" class="btn btn-primary w-100">@Localizer["Filter"]</button>
     </div>
     <div class="col-md-2">
-        <a asp-action="Index" class="btn btn-outline-dark w-100">Reset</a>
+        <a asp-action="Index" class="btn btn-outline-dark w-100">@Localizer["Reset"]</a>
     </div>
 </form>
 
 <div class="card mb-4">
     <div class="card-body">
-        <h5 class="card-title">Create Reservation</h5>
+        <h5 class="card-title">@Localizer["Create Reservation"]</h5>
         <form method="post" asp-action="Create" class="js-reservation-form row g-3">
             <input type="hidden" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
             <input type="hidden" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
@@ -124,7 +127,7 @@
             <input type="hidden" name="filterStatus" value="@Model.Status" />
 
             <div class="col-md-3">
-                <label class="form-label">Customer name</label>
+                <label class="form-label">@Localizer["Customer name"]</label>
                 <input type="text"
                        class="form-control"
                        name="customerName"
@@ -132,21 +135,21 @@
                        required />
             </div>
             <div class="col-md-2">
-                <label class="form-label">Phone</label>
+                <label class="form-label">@Localizer["Phone"]</label>
                 <input type="text"
                        class="form-control"
                        name="customerPhone"
                        value="@Model.CustomerPhone" />
             </div>
             <div class="col-md-3">
-                <label class="form-label">Email</label>
+                <label class="form-label">@Localizer["Email"]</label>
                 <input type="email"
                        class="form-control"
                        name="customerEmail"
                        value="@Model.CustomerEmail" />
             </div>
             <div class="col-md-2">
-                <label class="form-label">Table</label>
+                <label class="form-label">@Localizer["Table"]</label>
                 <select name="tableId" class="form-select" required>
                     @foreach (var table in Model.Tables)
                     {
@@ -162,7 +165,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Guests</label>
+                <label class="form-label">@Localizer["Guests"]</label>
                 <input type="number"
                        class="form-control"
                        name="numberOfGuests"
@@ -171,7 +174,7 @@
                        required />
             </div>
             <div class="col-md-4">
-                <label class="form-label">Reservation time</label>
+                <label class="form-label">@Localizer["Reservation time"]</label>
                 <input type="datetime-local"
                        class="form-control"
                        name="reservationTime"
@@ -179,7 +182,7 @@
                        required />
             </div>
             <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-success w-100">Create (Pending)</button>
+                <button type="submit" class="btn btn-success w-100">@Localizer["Create (Pending)"]</button>
             </div>
             <div class="col-12">
                 <div class="small text-danger js-conflict-feedback"></div>
@@ -188,11 +191,11 @@
     </div>
 </div>
 
-<h4>Calendar View</h4>
+<h4>@Localizer["Calendar View"]</h4>
 
 @if (!Model.Reservations.Any())
 {
-    <div class="alert alert-light border">No reservation found for selected filter.</div>
+    <div class="alert alert-light border">@Localizer["No reservation found for selected filter."]</div>
 }
 else
 {
@@ -203,7 +206,7 @@ else
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <strong>@dayGroup.Key.ToString("yyyy-MM-dd")</strong>
-                        <span class="badge bg-primary">@dayGroup.Count() bookings</span>
+                        <span class="badge bg-primary">@Localizer["{0} bookings", dayGroup.Count()]</span>
                     </div>
                     <ul class="list-group list-group-flush">
                         @foreach (var reservation in dayGroup.OrderBy(x => x.ReservationTime))
@@ -220,8 +223,8 @@ else
                                     </span>
                                 </div>
                                 <div class="small text-muted">
-                                    @(reservation.Customer?.Name ?? $"Customer {reservation.CustomerID}") |
-                                    Guests: @reservation.NumberOfGuests
+                                    @(reservation.Customer?.Name ?? Localizer["Customer {0}", reservation.CustomerID].Value) |
+                                    @Localizer["Guests: {0}", reservation.NumberOfGuests]
                                 </div>
                             </li>
                         }
@@ -232,26 +235,26 @@ else
     </div>
 }
 
-<h4>Reservation List</h4>
+<h4>@Localizer["Reservation List"]</h4>
 
 <table class="table table-striped align-middle">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Time</th>
-            <th>Customer</th>
-            <th>Phone</th>
-            <th>Table</th>
-            <th>Guests</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>@Localizer["ID"]</th>
+            <th>@Localizer["Time"]</th>
+            <th>@Localizer["Customer"]</th>
+            <th>@Localizer["Phone"]</th>
+            <th>@Localizer["Table"]</th>
+            <th>@Localizer["Guests"]</th>
+            <th>@Localizer["Status"]</th>
+            <th>@Localizer["Actions"]</th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Reservations.Any())
         {
             <tr>
-                <td colspan="8" class="text-center text-muted">No reservation found.</td>
+                <td colspan="8" class="text-center text-muted">@Localizer["No reservation found."]</td>
             </tr>
         }
         else
@@ -261,9 +264,9 @@ else
                 <tr>
                     <td>#@reservation.ReservationID</td>
                     <td>@reservation.ReservationTime.ToString("yyyy-MM-dd HH:mm")</td>
-                    <td>@(reservation.Customer?.Name ?? $"Customer {reservation.CustomerID}")</td>
+                    <td>@(reservation.Customer?.Name ?? Localizer["Customer {0}", reservation.CustomerID].Value)</td>
                     <td>@(reservation.Customer?.Phone ?? "-")</td>
-                    <td>@(reservation.RestaurantTable?.TableName ?? $"Table {reservation.TableID}")</td>
+                    <td>@(reservation.RestaurantTable?.TableName ?? Localizer["Table {0}", reservation.TableID].Value)</td>
                     <td>@reservation.NumberOfGuests</td>
                     <td>
                         <span class="badge @GetStatusBadgeClass(reservation.Status)">
@@ -279,7 +282,7 @@ else
                                 <input type="hidden" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
                                 <input type="hidden" name="tableId" value="@Model.TableId" />
                                 <input type="hidden" name="status" value="@Model.Status" />
-                                <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                                <button type="submit" class="btn btn-sm btn-success">@Localizer["Confirm"]</button>
                             </form>
                         }
 
@@ -291,7 +294,7 @@ else
                                 <input type="hidden" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
                                 <input type="hidden" name="tableId" value="@Model.TableId" />
                                 <input type="hidden" name="status" value="@Model.Status" />
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">@Localizer["Cancel"]</button>
                             </form>
                         }
                     </td>
@@ -303,5 +306,12 @@ else
 
 @section Scripts
 {
+    <script>
+        window.reservationI18n = {
+            unableToValidateReservationTime: "@Localizer["Unable to validate reservation time."]",
+            selectedTableHasReservation: "@Localizer["Selected table already has a reservation at this time."]",
+            unableToValidateNow: "@Localizer["Unable to validate reservation time right now."]"
+        };
+    </script>
     <script src="~/js/reservation.js" asp-append-version="true"></script>
 }

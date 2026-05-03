@@ -1,77 +1,95 @@
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Dashboard"];
+    var dashboardLocale = System.Globalization.CultureInfo.CurrentUICulture.Name;
+}
+
 <section class="dashboard-surface">
-    <h2>Restaurant Dashboard</h2>
-    <p>Track operations in real time with expanded KPIs, import trend, and active alerts.</p>
+    <h2>@Localizer["Restaurant Dashboard"]</h2>
+    <p>@Localizer["Track operations in real time with expanded KPIs, import trend, and active alerts."]</p>
 
     <div class="dashboard-grid">
         <div class="metric-card text-center">
             <h4 id="revenueToday">0</h4>
-            <p>Revenue Today</p>
+            <p>@Localizer["Revenue Today"]</p>
         </div>
 
         <div class="metric-card text-center">
             <h4 id="ordersToday">0</h4>
-            <p>Orders Today</p>
+            <p>@Localizer["Orders Today"]</p>
         </div>
 
         <div class="metric-card text-center">
             <h4 id="tablesInUse">0</h4>
-            <p>Tables In Use</p>
+            <p>@Localizer["Tables In Use"]</p>
         </div>
 
         <div class="metric-card text-center">
             <h4 id="lowStockCount">0</h4>
-            <p>Low Stock Items</p>
+            <p>@Localizer["Low Stock Items"]</p>
         </div>
 
         <div class="metric-card text-center">
             <h4 id="importValueToday">0</h4>
-            <p>Import Value Today</p>
+            <p>@Localizer["Import Value Today"]</p>
         </div>
 
         <div class="metric-card text-center">
             <h4 id="importValueMonth">0</h4>
-            <p>Import Value This Month</p>
+            <p>@Localizer["Import Value This Month"]</p>
         </div>
 
         <div class="metric-card text-center">
             <h4 id="reservationsToday">0</h4>
-            <p>Reservations Today</p>
+            <p>@Localizer["Reservations Today"]</p>
         </div>
 
         <div class="metric-card text-center">
             <h4 id="staffHoursToday">0</h4>
-            <p>Staff Hours Today</p>
+            <p>@Localizer["Staff Hours Today"]</p>
         </div>
     </div>
 </section>
 
 <div class="chart-grid">
     <section class="chart-card">
-        <h3>Import Trend (Last 7 Days)</h3>
+        <h3>@Localizer["Import Trend (Last 7 Days)"]</h3>
         <canvas id="importTrendChart"></canvas>
     </section>
 
     <section class="chart-card">
-        <h3>Top Products</h3>
+        <h3>@Localizer["Top Products"]</h3>
         <canvas id="productChart"></canvas>
     </section>
 </div>
 
 <section class="alert-widget-grid">
     <article class="chart-card alert-widget-card">
-        <h3>Low Stock Warnings</h3>
-        <p class="text-muted mb-3">Ingredients that are at or below minimum stock.</p>
+        <h3>@Localizer["Low Stock Warnings"]</h3>
+        <p class="text-muted mb-3">@Localizer["Ingredients that are at or below minimum stock."]</p>
         <ul id="lowStockWarningList" class="warning-list mb-0"></ul>
-        <a class="btn btn-sm btn-outline-primary mt-3" href="/Inventory/Index?lowStockOnly=true">Open Inventory Alerts</a>
+        <a class="btn btn-sm btn-outline-primary mt-3" href="/Inventory/Index?lowStockOnly=true">@Localizer["Open Inventory Alerts"]</a>
     </article>
 
     <article class="chart-card alert-widget-card">
-        <h3>Reservation Clash Warnings</h3>
-        <p class="text-muted mb-3">Potential double-booking in the next 7 days.</p>
+        <h3>@Localizer["Reservation Clash Warnings"]</h3>
+        <p class="text-muted mb-3">@Localizer["Potential double-booking in the next 7 days."]</p>
         <ul id="reservationClashList" class="warning-list mb-0"></ul>
-        <a class="btn btn-sm btn-outline-primary mt-3" href="/Reservation/Index">Open Reservation Management</a>
+        <a class="btn btn-sm btn-outline-primary mt-3" href="/Reservation/Index">@Localizer["Open Reservation Management"]</a>
     </article>
 </section>
 
+<script>
+    window.dashboardI18n = {
+        locale: "@dashboardLocale",
+        importValueLabel: "@Localizer["Import Value"]",
+        noLowStockWarning: "@Localizer["No low-stock warning."]",
+        noReservationClashDetected: "@Localizer["No reservation clash detected."]",
+        minLabel: "@Localizer["Min"]",
+        reservationsLabel: "@Localizer["reservations"]",
+        hourSuffix: "@Localizer["h"]",
+        requestFailedPrefix: "@Localizer["Request failed"]"
+    };
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/dashboard.js"></script>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Checkout" xml:space="preserve">
+    <value>Thanh toán</value>
+  </data>
+  <data name="Select Payment Method" xml:space="preserve">
+    <value>Chọn phương thức thanh toán</value>
+  </data>
+  <data name="Cash Payment" xml:space="preserve">
+    <value>Thanh toán tiền mặt</value>
+  </data>
+  <data name="VNPay Sandbox Payment" xml:space="preserve">
+    <value>Thanh toán VNPay Sandbox</value>
+  </data>
+</root>

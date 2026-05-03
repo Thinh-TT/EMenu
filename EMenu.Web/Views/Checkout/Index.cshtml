@@ -1,4 +1,9 @@
-<h2>Select Payment Method</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Checkout"];
+}
+
+<h2>@Localizer["Select Payment Method"]</h2>
 
 @if (TempData["Error"] != null)
 {
@@ -21,7 +26,7 @@
           method="post">
         <button type="submit"
                 class="btn btn-primary">
-            Cash Payment
+            @Localizer["Cash Payment"]
         </button>
     </form>
 
@@ -31,7 +36,7 @@
           method="post">
         <button type="submit"
                 class="btn btn-warning">
-            VNPay Sandbox Payment
+            @Localizer["VNPay Sandbox Payment"]
         </button>
     </form>
 </div>

@@ -1,7 +1,11 @@
 @model EMenu.Web.ViewModels.ReservationBookViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Book A Table"];
+}
 
-<h2>Book A Table</h2>
-<p class="text-muted">Submit your reservation online. Our staff will confirm as soon as possible.</p>
+<h2>@Localizer["Book A Table"]</h2>
+<p class="text-muted">@Localizer["Submit your reservation online. Our staff will confirm as soon as possible."]</p>
 
 @if (ViewBag.Error != null)
 {
@@ -17,7 +21,7 @@
     <div class="card-body">
         <form method="post" asp-action="Book" class="js-reservation-form row g-3">
             <div class="col-md-6">
-                <label class="form-label">Full name</label>
+                <label class="form-label">@Localizer["Full name"]</label>
                 <input type="text"
                        class="form-control"
                        name="CustomerName"
@@ -25,41 +29,41 @@
                        required />
             </div>
             <div class="col-md-3">
-                <label class="form-label">Phone</label>
+                <label class="form-label">@Localizer["Phone"]</label>
                 <input type="text"
                        class="form-control"
                        name="CustomerPhone"
                        value="@Model.CustomerPhone" />
             </div>
             <div class="col-md-3">
-                <label class="form-label">Email</label>
+                <label class="form-label">@Localizer["Email"]</label>
                 <input type="email"
                        class="form-control"
                        name="CustomerEmail"
                        value="@Model.CustomerEmail" />
             </div>
             <div class="col-md-4">
-                <label class="form-label">Table</label>
+                <label class="form-label">@Localizer["Table"]</label>
                 <select class="form-select" name="TableId" required>
                     @foreach (var table in Model.Tables)
                     {
                         if (Model.TableId == table.TableID)
                         {
                             <option value="@table.TableID" selected>
-                                @table.TableName (Capacity @table.Capacity)
+                                @Localizer["{0} (Capacity {1})", table.TableName, table.Capacity]
                             </option>
                         }
                         else
                         {
                             <option value="@table.TableID">
-                                @table.TableName (Capacity @table.Capacity)
+                                @Localizer["{0} (Capacity {1})", table.TableName, table.Capacity]
                             </option>
                         }
                     }
                 </select>
             </div>
             <div class="col-md-4">
-                <label class="form-label">Reservation time</label>
+                <label class="form-label">@Localizer["Reservation time"]</label>
                 <input type="datetime-local"
                        class="form-control"
                        name="ReservationTime"
@@ -67,7 +71,7 @@
                        required />
             </div>
             <div class="col-md-4">
-                <label class="form-label">Guests</label>
+                <label class="form-label">@Localizer["Guests"]</label>
                 <input type="number"
                        class="form-control"
                        name="NumberOfGuests"
@@ -79,11 +83,11 @@
                 <div class="small text-danger js-conflict-feedback"></div>
             </div>
             <div class="col-md-4">
-                <button type="submit" class="btn btn-primary w-100">Submit Reservation</button>
+                <button type="submit" class="btn btn-primary w-100">@Localizer["Submit Reservation"]</button>
             </div>
             <div class="col-md-8 d-flex align-items-center">
                 <span class="text-muted">
-                    Status flow: Pending -> Confirmed -> Cancelled
+                    @Localizer["Status flow: Pending -> Confirmed -> Cancelled"]
                 </span>
             </div>
         </form>
@@ -92,5 +96,12 @@
 
 @section Scripts
 {
+    <script>
+        window.reservationI18n = {
+            unableToValidateReservationTime: "@Localizer["Unable to validate reservation time."]",
+            selectedTableHasReservation: "@Localizer["Selected table already has a reservation at this time."]",
+            unableToValidateNow: "@Localizer["Unable to validate reservation time right now."]"
+        };
+    </script>
     <script src="~/js/reservation.js" asp-append-version="true"></script>
 }

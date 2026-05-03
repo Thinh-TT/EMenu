@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="VNPay Payment Failed" xml:space="preserve">
+    <value>Thanh toán VNPay thất bại</value>
+  </data>
+  <data name="Transaction Ref" xml:space="preserve">
+    <value>Mã tham chiếu</value>
+  </data>
+  <data name="Session" xml:space="preserve">
+    <value>Phiên</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Đơn hàng</value>
+  </data>
+  <data name="Response Code" xml:space="preserve">
+    <value>Mã phản hồi</value>
+  </data>
+  <data name="Transaction Status" xml:space="preserve">
+    <value>Trạng thái giao dịch</value>
+  </data>
+  <data name="VNPay Transaction No" xml:space="preserve">
+    <value>Mã giao dịch VNPay</value>
+  </data>
+  <data name="Pay Date" xml:space="preserve">
+    <value>Thời gian thanh toán</value>
+  </data>
+  <data name="Back To Checkout" xml:space="preserve">
+    <value>Quay về thanh toán</value>
+  </data>
+  <data name="Back To Table" xml:space="preserve">
+    <value>Quay về bàn</value>
+  </data>
+</root>
