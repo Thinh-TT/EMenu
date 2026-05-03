@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Welcome" xml:space="preserve"><value>Chào mừng</value></data>
+  <data name="Your Name *" xml:space="preserve"><value>Tên của bạn *</value></data>
+  <data name="Phone (optional)" xml:space="preserve"><value>Số điện thoại (tùy chọn)</value></data>
+  <data name="Email (optional)" xml:space="preserve"><value>Email (tùy chọn)</value></data>
+  <data name="Start Order" xml:space="preserve"><value>Bắt đầu gọi món</value></data>
+</root>

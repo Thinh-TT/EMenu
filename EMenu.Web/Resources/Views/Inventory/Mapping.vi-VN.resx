@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Ingredient Product Mapping" xml:space="preserve"><value>Mapping nguyên liệu - sản phẩm</value></data>
+  <data name="No products found. Please create products before mapping ingredients." xml:space="preserve"><value>Không có sản phẩm. Vui lòng tạo sản phẩm trước khi mapping nguyên liệu.</value></data>
+  <data name="Back to Inventory" xml:space="preserve"><value>Quay lại kho</value></data>
+  <data name="Product" xml:space="preserve"><value>Sản phẩm</value></data>
+  <data name="Load" xml:space="preserve"><value>Tải</value></data>
+  <data name="Ingredients" xml:space="preserve"><value>Nguyên liệu</value></data>
+  <data name="Add / Update Recipe Item" xml:space="preserve"><value>Thêm / Cập nhật công thức</value></data>
+  <data name="Ingredient" xml:space="preserve"><value>Nguyên liệu</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Số lượng</value></data>
+  <data name="Save Mapping" xml:space="preserve"><value>Lưu mapping</value></data>
+  <data name="Current Recipe" xml:space="preserve"><value>Công thức hiện tại</value></data>
+  <data name="Unit" xml:space="preserve"><value>Đơn vị</value></data>
+  <data name="Quantity / Product" xml:space="preserve"><value>Số lượng / sản phẩm</value></data>
+  <data name="Actions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="No ingredients mapped for this product." xml:space="preserve"><value>Chưa có nguyên liệu nào được gán cho sản phẩm này.</value></data>
+  <data name="Remove" xml:space="preserve"><value>Xóa</value></data>
+</root>

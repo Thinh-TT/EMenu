@@ -1,33 +1,32 @@
 @model EMenu.Application.DTOs.BillDto
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Print Bill"];
+}
 
 <div class="receipt">
+    <h2>@Localizer["Restaurant"]</h2>
+    <p>@Localizer["Table: {0}", Model.TableName]</p>
+    <p>@Localizer["Date: {0}", DateTime.Now]</p>
 
-	<h2>Restaurant</h2>
+    <hr />
 
-	<p>Table: @Model.TableName</p>
-	<p>Date: @DateTime.Now</p>
+    <table>
+        @foreach (var i in Model.Items)
+        {
+            <tr>
+                <td>@i.ProductName</td>
+                <td>x @i.Quantity</td>
+                <td>@((i.UnitPrice * i.Quantity).ToVnd())</td>
+            </tr>
+        }
+    </table>
 
-	<hr />
+    <hr />
 
-	<table>
-
-		@foreach (var i in Model.Items)
-		{
-			<tr>
-				<td>@i.ProductName</td>
-				<td>x @i.Quantity</td>
-				<td>@((i.UnitPrice * i.Quantity).ToVnd())</td>
-			</tr>
-		}
-
-	</table>
-
-	<hr />
-
-	<h3>Total: @Model.TotalAmount.ToVnd()</h3>
-
+    <h3>@Localizer["Total: {0}", Model.TotalAmount.ToVnd()]</h3>
 </div>
 
 <button onclick="window.print()">
-	Print
+    @Localizer["Print"]
 </button>

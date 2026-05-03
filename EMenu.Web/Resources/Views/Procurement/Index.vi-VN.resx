@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Supplier Management" xml:space="preserve"><value>Quản lý nhà cung cấp</value></data>
+  <data name="Create Receipt" xml:space="preserve"><value>Tạo phiếu nhập</value></data>
+  <data name="Receipt History" xml:space="preserve"><value>Lịch sử phiếu nhập</value></data>
+  <data name="Keyword" xml:space="preserve"><value>Từ khóa</value></data>
+  <data name="Supplier name..." xml:space="preserve"><value>Tên nhà cung cấp...</value></data>
+  <data name="Filter" xml:space="preserve"><value>Lọc</value></data>
+  <data name="Reset" xml:space="preserve"><value>Đặt lại</value></data>
+  <data name="Create Supplier" xml:space="preserve"><value>Tạo nhà cung cấp</value></data>
+  <data name="Name" xml:space="preserve"><value>Tên</value></data>
+  <data name="Phone" xml:space="preserve"><value>Số điện thoại</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Create" xml:space="preserve"><value>Tạo</value></data>
+  <data name="ID" xml:space="preserve"><value>Mã</value></data>
+  <data name="Actions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="No suppliers found." xml:space="preserve"><value>Không tìm thấy nhà cung cấp.</value></data>
+  <data name="Update" xml:space="preserve"><value>Cập nhật</value></data>
+  <data name="Delete" xml:space="preserve"><value>Xóa</value></data>
+</root>

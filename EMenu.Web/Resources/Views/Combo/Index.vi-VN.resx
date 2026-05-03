@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Combo Management" xml:space="preserve"><value>Quản lý combo</value></data>
+  <data name="ID" xml:space="preserve"><value>Mã</value></data>
+  <data name="Name" xml:space="preserve"><value>Tên</value></data>
+  <data name="Price" xml:space="preserve"><value>Giá</value></data>
+  <data name="Actions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="Edit" xml:space="preserve"><value>Sửa</value></data>
+</root>

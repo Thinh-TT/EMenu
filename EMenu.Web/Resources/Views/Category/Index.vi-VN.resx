@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Category Management" xml:space="preserve"><value>Quản lý danh mục</value></data>
+  <data name="Add Category" xml:space="preserve"><value>Thêm danh mục</value></data>
+  <data name="ID" xml:space="preserve"><value>Mã</value></data>
+  <data name="Name" xml:space="preserve"><value>Tên</value></data>
+  <data name="Actions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="Edit" xml:space="preserve"><value>Sửa</value></data>
+  <data name="Delete" xml:space="preserve"><value>Xóa</value></data>
+</root>

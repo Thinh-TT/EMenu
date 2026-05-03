@@ -1,54 +1,59 @@
 @model List<EMenu.Domain.Entities.Product>
 @using EMenu.Domain.Enums
-<h2>Product Management</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Product Management"];
+}
 
-<a href="/Product/Create" class="btn btn-primary">Add Product</a>
+<h2>@Localizer["Product Management"]</h2>
+
+<a href="/Product/Create" class="btn btn-primary">@Localizer["Add Product"]</a>
 
 <table class="table">
-	<thead>
-		<tr>
-			<th>ID</th>
-			<th>Name</th>
-			<th>Image</th>
-			<th>Category</th>
-			<th>Price</th>
-			<th>Type</th>
-			<th>Status</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
+    <thead>
+        <tr>
+            <th>@Localizer["ID"]</th>
+            <th>@Localizer["Name"]</th>
+            <th>@Localizer["Image"]</th>
+            <th>@Localizer["Category"]</th>
+            <th>@Localizer["Price"]</th>
+            <th>@Localizer["Type"]</th>
+            <th>@Localizer["Status"]</th>
+            <th>@Localizer["Actions"]</th>
+        </tr>
+    </thead>
 
-	<tbody>
-		@foreach (var item in Model)
-		{
-			<tr>
-				<td>@item.ProductID</td>
-				<td>@item.ProductName</td>
-				<td>
-					<img src="/images/products/@item.Image" width="80" />
-				</td>
-				<td>@item.Category?.CategoryName</td>
-				<td>@item.Price.ToVnd()</td>
-				<td>
-					@if (item.ProductType == ProductType.Combo)
-					{
-						<span class="badge bg-warning">Combo</span>
-					}
-					else
-					{
-						<span class="badge bg-success">Single</span>
-					}
-				</td>
-				<td>@(item.IsAvailable ? "Available" : "Disabled")</td>
-				<td>
-					<a class="table-action-link" href="/Product/Edit/@item.ProductID">Edit</a> |
-					<form asp-action="Delete" asp-route-id="@item.ProductID" method="post" class="table-action-form">
-						<button type="submit" class="btn btn-link table-action-link">
-							Delete
-						</button>
-					</form>
-				</td>
-			</tr>
-		}
-	</tbody>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductID</td>
+                <td>@item.ProductName</td>
+                <td>
+                    <img src="/images/products/@item.Image" width="80" />
+                </td>
+                <td>@item.Category?.CategoryName</td>
+                <td>@item.Price.ToVnd()</td>
+                <td>
+                    @if (item.ProductType == ProductType.Combo)
+                    {
+                        <span class="badge bg-warning">@Localizer["Combo"]</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">@Localizer["Single"]</span>
+                    }
+                </td>
+                <td>@(item.IsAvailable ? Localizer["Available"].Value : Localizer["Disabled"].Value)</td>
+                <td>
+                    <a class="table-action-link" href="/Product/Edit/@item.ProductID">@Localizer["Edit"]</a> |
+                    <form asp-action="Delete" asp-route-id="@item.ProductID" method="post" class="table-action-form">
+                        <button type="submit" class="btn btn-link table-action-link">
+                            @Localizer["Delete"]
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

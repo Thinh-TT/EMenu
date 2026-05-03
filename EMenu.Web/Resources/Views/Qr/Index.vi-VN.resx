@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="QR Codes for Tables" xml:space="preserve"><value>Mã QR cho bàn</value></data>
+  <data name="Generate and print table QR codes from a cleaner grid that is easier to scan and manage." xml:space="preserve"><value>Tạo và in mã QR cho bàn từ bố cục gọn gàng, dễ quét và dễ quản lý hơn.</value></data>
+  <data name="Table {0}" xml:space="preserve"><value>Bàn {0}</value></data>
+  <data name="QR Table {0}" xml:space="preserve"><value>QR Bàn {0}</value></data>
+</root>

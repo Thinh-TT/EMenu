@@ -1,6 +1,11 @@
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Kitchen Screen"];
+}
+
 <section class="kitchen-stage">
-    <h2>Kitchen Screen</h2>
-    <p>Monitor incoming orders, update preparation status and keep the kitchen workflow focused.</p>
+    <h2>@Localizer["Kitchen Screen"]</h2>
+    <p>@Localizer["Monitor incoming orders, update preparation status and keep the kitchen workflow focused."]</p>
 
     <div id="kitchenNotification" class="alert alert-warning" style="display:none"></div>
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Access Denied" xml:space="preserve"><value>Truy cập bị từ chối</value></data>
+  <data name="You do not have permission to access this page." xml:space="preserve"><value>Bạn không có quyền truy cập trang này.</value></data>
+</root>

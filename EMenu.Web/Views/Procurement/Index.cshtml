@@ -1,6 +1,10 @@
 @model EMenu.Web.ViewModels.SupplierIndexViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Supplier Management"];
+}
 
-<h2>Supplier Management</h2>
+<h2>@Localizer["Supplier Management"]</h2>
 
 @if (TempData["Error"] != null)
 {
@@ -13,45 +17,41 @@
 }
 
 <div class="d-flex gap-2 mb-3">
-    <a asp-action="CreateReceipt" class="btn btn-primary">Create Receipt</a>
-    <a asp-action="ReceiptHistory" class="btn btn-outline-primary">Receipt History</a>
+    <a asp-action="CreateReceipt" class="btn btn-primary">@Localizer["Create Receipt"]</a>
+    <a asp-action="ReceiptHistory" class="btn btn-outline-primary">@Localizer["Receipt History"]</a>
 </div>
 
 <form method="get" asp-action="Index" class="row g-3 align-items-end mb-4">
     <div class="col-md-6">
-        <label class="form-label">Keyword</label>
-        <input type="text"
-               class="form-control"
-               name="keyword"
-               value="@Model.Keyword"
-               placeholder="Supplier name..." />
+        <label class="form-label">@Localizer["Keyword"]</label>
+        <input type="text" class="form-control" name="keyword" value="@Model.Keyword" placeholder="@Localizer["Supplier name..."]" />
     </div>
     <div class="col-md-2">
-        <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
+        <button type="submit" class="btn btn-outline-secondary w-100">@Localizer["Filter"]</button>
     </div>
     <div class="col-md-2">
-        <a asp-action="Index" class="btn btn-outline-dark w-100">Reset</a>
+        <a asp-action="Index" class="btn btn-outline-dark w-100">@Localizer["Reset"]</a>
     </div>
 </form>
 
 <div class="card mb-4">
     <div class="card-body">
-        <h5 class="card-title">Create Supplier</h5>
+        <h5 class="card-title">@Localizer["Create Supplier"]</h5>
         <form method="post" asp-action="CreateSupplier" class="row g-2 align-items-end">
             <div class="col-md-4">
-                <label class="form-label">Name</label>
+                <label class="form-label">@Localizer["Name"]</label>
                 <input type="text" class="form-control" name="name" required />
             </div>
             <div class="col-md-3">
-                <label class="form-label">Phone</label>
+                <label class="form-label">@Localizer["Phone"]</label>
                 <input type="text" class="form-control" name="phone" />
             </div>
             <div class="col-md-3">
-                <label class="form-label">Email</label>
+                <label class="form-label">@Localizer["Email"]</label>
                 <input type="email" class="form-control" name="email" />
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-success w-100">Create</button>
+                <button type="submit" class="btn btn-success w-100">@Localizer["Create"]</button>
             </div>
         </form>
     </div>
@@ -60,18 +60,18 @@
 <table class="table table-striped align-middle">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th style="min-width: 420px;">Actions</th>
+            <th>@Localizer["ID"]</th>
+            <th>@Localizer["Name"]</th>
+            <th>@Localizer["Phone"]</th>
+            <th>@Localizer["Email"]</th>
+            <th style="min-width: 420px;">@Localizer["Actions"]</th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Suppliers.Any())
         {
             <tr>
-                <td colspan="5" class="text-center text-muted">No suppliers found.</td>
+                <td colspan="5" class="text-center text-muted">@Localizer["No suppliers found."]</td>
             </tr>
         }
         else
@@ -88,33 +88,23 @@
                             <input type="hidden" name="supplierId" value="@supplier.SupplierID" />
                             <input type="hidden" name="keyword" value="@Model.Keyword" />
                             <div class="col-md-4">
-                                <input type="text"
-                                       class="form-control form-control-sm"
-                                       name="name"
-                                       value="@supplier.Name"
-                                       required />
+                                <input type="text" class="form-control form-control-sm" name="name" value="@supplier.Name" required />
                             </div>
                             <div class="col-md-3">
-                                <input type="text"
-                                       class="form-control form-control-sm"
-                                       name="phone"
-                                       value="@supplier.Phone" />
+                                <input type="text" class="form-control form-control-sm" name="phone" value="@supplier.Phone" />
                             </div>
                             <div class="col-md-3">
-                                <input type="email"
-                                       class="form-control form-control-sm"
-                                       name="email"
-                                       value="@supplier.Email" />
+                                <input type="email" class="form-control form-control-sm" name="email" value="@supplier.Email" />
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-sm btn-warning w-100">Update</button>
+                                <button type="submit" class="btn btn-sm btn-warning w-100">@Localizer["Update"]</button>
                             </div>
                         </form>
 
                         <form method="post" asp-action="DeleteSupplier">
                             <input type="hidden" name="supplierId" value="@supplier.SupplierID" />
                             <input type="hidden" name="keyword" value="@Model.Keyword" />
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">@Localizer["Delete"]</button>
                         </form>
                     </td>
                 </tr>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Receipt History" xml:space="preserve"><value>Lịch sử phiếu nhập</value></data>
+  <data name="Suppliers" xml:space="preserve"><value>Nhà cung cấp</value></data>
+  <data name="Create Receipt" xml:space="preserve"><value>Tạo phiếu nhập</value></data>
+  <data name="From date" xml:space="preserve"><value>Từ ngày</value></data>
+  <data name="To date" xml:space="preserve"><value>Đến ngày</value></data>
+  <data name="Supplier" xml:space="preserve"><value>Nhà cung cấp</value></data>
+  <data name="All suppliers" xml:space="preserve"><value>Tất cả nhà cung cấp</value></data>
+  <data name="Filter" xml:space="preserve"><value>Lọc</value></data>
+  <data name="Total import value:" xml:space="preserve"><value>Tổng giá trị nhập:</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Phiếu</value></data>
+  <data name="Date" xml:space="preserve"><value>Ngày</value></data>
+  <data name="Staff" xml:space="preserve"><value>Nhân viên</value></data>
+  <data name="Items" xml:space="preserve"><value>Số dòng</value></data>
+  <data name="Total" xml:space="preserve"><value>Tổng</value></data>
+  <data name="Detail" xml:space="preserve"><value>Chi tiết</value></data>
+  <data name="No receipt data found." xml:space="preserve"><value>Không có dữ liệu phiếu nhập.</value></data>
+  <data name="No detail" xml:space="preserve"><value>Không có chi tiết</value></data>
+</root>

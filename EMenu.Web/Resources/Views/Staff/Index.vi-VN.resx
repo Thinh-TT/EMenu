@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Staff Management" xml:space="preserve"><value>Quản lý nhân viên</value></data>
+  <data name="Add Staff" xml:space="preserve"><value>Thêm nhân viên</value></data>
+  <data name="ID" xml:space="preserve"><value>Mã</value></data>
+  <data name="Name" xml:space="preserve"><value>Tên</value></data>
+  <data name="Phone" xml:space="preserve"><value>Số điện thoại</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Account" xml:space="preserve"><value>Tài khoản</value></data>
+  <data name="Actions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="Edit" xml:space="preserve"><value>Sửa</value></data>
+  <data name="Delete" xml:space="preserve"><value>Xóa</value></data>
+</root>

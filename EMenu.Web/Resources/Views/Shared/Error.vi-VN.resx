@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Error" xml:space="preserve"><value>Lỗi</value></data>
+  <data name="Error." xml:space="preserve"><value>Lỗi.</value></data>
+  <data name="An error occurred while processing your request." xml:space="preserve"><value>Đã xảy ra lỗi khi xử lý yêu cầu của bạn.</value></data>
+  <data name="Request ID:" xml:space="preserve"><value>Mã yêu cầu:</value></data>
+  <data name="Development Mode" xml:space="preserve"><value>Chế độ phát triển</value></data>
+  <data name="Swapping to Development environment will display more detailed information about the error that occurred." xml:space="preserve"><value>Chuyển sang môi trường Development sẽ hiển thị thông tin chi tiết hơn về lỗi đã xảy ra.</value></data>
+  <data name="The Development environment shouldn't be enabled for deployed applications." xml:space="preserve"><value>Không nên bật môi trường Development cho ứng dụng đã triển khai.</value></data>
+  <data name="It can result in displaying sensitive information from exceptions to end users." xml:space="preserve"><value>Điều này có thể làm lộ thông tin nhạy cảm từ exception đến người dùng cuối.</value></data>
+  <data name="For local debugging, enable the Development environment by setting the ASPNETCORE_ENVIRONMENT environment variable to Development and restarting the app." xml:space="preserve"><value>Để debug cục bộ, hãy bật môi trường Development bằng cách đặt biến môi trường ASPNETCORE_ENVIRONMENT thành Development và khởi động lại ứng dụng.</value></data>
+</root>

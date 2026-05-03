@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Edit User" xml:space="preserve"><value>Sửa người dùng</value></data>
+  <data name="Username" xml:space="preserve"><value>Tên đăng nhập</value></data>
+  <data name="New Password" xml:space="preserve"><value>Mật khẩu mới</value></data>
+  <data name="Confirm New Password" xml:space="preserve"><value>Xác nhận mật khẩu mới</value></data>
+  <data name="Leave password blank to keep the current password." xml:space="preserve"><value>Để trống mật khẩu nếu muốn giữ mật khẩu hiện tại.</value></data>
+  <data name="Role" xml:space="preserve"><value>Vai trò</value></data>
+  <data name="Update" xml:space="preserve"><value>Cập nhật</value></data>
+</root>

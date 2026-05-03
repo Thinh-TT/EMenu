@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="User Management" xml:space="preserve"><value>Quản lý người dùng</value></data>
+  <data name="Create User" xml:space="preserve"><value>Tạo người dùng</value></data>
+  <data name="ID" xml:space="preserve"><value>Mã</value></data>
+  <data name="Username" xml:space="preserve"><value>Tên đăng nhập</value></data>
+  <data name="Role" xml:space="preserve"><value>Vai trò</value></data>
+  <data name="Status" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="Actions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="Active" xml:space="preserve"><value>Hoạt động</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Tạm khóa</value></data>
+  <data name="Edit" xml:space="preserve"><value>Sửa</value></data>
+  <data name="Toggle Status" xml:space="preserve"><value>Đổi trạng thái</value></data>
+</root>

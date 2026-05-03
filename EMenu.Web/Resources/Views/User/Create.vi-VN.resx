@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Create User" xml:space="preserve"><value>Tạo người dùng</value></data>
+  <data name="Username" xml:space="preserve"><value>Tên đăng nhập</value></data>
+  <data name="Password" xml:space="preserve"><value>Mật khẩu</value></data>
+  <data name="Confirm Password" xml:space="preserve"><value>Xác nhận mật khẩu</value></data>
+  <data name="Role" xml:space="preserve"><value>Vai trò</value></data>
+  <data name="Save" xml:space="preserve"><value>Lưu</value></data>
+</root>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Your Order Status" xml:space="preserve"><value>Trạng thái đơn hàng</value></data>
+  <data name="Pending" xml:space="preserve"><value>Chờ xử lý</value></data>
+  <data name="Preparing" xml:space="preserve"><value>Đang chuẩn bị</value></data>
+  <data name="Ready" xml:space="preserve"><value>Sẵn sàng</value></data>
+  <data name="Served" xml:space="preserve"><value>Đã phục vụ</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Đã hủy</value></data>
+</root>

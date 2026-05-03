@@ -1,6 +1,10 @@
 @model EMenu.Web.ViewModels.InventoryMappingViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Ingredient Product Mapping"];
+}
 
-<h2>Ingredient Product Mapping</h2>
+<h2>@Localizer["Ingredient Product Mapping"]</h2>
 
 @if (TempData["Error"] != null)
 {
@@ -14,14 +18,14 @@
 
 @if (!Model.Products.Any())
 {
-    <div class="alert alert-warning">No products found. Please create products before mapping ingredients.</div>
-    <a asp-action="Index" class="btn btn-outline-primary">Back to Inventory</a>
+    <div class="alert alert-warning">@Localizer["No products found. Please create products before mapping ingredients."]</div>
+    <a asp-action="Index" class="btn btn-outline-primary">@Localizer["Back to Inventory"]</a>
 }
 else
 {
     <form method="get" asp-action="Mapping" class="row g-2 align-items-end mb-4">
         <div class="col-md-6">
-            <label class="form-label">Product</label>
+            <label class="form-label">@Localizer["Product"]</label>
             <select class="form-select" name="productId">
                 @foreach (var product in Model.Products)
                 {
@@ -37,20 +41,20 @@ else
             </select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Load</button>
+            <button type="submit" class="btn btn-primary w-100">@Localizer["Load"]</button>
         </div>
         <div class="col-md-2">
-            <a asp-action="Index" class="btn btn-outline-secondary w-100">Ingredients</a>
+            <a asp-action="Index" class="btn btn-outline-secondary w-100">@Localizer["Ingredients"]</a>
         </div>
     </form>
 
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Add / Update Recipe Item</h5>
+            <h5 class="card-title">@Localizer["Add / Update Recipe Item"]</h5>
             <form method="post" asp-action="UpsertMapping" class="row g-2 align-items-end">
                 <input type="hidden" name="productId" value="@Model.SelectedProductId" />
                 <div class="col-md-6">
-                    <label class="form-label">Ingredient</label>
+                    <label class="form-label">@Localizer["Ingredient"]</label>
                     <select class="form-select" name="ingredientId" required>
                         @foreach (var ingredient in Model.Ingredients)
                         {
@@ -61,24 +65,24 @@ else
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Quantity</label>
+                    <label class="form-label">@Localizer["Quantity"]</label>
                     <input type="number" class="form-control" name="quantity" min="0.01" step="0.01" required />
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-success w-100">Save Mapping</button>
+                    <button type="submit" class="btn btn-success w-100">@Localizer["Save Mapping"]</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <h4>Current Recipe</h4>
+    <h4>@Localizer["Current Recipe"]</h4>
     <table class="table table-striped align-middle">
         <thead>
             <tr>
-                <th>Ingredient</th>
-                <th>Unit</th>
-                <th>Quantity / Product</th>
-                <th style="width: 140px;">Actions</th>
+                <th>@Localizer["Ingredient"]</th>
+                <th>@Localizer["Unit"]</th>
+                <th>@Localizer["Quantity / Product"]</th>
+                <th style="width: 140px;">@Localizer["Actions"]</th>
             </tr>
         </thead>
         <tbody>
@@ -86,7 +90,7 @@ else
             {
                 <tr>
                     <td colspan="4" class="text-center text-muted">
-                        No ingredients mapped for this product.
+                        @Localizer["No ingredients mapped for this product."]
                     </td>
                 </tr>
             }
@@ -102,7 +106,7 @@ else
                             <form method="post" asp-action="RemoveMapping">
                                 <input type="hidden" name="id" value="@mapping.Id" />
                                 <input type="hidden" name="productId" value="@Model.SelectedProductId" />
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">@Localizer["Remove"]</button>
                             </form>
                         </td>
                     </tr>

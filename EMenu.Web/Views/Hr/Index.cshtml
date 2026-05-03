@@ -1,6 +1,10 @@
 @model EMenu.Web.ViewModels.HrIndexViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["HR Timekeeping"];
+}
 
-<h2>HR Timekeeping</h2>
+<h2>@Localizer["HR Timekeeping"]</h2>
 
 @if (ViewBag.Error != null)
 {
@@ -21,7 +25,7 @@
     @if (Model.IsAdmin)
     {
         <div class="col-md-4">
-            <label class="form-label">Staff</label>
+            <label class="form-label">@Localizer["Staff"]</label>
             <select class="form-select" name="staffId">
                 @foreach (var staff in Model.Staffs)
                 {
@@ -39,17 +43,17 @@
     }
 
     <div class="col-md-2">
-        <label class="form-label">Month</label>
+        <label class="form-label">@Localizer["Month"]</label>
         <input class="form-control" type="number" min="1" max="12" name="month" value="@Model.Month" />
     </div>
 
     <div class="col-md-2">
-        <label class="form-label">Year</label>
+        <label class="form-label">@Localizer["Year"]</label>
         <input class="form-control" type="number" min="2000" max="9999" name="year" value="@Model.Year" />
     </div>
 
     <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100">Apply</button>
+        <button type="submit" class="btn btn-primary w-100">@Localizer["Apply"]</button>
     </div>
 </form>
 
@@ -58,14 +62,14 @@
         <input type="hidden" name="staffId" value="@Model.SelectedStaffId" />
         <input type="hidden" name="month" value="@Model.Month" />
         <input type="hidden" name="year" value="@Model.Year" />
-        <button type="submit" class="btn btn-success">Quick Check-in</button>
+        <button type="submit" class="btn btn-success">@Localizer["Quick Check-in"]</button>
     </form>
 
     <form method="post" asp-action="CheckOut">
         <input type="hidden" name="staffId" value="@Model.SelectedStaffId" />
         <input type="hidden" name="month" value="@Model.Month" />
         <input type="hidden" name="year" value="@Model.Year" />
-        <button type="submit" class="btn btn-warning">Quick Check-out</button>
+        <button type="submit" class="btn btn-warning">@Localizer["Quick Check-out"]</button>
     </form>
 </div>
 
@@ -73,33 +77,33 @@
 {
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title mb-3">Monthly Summary - @Model.StaffSummary.StaffName (@Model.Month/@Model.Year)</h5>
+            <h5 class="card-title mb-3">@Localizer["Monthly Summary - {0} ({1}/{2})", Model.StaffSummary.StaffName, Model.Month, Model.Year]</h5>
             <div class="row">
-                <div class="col-md-3"><strong>Work Days:</strong> @Model.StaffSummary.WorkDays</div>
-                <div class="col-md-3"><strong>Total Hours:</strong> @Model.StaffSummary.TotalHours.ToString("N2")</div>
-                <div class="col-md-3"><strong>Base Salary:</strong> @Model.StaffSummary.BaseSalary.ToString("N0")</div>
-                <div class="col-md-3"><strong>Estimated Wage:</strong> @Model.StaffSummary.EstimatedWage.ToString("N0")</div>
+                <div class="col-md-3"><strong>@Localizer["Work Days:"]</strong> @Model.StaffSummary.WorkDays</div>
+                <div class="col-md-3"><strong>@Localizer["Total Hours:"]</strong> @Model.StaffSummary.TotalHours.ToString("N2")</div>
+                <div class="col-md-3"><strong>@Localizer["Base Salary:"]</strong> @Model.StaffSummary.BaseSalary.ToString("N0")</div>
+                <div class="col-md-3"><strong>@Localizer["Estimated Wage:"]</strong> @Model.StaffSummary.EstimatedWage.ToString("N0")</div>
             </div>
         </div>
     </div>
 }
 
-<h4>Timekeeping Records</h4>
+<h4>@Localizer["Timekeeping Records"]</h4>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Date</th>
-            <th>Check-in</th>
-            <th>Check-out</th>
-            <th>Worked Hours</th>
+            <th>@Localizer["Date"]</th>
+            <th>@Localizer["Check-in"]</th>
+            <th>@Localizer["Check-out"]</th>
+            <th>@Localizer["Worked Hours"]</th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Timekeepings.Any())
         {
             <tr>
-                <td colspan="4" class="text-center text-muted">No timekeeping records found for this period.</td>
+                <td colspan="4" class="text-center text-muted">@Localizer["No timekeeping records found for this period."]</td>
             </tr>
         }
         else
@@ -123,23 +127,23 @@
 
 @if (Model.IsAdmin)
 {
-    <h4>Monthly Report (All Staff)</h4>
+    <h4>@Localizer["Monthly Report (All Staff)"]</h4>
     <table class="table">
         <thead>
             <tr>
-                <th>Staff</th>
-                <th>Work Days</th>
-                <th>Total Hours</th>
-                <th>Base Salary</th>
-                <th>Hourly Rate</th>
-                <th>Estimated Wage</th>
+                <th>@Localizer["Staff"]</th>
+                <th>@Localizer["Work Days"]</th>
+                <th>@Localizer["Total Hours"]</th>
+                <th>@Localizer["Base Salary"]</th>
+                <th>@Localizer["Hourly Rate"]</th>
+                <th>@Localizer["Estimated Wage"]</th>
             </tr>
         </thead>
         <tbody>
             @if (!Model.MonthlySummary.Any())
             {
                 <tr>
-                    <td colspan="6" class="text-center text-muted">No data.</td>
+                    <td colspan="6" class="text-center text-muted">@Localizer["No data."]</td>
                 </tr>
             }
             else

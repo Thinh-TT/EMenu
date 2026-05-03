@@ -1,38 +1,41 @@
-<h2>Create User</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Create User"];
+}
+
+<h2>@Localizer["Create User"]</h2>
 
 <form method="post">
-	@Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
 
-	@if (ViewBag.Error != null)
-	{
-		<div class="alert alert-danger">@ViewBag.Error</div>
-	}
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
 
-	@if (ViewBag.PasswordPolicy != null)
-	{
-		<div class="alert alert-info">@ViewBag.PasswordPolicy</div>
-	}
+    @if (ViewBag.PasswordPolicy != null)
+    {
+        <div class="alert alert-info">@ViewBag.PasswordPolicy</div>
+    }
 
-	<label>Username</label>
-	<input name="UserName" class="form-control" value="@Model?.UserName" />
+    <label>@Localizer["Username"]</label>
+    <input name="UserName" class="form-control" value="@Model?.UserName" />
 
-	<label>Password</label>
-	<input name="Password" type="password" class="form-control" />
+    <label>@Localizer["Password"]</label>
+    <input name="Password" type="password" class="form-control" />
 
-	<label>Confirm Password</label>
-	<input name="confirmPassword" type="password" class="form-control" />
+    <label>@Localizer["Confirm Password"]</label>
+    <input name="confirmPassword" type="password" class="form-control" />
 
-	<label>Role</label>
-	<select name="roleId" class="form-control">
-		@foreach (var r in ViewBag.Roles)
-		{
-			<option value="@r.RoleID">
-				@r.RoleName
-			</option>
-		}
-	</select>
+    <label>@Localizer["Role"]</label>
+    <select name="roleId" class="form-control">
+        @foreach (var r in ViewBag.Roles)
+        {
+            <option value="@r.RoleID">@r.RoleName</option>
+        }
+    </select>
 
-	<br />
+    <br />
 
-	<button class="btn btn-success">Save</button>
+    <button class="btn btn-success">@Localizer["Save"]</button>
 </form>

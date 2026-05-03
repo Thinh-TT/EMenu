@@ -1,39 +1,44 @@
 @using EMenu.Domain.Enums
-<h2>Create Product</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Create Product"];
+}
+
+<h2>@Localizer["Create Product"]</h2>
 
 <form method="post" enctype="multipart/form-data">
-	@Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
 
-	<label>Name</label>
-	<input name="ProductName" class="form-control" />
+    <label>@Localizer["Name"]</label>
+    <input name="ProductName" class="form-control" />
 
-	<label>Price</label>
-	<input name="Price" class="form-control" />
+    <label>@Localizer["Price"]</label>
+    <input name="Price" class="form-control" />
 
-	<label>Category</label>
-	<select name="CategoryID" class="form-control">
-		@foreach (var c in ViewBag.Categories)
-		{
-			<option value="@c.CategoryID">@c.CategoryName</option>
-		}
-	</select>
+    <label>@Localizer["Category"]</label>
+    <select name="CategoryID" class="form-control">
+        @foreach (var c in ViewBag.Categories)
+        {
+            <option value="@c.CategoryID">@c.CategoryName</option>
+        }
+    </select>
 
-	<label>Image</label>
-	<input type="file" name="ImageFile" class="form-control" />
+    <label>@Localizer["Image"]</label>
+    <input type="file" name="ImageFile" class="form-control" />
 
-	<label>Description</label>
-	<textarea name="Description" class="form-control"></textarea>
+    <label>@Localizer["Description"]</label>
+    <textarea name="Description" class="form-control"></textarea>
 
-	<label>Product Type</label>
-	<select name="ProductType" class="form-control">
-		<option value="1">Single</option>
-		<option value="2">Combo</option>
-	</select>
+    <label>@Localizer["Product Type"]</label>
+    <select name="ProductType" class="form-control">
+        <option value="1">@Localizer["Single"]</option>
+        <option value="2">@Localizer["Combo"]</option>
+    </select>
 
-	<label>Status</label>
-	<input type="checkbox" name="IsAvailable" value="true" />
+    <label>@Localizer["Status"]</label>
+    <input type="checkbox" name="IsAvailable" value="true" />
 
-	<br />
+    <br />
 
-	<button class="btn btn-success">Save</button>
+    <button class="btn btn-success">@Localizer["Save"]</button>
 </form>

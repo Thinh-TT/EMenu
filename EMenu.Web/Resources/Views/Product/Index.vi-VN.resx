@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Product Management" xml:space="preserve"><value>Quản lý sản phẩm</value></data>
+  <data name="Add Product" xml:space="preserve"><value>Thêm sản phẩm</value></data>
+  <data name="ID" xml:space="preserve"><value>Mã</value></data>
+  <data name="Name" xml:space="preserve"><value>Tên</value></data>
+  <data name="Image" xml:space="preserve"><value>Hình ảnh</value></data>
+  <data name="Category" xml:space="preserve"><value>Danh mục</value></data>
+  <data name="Price" xml:space="preserve"><value>Giá</value></data>
+  <data name="Type" xml:space="preserve"><value>Loại</value></data>
+  <data name="Status" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="Actions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="Combo" xml:space="preserve"><value>Combo</value></data>
+  <data name="Single" xml:space="preserve"><value>Món lẻ</value></data>
+  <data name="Available" xml:space="preserve"><value>Đang bán</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Tạm tắt</value></data>
+  <data name="Edit" xml:space="preserve"><value>Sửa</value></data>
+  <data name="Delete" xml:space="preserve"><value>Xóa</value></data>
+</root>

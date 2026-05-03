@@ -1,4 +1,9 @@
-<h2>Welcome</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Welcome"];
+}
+
+<h2>@Localizer["Welcome"]</h2>
 
 @if (ViewBag.Error != null)
 {
@@ -10,30 +15,24 @@
 <form method="post">
     @Html.AntiForgeryToken()
 
-    <input type="hidden"
-           name="tableId"
-           value="@ViewBag.TableId" />
+    <input type="hidden" name="tableId" value="@ViewBag.TableId" />
 
     <div class="mb-3">
-        <label>Your Name *</label>
-        <input name="name"
-               class="form-control"
-               required />
+        <label>@Localizer["Your Name *"]</label>
+        <input name="name" class="form-control" required />
     </div>
 
     <div class="mb-3">
-        <label>Phone (optional)</label>
-        <input name="phone"
-               class="form-control" />
+        <label>@Localizer["Phone (optional)"]</label>
+        <input name="phone" class="form-control" />
     </div>
 
     <div class="mb-3">
-        <label>Email (optional)</label>
-        <input name="email"
-               class="form-control" />
+        <label>@Localizer["Email (optional)"]</label>
+        <input name="email" class="form-control" />
     </div>
 
     <button class="btn btn-primary">
-        Start Order
+        @Localizer["Start Order"]
     </button>
 </form>

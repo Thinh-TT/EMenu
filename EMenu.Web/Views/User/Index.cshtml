@@ -1,42 +1,42 @@
 @model List<EMenu.Domain.Entities.User>
 @using System.Linq
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["User Management"];
+}
 
-<h2>User Management</h2>
+<h2>@Localizer["User Management"]</h2>
 
-<a href="/User/Create" class="btn btn-primary">Create User</a>
+<a href="/User/Create" class="btn btn-primary">@Localizer["Create User"]</a>
 
 <table class="table">
-	<thead>
-		<tr>
-			<th>ID</th>
-			<th>Username</th>
-			<th>Role</th>
-			<th>Status</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
+    <thead>
+        <tr>
+            <th>@Localizer["ID"]</th>
+            <th>@Localizer["Username"]</th>
+            <th>@Localizer["Role"]</th>
+            <th>@Localizer["Status"]</th>
+            <th>@Localizer["Actions"]</th>
+        </tr>
+    </thead>
 
-	<tbody>
-		@foreach (var user in Model)
-		{
-			<tr>
-				<td>@user.UserID</td>
-				<td>@user.UserName</td>
-				<td>@user.UserRoles.FirstOrDefault()?.Role?.RoleName</td>
-				<td>@(user.IsActive ? "Active" : "Disabled")</td>
-				<td class="table-actions">
-					<a class="table-action-link" href="/User/Edit/@user.UserID">Edit</a>
-					<form asp-action="ToggleStatus"
-					      asp-route-id="@user.UserID"
-					      method="post"
-					      class="table-action-form">
-						<button type="submit"
-						        class="btn btn-link table-action-link">
-							Toggle Status
-						</button>
-					</form>
-				</td>
-			</tr>
-		}
-	</tbody>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserID</td>
+                <td>@user.UserName</td>
+                <td>@user.UserRoles.FirstOrDefault()?.Role?.RoleName</td>
+                <td>@(user.IsActive ? Localizer["Active"].Value : Localizer["Disabled"].Value)</td>
+                <td class="table-actions">
+                    <a class="table-action-link" href="/User/Edit/@user.UserID">@Localizer["Edit"]</a>
+                    <form asp-action="ToggleStatus" asp-route-id="@user.UserID" method="post" class="table-action-form">
+                        <button type="submit" class="btn btn-link table-action-link">
+                            @Localizer["Toggle Status"]
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

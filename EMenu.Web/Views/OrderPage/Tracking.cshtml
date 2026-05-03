@@ -1,75 +1,61 @@
-﻿<h2>Your Order Status</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Your Order Status"];
+}
+
+<h2>@Localizer["Your Order Status"]</h2>
 
 <div id="orderStatus"></div>
 <script src="/js/signalr.min.js"></script>
 <script>
+    let sessionId = "@ViewBag.SessionId";
+    const statusMap = {
+        0: "@Localizer["Pending"]",
+        1: "@Localizer["Preparing"]",
+        2: "@Localizer["Ready"]",
+        3: "@Localizer["Served"]",
+        4: "@Localizer["Cancelled"]"
+    };
 
-	let sessionId = "@ViewBag.SessionId";
+    loadStatus();
 
-	loadStatus();
+    function loadStatus() {
+        fetch("/api/order/status?sessionId=" + sessionId)
+            .then(res => res.json())
+            .then(data => renderStatus(data));
+    }
 
-	function loadStatus(){
+    function renderStatus(items) {
+        let html = "";
 
-	fetch("/api/order/status?sessionId=" + sessionId)
-	.then(res=>res.json())
-	.then(data=>renderStatus(data));
+        items.forEach(i => {
+            html += `
+    <div class="order-item">
+    ${i.productName} x${i.quantity}
+    <span>${getStatus(i.status)}</span>
+    </div>
+    `;
+        });
 
-	}
+        document.getElementById("orderStatus").innerHTML = html;
+    }
 
-	function renderStatus(items){
+    function getStatus(s) {
+        return statusMap[s] || "";
+    }
 
-	let html="";
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/orderHub")
+        .build();
 
-	items.forEach(i=>{
+    connection.start()
+        .then(() => console.log("SignalR connected"))
+        .catch(err => console.error(err));
 
-	html += `
-	<div class="order-item">
-
-	${i.productName} x${i.quantity}
-
-	<span>${getStatus(i.status)}</span>
-
-	</div>
-	`;
-
-	});
-
-	document.getElementById("orderStatus").innerHTML=html;
-
-	}
-
-	function getStatus(s){
-
-	if(s==0) return "Pending";
-	if(s==1) return "Preparing";
-	if(s==2) return "Ready";
-	if(s==3) return "Served";
-	if(s==4) return "Cancelled";
-
-	return "";
-
-	}
-	
-
-		const connection = new signalR.HubConnectionBuilder()
-		.withUrl("/orderHub")
-		.build();
-
-		connection.start()
-	.then(() => console.log("SignalR connected"))
-	.catch(err => console.error(err));
-
-	connection.on("OrderStatusUpdated", function(orderProductId, status){
-
-		console.log("Realtime update:", orderProductId, status);
-
-		loadStatus();
-
-	});
-
-	
-
+    connection.on("OrderStatusUpdated", function (orderProductId, status) {
+        console.log("Realtime update:", orderProductId, status);
+        loadStatus();
+    });
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
-

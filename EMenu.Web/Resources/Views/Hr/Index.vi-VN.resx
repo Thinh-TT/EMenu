@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="HR Timekeeping" xml:space="preserve"><value>Chấm công nhân sự</value></data>
+  <data name="Staff" xml:space="preserve"><value>Nhân viên</value></data>
+  <data name="Month" xml:space="preserve"><value>Tháng</value></data>
+  <data name="Year" xml:space="preserve"><value>Năm</value></data>
+  <data name="Apply" xml:space="preserve"><value>Áp dụng</value></data>
+  <data name="Quick Check-in" xml:space="preserve"><value>Check-in nhanh</value></data>
+  <data name="Quick Check-out" xml:space="preserve"><value>Check-out nhanh</value></data>
+  <data name="Monthly Summary - {0} ({1}/{2})" xml:space="preserve"><value>Tổng kết tháng - {0} ({1}/{2})</value></data>
+  <data name="Work Days:" xml:space="preserve"><value>Ngày công:</value></data>
+  <data name="Total Hours:" xml:space="preserve"><value>Tổng giờ:</value></data>
+  <data name="Base Salary:" xml:space="preserve"><value>Lương cơ bản:</value></data>
+  <data name="Estimated Wage:" xml:space="preserve"><value>Lương ước tính:</value></data>
+  <data name="Timekeeping Records" xml:space="preserve"><value>Bản ghi chấm công</value></data>
+  <data name="Date" xml:space="preserve"><value>Ngày</value></data>
+  <data name="Check-in" xml:space="preserve"><value>Giờ vào</value></data>
+  <data name="Check-out" xml:space="preserve"><value>Giờ ra</value></data>
+  <data name="Worked Hours" xml:space="preserve"><value>Giờ làm</value></data>
+  <data name="No timekeeping records found for this period." xml:space="preserve"><value>Không có bản ghi chấm công trong kỳ này.</value></data>
+  <data name="Monthly Report (All Staff)" xml:space="preserve"><value>Báo cáo tháng (toàn bộ nhân viên)</value></data>
+  <data name="Work Days" xml:space="preserve"><value>Ngày công</value></data>
+  <data name="Total Hours" xml:space="preserve"><value>Tổng giờ</value></data>
+  <data name="Base Salary" xml:space="preserve"><value>Lương cơ bản</value></data>
+  <data name="Hourly Rate" xml:space="preserve"><value>Lương theo giờ</value></data>
+  <data name="Estimated Wage" xml:space="preserve"><value>Lương ước tính</value></data>
+  <data name="No data." xml:space="preserve"><value>Không có dữ liệu.</value></data>
+</root>

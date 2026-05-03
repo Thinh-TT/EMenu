@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Print Bill" xml:space="preserve"><value>In hóa đơn</value></data>
+  <data name="Restaurant" xml:space="preserve"><value>Nhà hàng</value></data>
+  <data name="Table: {0}" xml:space="preserve"><value>Bàn: {0}</value></data>
+  <data name="Date: {0}" xml:space="preserve"><value>Ngày: {0}</value></data>
+  <data name="Total: {0}" xml:space="preserve"><value>Tổng cộng: {0}</value></data>
+  <data name="Print" xml:space="preserve"><value>In</value></data>
+</root>

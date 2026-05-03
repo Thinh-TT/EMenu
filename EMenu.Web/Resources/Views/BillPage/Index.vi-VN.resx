@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Bill" xml:space="preserve"><value>Hóa đơn</value></data>
+  <data name="Table: {0}" xml:space="preserve"><value>Bàn: {0}</value></data>
+  <data name="Product" xml:space="preserve"><value>Món</value></data>
+  <data name="Qty" xml:space="preserve"><value>SL</value></data>
+  <data name="Price" xml:space="preserve"><value>Đơn giá</value></data>
+  <data name="Total" xml:space="preserve"><value>Thành tiền</value></data>
+  <data name="Total: {0}" xml:space="preserve"><value>Tổng cộng: {0}</value></data>
+  <data name="Checkout" xml:space="preserve"><value>Thanh toán</value></data>
+  <data name="Print Bill" xml:space="preserve"><value>In hóa đơn</value></data>
+</root>

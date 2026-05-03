@@ -1,9 +1,13 @@
 @model List<EMenu.Domain.Entities.Category>
 @using EMenu.Domain.Enums
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Restaurant Menu"];
+}
 
 <section class="page-intro">
-    <h2>Restaurant Menu</h2>
-    <p>Browse products by category, review combos quickly and keep the cart visible while ordering.</p>
+    <h2>@Localizer["Restaurant Menu"]</h2>
+    <p>@Localizer["Browse products by category, review combos quickly and keep the cart visible while ordering."]</p>
     @if (ViewBag.HasValidSession != true)
     {
         <div class="alert alert-warning mb-0">
@@ -19,7 +23,7 @@
             <section class="menu-category">
                 <div class="category-heading">
                     <h3>@category.CategoryName</h3>
-                    <span class="category-count">@category.Products.Count item(s)</span>
+                    <span class="category-count">@Localizer["{0} item(s)", category.Products.Count]</span>
                 </div>
 
                 <div class="product-grid">
@@ -34,13 +38,13 @@
                             <div class="product-card-actions">
                                 <button class="btn btn-primary"
                                         onclick="addToCart(@product.ProductID,'@product.ProductName',@product.Price)">
-                                    Add
+                                    @Localizer["Add"]
                                 </button>
 
                                 @if (product.ProductType == ProductType.Combo)
                                 {
                                     <button class="btn btn-warning" onclick="showCombo(@product.ProductID)">
-                                        View Combo
+                                        @Localizer["View Combo"]
                                     </button>
                                 }
                             </div>
@@ -52,10 +56,10 @@
     </div>
 
     <aside class="cart-panel">
-        <h3>Cart</h3>
+        <h3>@Localizer["Cart"]</h3>
         <div id="cartItems"></div>
-        <h4>Total: <span id="cartTotal">@((0m).ToVnd())</span></h4>
-        <button onclick="submitOrder()" class="btn btn-success">Submit Order</button>
+        <h4>@Localizer["Total:"] <span id="cartTotal">@((0m).ToVnd())</span></h4>
+        <button onclick="submitOrder()" class="btn btn-success">@Localizer["Submit Order"]</button>
     </aside>
 </div>
 
@@ -64,8 +68,8 @@
 
 <div id="comboModal" class="combo-modal">
     <div class="combo-modal-card">
-        <h3>Combo Items</h3>
+        <h3>@Localizer["Combo Items"]</h3>
         <ul id="comboItems"></ul>
-        <button onclick="closeCombo()" class="btn btn-danger">Close</button>
+        <button onclick="closeCombo()" class="btn btn-danger">@Localizer["Close"]</button>
     </div>
 </div>

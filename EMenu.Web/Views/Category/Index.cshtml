@@ -1,13 +1,18 @@
-<h2>Category Management</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Category Management"];
+}
 
-<a href="/Category/Create" class="btn btn-primary">Add Category</a>
+<h2>@Localizer["Category Management"]</h2>
+
+<a href="/Category/Create" class="btn btn-primary">@Localizer["Add Category"]</a>
 
 <table class="table">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Actions</th>
+            <th>@Localizer["ID"]</th>
+            <th>@Localizer["Name"]</th>
+            <th>@Localizer["Actions"]</th>
         </tr>
     </thead>
 
@@ -18,14 +23,10 @@
                 <td>@item.CategoryID</td>
                 <td>@item.CategoryName</td>
                 <td class="table-actions">
-                    <a class="table-action-link" href="/Category/Edit/@item.CategoryID">Edit</a>
-                    <form asp-action="Delete"
-                          asp-route-id="@item.CategoryID"
-                          method="post"
-                          class="table-action-form">
-                        <button type="submit"
-                                class="btn btn-link table-action-link">
-                            Delete
+                    <a class="table-action-link" href="/Category/Edit/@item.CategoryID">@Localizer["Edit"]</a>
+                    <form asp-action="Delete" asp-route-id="@item.CategoryID" method="post" class="table-action-form">
+                        <button type="submit" class="btn btn-link table-action-link">
+                            @Localizer["Delete"]
                         </button>
                     </form>
                 </td>

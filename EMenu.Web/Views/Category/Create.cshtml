@@ -1,12 +1,17 @@
-<h2>Create Category</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Create Category"];
+}
+
+<h2>@Localizer["Create Category"]</h2>
 
 <form method="post">
-	@Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
 
-	<label>Name</label>
-	<input name="CategoryName" class="form-control" />
+    <label>@Localizer["Name"]</label>
+    <input name="CategoryName" class="form-control" />
 
-	<br />
+    <br />
 
-	<button type="submit" class="btn btn-success">Save</button>
+    <button type="submit" class="btn btn-success">@Localizer["Save"]</button>
 </form>

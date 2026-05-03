@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Create Receipt" xml:space="preserve"><value>Tạo phiếu nhập</value></data>
+  <data name="Suppliers" xml:space="preserve"><value>Nhà cung cấp</value></data>
+  <data name="Receipt History" xml:space="preserve"><value>Lịch sử phiếu nhập</value></data>
+  <data name="Missing master data. Ensure at least one supplier, staff, and ingredient exists before creating a receipt." xml:space="preserve"><value>Thiếu dữ liệu gốc. Hãy đảm bảo có ít nhất 1 nhà cung cấp, 1 nhân viên và 1 nguyên liệu trước khi tạo phiếu nhập.</value></data>
+  <data name="Supplier" xml:space="preserve"><value>Nhà cung cấp</value></data>
+  <data name="Staff" xml:space="preserve"><value>Nhân viên</value></data>
+  <data name="Created Date" xml:space="preserve"><value>Ngày tạo</value></data>
+  <data name="Receipt Details" xml:space="preserve"><value>Chi tiết phiếu nhập</value></data>
+  <data name="+ Add Item" xml:space="preserve"><value>+ Thêm dòng</value></data>
+  <data name="Ingredient" xml:space="preserve"><value>Nguyên liệu</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Số lượng</value></data>
+  <data name="Price" xml:space="preserve"><value>Đơn giá</value></data>
+  <data name="Action" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="Remove" xml:space="preserve"><value>Xóa</value></data>
+</root>

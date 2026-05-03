@@ -1,3 +1,7 @@
-﻿<h2>Access Denied</h2>
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Access Denied"];
+}
 
-<p>You do not have permission to access this page.</p>
+<h2>@Localizer["Access Denied"]</h2>
+<p>@Localizer["You do not have permission to access this page."]</p>

@@ -1,44 +1,43 @@
 @model EMenu.Application.DTOs.BillDto
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Bill"];
+}
 
-<h2>Bill</h2>
+<h2>@Localizer["Bill"]</h2>
 
 @if (!string.IsNullOrEmpty(Model.TableName))
 {
-	<p>Table: @Model.TableName</p>
+    <p>@Localizer["Table: {0}", Model.TableName]</p>
 }
 
 <table class="table">
+    <tr>
+        <th>@Localizer["Product"]</th>
+        <th>@Localizer["Qty"]</th>
+        <th>@Localizer["Price"]</th>
+        <th>@Localizer["Total"]</th>
+    </tr>
 
-	<tr>
-		<th>Product</th>
-		<th>Qty</th>
-		<th>Price</th>
-		<th>Total</th>
-	</tr>
-
-	@foreach (var item in Model.Items)
-	{
-		<tr>
-			<td>@item.ProductName</td>
-			<td>@item.Quantity</td>
-			<td>@item.UnitPrice.ToVnd()</td>
-			<td>@item.Total.ToVnd()</td>
-		</tr>
-	}
-
+    @foreach (var item in Model.Items)
+    {
+        <tr>
+            <td>@item.ProductName</td>
+            <td>@item.Quantity</td>
+            <td>@item.UnitPrice.ToVnd()</td>
+            <td>@item.Total.ToVnd()</td>
+        </tr>
+    }
 </table>
 
-<h3>Total: @Model.TotalAmount.ToVnd()</h3>
-
+<h3>@Localizer["Total: {0}", Model.TotalAmount.ToVnd()]</h3>
 
 @if (User.IsInRole("Staff") || User.IsInRole("Admin"))
 {
-	<a href="/Checkout?sessionId=@ViewBag.SessionId"
-		   class="btn btn-success">
-		Checkout
-	</a>
+    <a href="/Checkout?sessionId=@ViewBag.SessionId" class="btn btn-success">
+        @Localizer["Checkout"]
+    </a>
 }
-<a href="/BillPage/Print?sessionId=@ViewBag.SessionId"
-	   class="btn btn-secondary">
-	Print Bill
+<a href="/BillPage/Print?sessionId=@ViewBag.SessionId" class="btn btn-secondary">
+    @Localizer["Print Bill"]
 </a>

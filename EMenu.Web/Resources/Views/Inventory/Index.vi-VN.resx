@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Inventory Ingredients" xml:space="preserve"><value>Kho nguyên liệu</value></data>
+  <data name="Low stock items:" xml:space="preserve"><value>Nguyên liệu sắp hết:</value></data>
+  <data name="Keyword" xml:space="preserve"><value>Từ khóa</value></data>
+  <data name="Ingredient name" xml:space="preserve"><value>Tên nguyên liệu</value></data>
+  <data name="Sort by" xml:space="preserve"><value>Sắp xếp theo</value></data>
+  <data name="Name" xml:space="preserve"><value>Tên</value></data>
+  <data name="Stock" xml:space="preserve"><value>Tồn</value></data>
+  <data name="Min stock" xml:space="preserve"><value>Tồn tối thiểu</value></data>
+  <data name="Stock gap" xml:space="preserve"><value>Khoảng thiếu tồn</value></data>
+  <data name="Low stock only" xml:space="preserve"><value>Chỉ hiện sắp hết</value></data>
+  <data name="Descending" xml:space="preserve"><value>Giảm dần</value></data>
+  <data name="Apply" xml:space="preserve"><value>Áp dụng</value></data>
+  <data name="Create Ingredient" xml:space="preserve"><value>Tạo nguyên liệu</value></data>
+  <data name="Unit" xml:space="preserve"><value>Đơn vị</value></data>
+  <data name="Create" xml:space="preserve"><value>Tạo</value></data>
+  <data name="Ingredient List" xml:space="preserve"><value>Danh sách nguyên liệu</value></data>
+  <data name="Open Product Mapping" xml:space="preserve"><value>Mở mapping sản phẩm</value></data>
+  <data name="ID" xml:space="preserve"><value>Mã</value></data>
+  <data name="Min" xml:space="preserve"><value>Tối thiểu</value></data>
+  <data name="Status" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="Actions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="No ingredients found." xml:space="preserve"><value>Không tìm thấy nguyên liệu.</value></data>
+  <data name="Low" xml:space="preserve"><value>Thấp</value></data>
+  <data name="OK" xml:space="preserve"><value>Ổn</value></data>
+  <data name="Update" xml:space="preserve"><value>Cập nhật</value></data>
+  <data name="Add stock" xml:space="preserve"><value>Nhập thêm</value></data>
+  <data name="Import +" xml:space="preserve"><value>Nhập +</value></data>
+  <data name="Delete" xml:space="preserve"><value>Xóa</value></data>
+</root>

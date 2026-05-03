@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Create Product" xml:space="preserve"><value>Tạo sản phẩm</value></data>
+  <data name="Name" xml:space="preserve"><value>Tên</value></data>
+  <data name="Price" xml:space="preserve"><value>Giá</value></data>
+  <data name="Category" xml:space="preserve"><value>Danh mục</value></data>
+  <data name="Image" xml:space="preserve"><value>Hình ảnh</value></data>
+  <data name="Description" xml:space="preserve"><value>Mô tả</value></data>
+  <data name="Product Type" xml:space="preserve"><value>Loại sản phẩm</value></data>
+  <data name="Single" xml:space="preserve"><value>Món lẻ</value></data>
+  <data name="Combo" xml:space="preserve"><value>Combo</value></data>
+  <data name="Status" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="Save" xml:space="preserve"><value>Lưu</value></data>
+</root>

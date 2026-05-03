@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Create Category" xml:space="preserve"><value>Tạo danh mục</value></data>
+  <data name="Name" xml:space="preserve"><value>Tên</value></data>
+  <data name="Save" xml:space="preserve"><value>Lưu</value></data>
+</root>

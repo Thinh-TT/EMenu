@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Wage Management" xml:space="preserve"><value>Quản lý lương</value></data>
+  <data name="Create / Update Wage Profile" xml:space="preserve"><value>Tạo / cập nhật hồ sơ lương</value></data>
+  <data name="Staff" xml:space="preserve"><value>Nhân viên</value></data>
+  <data name="Select staff" xml:space="preserve"><value>Chọn nhân viên</value></data>
+  <data name="Base Salary" xml:space="preserve"><value>Lương cơ bản</value></data>
+  <data name="Hourly Rate" xml:space="preserve"><value>Lương theo giờ</value></data>
+  <data name="Save" xml:space="preserve"><value>Lưu</value></data>
+  <data name="Month" xml:space="preserve"><value>Tháng</value></data>
+  <data name="Year" xml:space="preserve"><value>Năm</value></data>
+  <data name="Apply Month" xml:space="preserve"><value>Áp dụng tháng</value></data>
+  <data name="Current Wage Profiles" xml:space="preserve"><value>Hồ sơ lương hiện tại</value></data>
+  <data name="No wage profiles." xml:space="preserve"><value>Không có hồ sơ lương.</value></data>
+  <data name="Staff {0}" xml:space="preserve"><value>Nhân viên {0}</value></data>
+  <data name="Monthly Hours and Wage Estimate ({0}/{1})" xml:space="preserve"><value>Tổng giờ và lương ước tính ({0}/{1})</value></data>
+  <data name="Work Days" xml:space="preserve"><value>Ngày công</value></data>
+  <data name="Total Hours" xml:space="preserve"><value>Tổng giờ</value></data>
+  <data name="Estimated Wage" xml:space="preserve"><value>Lương ước tính</value></data>
+  <data name="No monthly data." xml:space="preserve"><value>Không có dữ liệu tháng.</value></data>
+</root>

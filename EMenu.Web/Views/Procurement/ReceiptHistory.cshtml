@@ -1,6 +1,10 @@
 @model EMenu.Web.ViewModels.ProcurementReceiptHistoryViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Receipt History"];
+}
 
-<h2>Receipt History</h2>
+<h2>@Localizer["Receipt History"]</h2>
 
 @if (TempData["Error"] != null)
 {
@@ -13,35 +17,29 @@
 }
 
 <div class="d-flex gap-2 mb-3">
-    <a asp-action="Index" class="btn btn-outline-secondary">Suppliers</a>
-    <a asp-action="CreateReceipt" class="btn btn-primary">Create Receipt</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Suppliers"]</a>
+    <a asp-action="CreateReceipt" class="btn btn-primary">@Localizer["Create Receipt"]</a>
 </div>
 
 <form method="get" asp-action="ReceiptHistory" class="row g-3 align-items-end mb-4">
     <div class="col-md-3">
-        <label class="form-label">From date</label>
-        <input type="date"
-               class="form-control"
-               name="fromDate"
-               value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+        <label class="form-label">@Localizer["From date"]</label>
+        <input type="date" class="form-control" name="fromDate" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
     </div>
     <div class="col-md-3">
-        <label class="form-label">To date</label>
-        <input type="date"
-               class="form-control"
-               name="toDate"
-               value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+        <label class="form-label">@Localizer["To date"]</label>
+        <input type="date" class="form-control" name="toDate" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
     </div>
     <div class="col-md-4">
-        <label class="form-label">Supplier</label>
+        <label class="form-label">@Localizer["Supplier"]</label>
         <select class="form-select" name="supplierId">
             @if (!Model.SupplierId.HasValue)
             {
-                <option value="" selected>All suppliers</option>
+                <option value="" selected>@Localizer["All suppliers"]</option>
             }
             else
             {
-                <option value="">All suppliers</option>
+                <option value="">@Localizer["All suppliers"]</option>
             }
 
             @foreach (var supplier in Model.Suppliers)
@@ -58,31 +56,31 @@
         </select>
     </div>
     <div class="col-md-2">
-        <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+        <button type="submit" class="btn btn-outline-primary w-100">@Localizer["Filter"]</button>
     </div>
 </form>
 
 <div class="alert alert-info">
-    <strong>Total import value:</strong> @Model.TotalAmount.ToString("N0")
+    <strong>@Localizer["Total import value:"]</strong> @Model.TotalAmount.ToString("N0")
 </div>
 
 <table class="table table-striped align-middle">
     <thead>
         <tr>
-            <th>Receipt</th>
-            <th>Date</th>
-            <th>Supplier</th>
-            <th>Staff</th>
-            <th>Items</th>
-            <th>Total</th>
-            <th>Detail</th>
+            <th>@Localizer["Receipt"]</th>
+            <th>@Localizer["Date"]</th>
+            <th>@Localizer["Supplier"]</th>
+            <th>@Localizer["Staff"]</th>
+            <th>@Localizer["Items"]</th>
+            <th>@Localizer["Total"]</th>
+            <th>@Localizer["Detail"]</th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Receipts.Any())
         {
             <tr>
-                <td colspan="7" class="text-center text-muted">No receipt data found.</td>
+                <td colspan="7" class="text-center text-muted">@Localizer["No receipt data found."]</td>
             </tr>
         }
         else
@@ -99,7 +97,7 @@
                     <td>
                         @if (!receipt.Items.Any())
                         {
-                            <span class="text-muted">No detail</span>
+                            <span class="text-muted">@Localizer["No detail"]</span>
                         }
                         else
                         {

@@ -1,6 +1,10 @@
 @model EMenu.Web.ViewModels.ProcurementCreateReceiptViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Create Receipt"];
+}
 
-<h2>Create Receipt</h2>
+<h2>@Localizer["Create Receipt"]</h2>
 
 @if (TempData["Error"] != null)
 {
@@ -13,14 +17,14 @@
 }
 
 <div class="d-flex gap-2 mb-3">
-    <a asp-action="Index" class="btn btn-outline-secondary">Suppliers</a>
-    <a asp-action="ReceiptHistory" class="btn btn-outline-primary">Receipt History</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Suppliers"]</a>
+    <a asp-action="ReceiptHistory" class="btn btn-outline-primary">@Localizer["Receipt History"]</a>
 </div>
 
 @if (!Model.Suppliers.Any() || !Model.Staffs.Any() || !Model.Ingredients.Any())
 {
     <div class="alert alert-warning">
-        Missing master data. Ensure at least one supplier, staff, and ingredient exists before creating a receipt.
+        @Localizer["Missing master data. Ensure at least one supplier, staff, and ingredient exists before creating a receipt."]
     </div>
 }
 else
@@ -28,7 +32,7 @@ else
     <form method="post" asp-action="CreateReceipt" id="receiptForm">
         <div class="row g-3 mb-4">
             <div class="col-md-4">
-                <label class="form-label">Supplier</label>
+                <label class="form-label">@Localizer["Supplier"]</label>
                 <select class="form-select" name="supplierId" required>
                     @foreach (var supplier in Model.Suppliers)
                     {
@@ -44,7 +48,7 @@ else
                 </select>
             </div>
             <div class="col-md-4">
-                <label class="form-label">Staff</label>
+                <label class="form-label">@Localizer["Staff"]</label>
                 <select class="form-select" name="staffId" required>
                     @foreach (var staff in Model.Staffs)
                     {
@@ -60,7 +64,7 @@ else
                 </select>
             </div>
             <div class="col-md-4">
-                <label class="form-label">Created Date</label>
+                <label class="form-label">@Localizer["Created Date"]</label>
                 <input type="datetime-local"
                        class="form-control"
                        name="createdDate"
@@ -69,18 +73,18 @@ else
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5 class="mb-0">Receipt Details</h5>
-            <button type="button" id="addRowBtn" class="btn btn-sm btn-outline-success">+ Add Item</button>
+            <h5 class="mb-0">@Localizer["Receipt Details"]</h5>
+            <button type="button" id="addRowBtn" class="btn btn-sm btn-outline-success">@Localizer["+ Add Item"]</button>
         </div>
 
         <div class="table-responsive">
             <table class="table table-striped align-middle" id="receiptItemsTable">
                 <thead>
                     <tr>
-                        <th style="width: 45%;">Ingredient</th>
-                        <th style="width: 20%;">Quantity</th>
-                        <th style="width: 20%;">Price</th>
-                        <th style="width: 15%;">Action</th>
+                        <th style="width: 45%;">@Localizer["Ingredient"]</th>
+                        <th style="width: 20%;">@Localizer["Quantity"]</th>
+                        <th style="width: 20%;">@Localizer["Price"]</th>
+                        <th style="width: 15%;">@Localizer["Action"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,7 +132,7 @@ else
                                        required />
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn">Remove</button>
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn">@Localizer["Remove"]</button>
                             </td>
                         </tr>
                     }
@@ -136,7 +140,7 @@ else
             </table>
         </div>
 
-        <button type="submit" class="btn btn-primary">Create Receipt</button>
+        <button type="submit" class="btn btn-primary">@Localizer["Create Receipt"]</button>
     </form>
 
     <template id="receiptItemTemplate">
@@ -166,7 +170,7 @@ else
                        required />
             </td>
             <td>
-                <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn">Remove</button>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn">@Localizer["Remove"]</button>
             </td>
         </tr>
     </template>
