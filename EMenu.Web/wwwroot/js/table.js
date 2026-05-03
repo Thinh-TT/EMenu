@@ -4,10 +4,18 @@
     const TABLE_STATUS_RESERVED = 2;
     const tableData = window.tableManagementData || { tables: [], actor: "Anonymous" };
     const i18n = tableData.i18n || {};
+    const checkoutRequests = new Map(
+        (tableData.checkoutRequests || []).map(request => [
+            Number.parseInt(request.tableId, 10),
+            request
+        ])
+    );
 
     function t(key, fallback) {
         return i18n[key] || fallback;
     }
+
+    applyCheckoutRequestState();
 
     window.openTable = function (tableId) {
         fetch(`/api/session/start?tableId=${tableId}&customerId=1`, {
@@ -48,6 +56,10 @@
             .catch(err => {
                 alert(err.message || t("unableToEndSession", "Unable to end session"));
             });
+    };
+
+    window.openBill = function (tableId) {
+        window.location = `/Table/Bill?tableId=${tableId}`;
     };
 
     window.openTransferModal = function (sourceTableId) {
@@ -136,6 +148,35 @@
             }
         });
     }
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/orderHub")
+        .build();
+
+    connection.start()
+        .catch(err => console.error(err));
+
+    connection.on("CheckoutRequested", payload => {
+        const tableId = Number.parseInt(payload?.tableId ?? payload?.tableID, 10);
+
+        if (Number.isNaN(tableId)) {
+            return;
+        }
+
+        checkoutRequests.set(tableId, payload);
+        applyCheckoutRequestState();
+    });
+
+    connection.on("CheckoutRequestCleared", payload => {
+        const tableId = Number.parseInt(payload?.tableId ?? payload?.tableID, 10);
+
+        if (Number.isNaN(tableId)) {
+            return;
+        }
+
+        checkoutRequests.delete(tableId);
+        applyCheckoutRequestState();
+    });
 
     function openTableActionModal(actionType, sourceTableId) {
         const sourceTable = tableData.tables.find(table => table.id === sourceTableId);
@@ -249,6 +290,30 @@
         if (selectElement) {
             selectElement.innerHTML = "";
         }
+    }
+
+    function applyCheckoutRequestState() {
+        document.querySelectorAll("[data-table-card]").forEach(card => {
+            const tableId = Number.parseInt(card.getAttribute("data-table-id"), 10);
+
+            if (Number.isNaN(tableId)) {
+                return;
+            }
+
+            const hasCheckoutRequest = checkoutRequests.has(tableId);
+            const requestElement = card.querySelector("[data-checkout-request]");
+            const billButton = card.querySelector("[data-bill-button]");
+
+            card.classList.toggle("table-box--checkout-requested", hasCheckoutRequest);
+
+            if (requestElement) {
+                requestElement.hidden = !hasCheckoutRequest;
+            }
+
+            if (billButton) {
+                billButton.classList.toggle("table-bill-button--highlight", hasCheckoutRequest);
+            }
+        });
     }
 
     async function readErrorMessage(response) {

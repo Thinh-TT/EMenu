@@ -5,6 +5,7 @@ using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
 using EMenu.Web.Extensions;
 using EMenu.Web.Hubs;
+using EMenu.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -21,6 +22,7 @@ namespace EMenu.Web.Controllers
         private readonly IHubContext<OrderHub> _hub;
         private readonly SessionService _sessionService;
         private readonly AppDbContext _context;
+        private readonly CheckoutRequestTracker _checkoutRequestTracker;
         private readonly ILogger<OrderController> _logger;
 
         public OrderController(
@@ -30,6 +32,7 @@ namespace EMenu.Web.Controllers
             SessionService sessionService,
             IHubContext<OrderHub> hub,
             AppDbContext context,
+            CheckoutRequestTracker checkoutRequestTracker,
             ILogger<OrderController> logger)
         {
             _orderService = orderService;
@@ -38,6 +41,7 @@ namespace EMenu.Web.Controllers
             _sessionService = sessionService;
             _hub = hub;
             _context = context;
+            _checkoutRequestTracker = checkoutRequestTracker;
             _logger = logger;
         }
 
@@ -205,6 +209,46 @@ namespace EMenu.Web.Controllers
                 .ToList();
 
             return Ok(items);
+        }
+
+        [HttpPost("call-checkout")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CallCheckout(int sessionId)
+        {
+            var session = _sessionService.GetById(sessionId);
+
+            if (session == null || session.Status != 1)
+                return BadRequest("Session is not active.");
+
+            var tableName = _context.RestaurantTables
+                .Where(x => x.TableID == session.TableID)
+                .Select(x => x.TableName)
+                .FirstOrDefault();
+
+            var request = _checkoutRequestTracker.Upsert(
+                sessionId,
+                session.TableID,
+                tableName ?? $"Table {session.TableID}");
+
+            var payload = new
+            {
+                request.SessionId,
+                request.TableId,
+                request.TableName,
+                request.RequestedAt
+            };
+
+            await _hub.Clients.All.SendAsync("CheckoutRequested", payload);
+
+            _logger.LogInformation(
+                "Checkout requested by user {UserId} ({Username}) roles {Roles}: session {SessionId}, table {TableId}.",
+                User.GetAuditUserId(),
+                User.GetAuditUserName(),
+                User.GetAuditRoles(),
+                sessionId,
+                session.TableID);
+
+            return Ok(payload);
         }
 
         [HttpPost("updateStatus")]

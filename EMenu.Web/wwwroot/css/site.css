@@ -474,10 +474,39 @@ form:not(.d-inline) .form-group {
     background: linear-gradient(160deg, #f59e0b, #b45309);
 }
 
+.table-box--checkout-requested {
+    outline: 3px solid rgba(254, 240, 138, 0.94);
+    box-shadow: 0 20px 34px rgba(250, 204, 21, 0.28);
+}
+
 .table-box-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.table-checkout-request {
+    display: grid;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    color: var(--blue-900);
+    background: rgba(254, 240, 138, 0.94);
+}
+
+.table-checkout-request strong,
+.table-checkout-request span {
+    color: inherit;
+}
+
+.table-checkout-request span {
+    font-size: 0.92rem;
+}
+
+.table-bill-button--highlight {
+    color: var(--blue-900) !important;
+    background: linear-gradient(135deg, #fde68a, #facc15) !important;
 }
 
 .status-pill {
@@ -841,6 +870,72 @@ body.cart-drawer-open {
     margin-bottom: 12px;
 }
 
+.tracking-stage {
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(10px);
+}
+
+.tracking-stage__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.tracking-checkout-card {
+    width: min(360px, 100%);
+    padding: 20px;
+    border: 1px solid rgba(219, 234, 254, 0.88);
+    border-radius: 24px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    box-shadow: var(--shadow-md);
+}
+
+.tracking-checkout-card .btn {
+    width: 100%;
+}
+
+.tracking-checkout-card__state {
+    margin: 14px 0 0;
+}
+
+.tracking-list {
+    display: grid;
+    gap: 12px;
+}
+
+.tracking-order-item {
+    align-items: center;
+    margin-bottom: 0;
+    padding: 16px 18px;
+    border: 1px solid rgba(219, 234, 254, 0.88);
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: var(--shadow-md);
+}
+
+.tracking-status-pill {
+    padding: 8px 12px;
+    color: var(--blue-700);
+    font-weight: 700;
+    border-radius: 999px;
+    background: var(--blue-50);
+}
+
+.tracking-empty-state {
+    padding: 20px;
+    border-radius: 20px;
+    color: var(--blue-700);
+    font-weight: 600;
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    border: 1px dashed rgba(147, 197, 253, 0.9);
+}
+
 .status-btn {
     padding: 8px 14px;
     border: none;
@@ -1140,6 +1235,7 @@ body.cart-drawer-open {
     .kitchen-stage,
     .qr-stage,
     .table-stage,
+    .tracking-stage,
     .menu-catalog,
     .home-hero,
     .auth-card,
@@ -1190,6 +1286,14 @@ body.cart-drawer-open {
     .cart-item {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .tracking-stage__header {
+        flex-direction: column;
+    }
+
+    .tracking-checkout-card {
+        width: 100%;
     }
 
     .footer-inner {

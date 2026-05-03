@@ -1,61 +1,51 @@
+@using System.Text.Json
 @inject IViewLocalizer Localizer
 @{
     ViewData["Title"] = Localizer["Your Order Status"];
+    var pageDataJson = JsonSerializer.Serialize(new
+    {
+        sessionId = (int)ViewBag.SessionId,
+        tableId = (int?)ViewBag.TableId,
+        checkoutRequested = (bool?)ViewBag.CheckoutRequested == true,
+        i18n = new
+        {
+            pending = Localizer["Pending"].Value,
+            preparing = Localizer["Preparing"].Value,
+            ready = Localizer["Ready"].Value,
+            served = Localizer["Served"].Value,
+            cancelled = Localizer["Cancelled"].Value,
+            callCheckout = Localizer["Call checkout"].Value,
+            checkoutRequestedButton = Localizer["Checkout requested"].Value,
+            checkoutHint = Localizer["Tap here when you are ready for the staff to bring your bill."].Value,
+            checkoutRequestedMessage = Localizer["The staff has been notified and will come to your table shortly."].Value,
+            unableToCallCheckout = Localizer["Unable to call checkout"].Value,
+            waitingForItems = Localizer["Your items will appear here after the kitchen receives them."].Value
+        }
+    });
 }
 
-<h2>@Localizer["Your Order Status"]</h2>
+<section class="tracking-stage">
+    <div class="tracking-stage__header">
+        <div>
+            <h2>@Localizer["Your Order Status"]</h2>
+            <p>@Localizer["Track each item in real time and let the staff know when you are ready to checkout."]</p>
+        </div>
 
-<div id="orderStatus"></div>
-<script src="/js/signalr.min.js"></script>
-<script>
-    let sessionId = "@ViewBag.SessionId";
-    const statusMap = {
-        0: "@Localizer["Pending"]",
-        1: "@Localizer["Preparing"]",
-        2: "@Localizer["Ready"]",
-        3: "@Localizer["Served"]",
-        4: "@Localizer["Cancelled"]"
-    };
-
-    loadStatus();
-
-    function loadStatus() {
-        fetch("/api/order/status?sessionId=" + sessionId)
-            .then(res => res.json())
-            .then(data => renderStatus(data));
-    }
-
-    function renderStatus(items) {
-        let html = "";
-
-        items.forEach(i => {
-            html += `
-    <div class="order-item">
-    ${i.productName} x${i.quantity}
-    <span>${getStatus(i.status)}</span>
+        <div class="tracking-checkout-card">
+            <button id="callCheckoutButton" type="button" class="btn btn-warning">
+                @Localizer["Call checkout"]
+            </button>
+            <p id="checkoutCallState" class="tracking-checkout-card__state">
+                @Localizer["Tap here when you are ready for the staff to bring your bill."]
+            </p>
+        </div>
     </div>
-    `;
-        });
 
-        document.getElementById("orderStatus").innerHTML = html;
-    }
+    <div id="orderStatus" class="tracking-list"></div>
+</section>
 
-    function getStatus(s) {
-        return statusMap[s] || "";
-    }
-
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/orderHub")
-        .build();
-
-    connection.start()
-        .then(() => console.log("SignalR connected"))
-        .catch(err => console.error(err));
-
-    connection.on("OrderStatusUpdated", function (orderProductId, status) {
-        console.log("Realtime update:", orderProductId, status);
-        loadStatus();
-    });
+<script>
+    window.trackingPageData = @Html.Raw(pageDataJson);
 </script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script src="/js/signalr.min.js"></script>
+<script src="/js/tracking.js" asp-append-version="true"></script>

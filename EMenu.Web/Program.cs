@@ -4,6 +4,7 @@ using EMenu.Infrastructure.Data;
 using EMenu.Infrastructure.DependencyInjection;
 using EMenu.Infrastructure.Seed;
 using EMenu.Web.Hubs;
+using EMenu.Web.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ var vnPayConfig = builder.Configuration
     .Get<VNPayConfig>() ?? new VNPayConfig();
 
 builder.Services.AddSingleton(vnPayConfig);
+builder.Services.AddSingleton<CheckoutRequestTracker>();
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<PasswordService>();
