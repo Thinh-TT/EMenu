@@ -1,79 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="Home Page" xml:space="preserve">
-    <value>Trang chu</value>
+    <value>Trang chủ</value>
   </data>
   <data name="Blue and white experience" xml:space="preserve">
-    <value>Trai nghiem xanh trang</value>
+    <value>Trải nghiệm xanh trắng</value>
   </data>
   <data name="Welcome" xml:space="preserve">
-    <value>Chao mung</value>
+    <value>Chào mừng</value>
   </data>
   <data name="Learn about" xml:space="preserve">
-    <value>Tim hieu ve</value>
+    <value>Tìm hiểu về</value>
   </data>
   <data name="building Web apps with ASP.NET Core" xml:space="preserve">
-    <value>xay dung ung dung Web voi ASP.NET Core</value>
+    <value>xây dựng ứng dụng Web với ASP.NET Core</value>
   </data>
   <data name="Open Dashboard" xml:space="preserve">
-    <value>Mo bang dieu khien</value>
+    <value>Mở bảng điều khiển</value>
   </data>
   <data name="Manage Tables" xml:space="preserve">
-    <value>Quan ly ban</value>
+    <value>Quản lý bàn</value>
   </data>
   <data name="Review Menu" xml:space="preserve">
-    <value>Xem thuc don</value>
+    <value>Xem thực đơn</value>
   </data>
   <data name="Book Table" xml:space="preserve">
-    <value>Dat ban</value>
+    <value>Đặt bàn</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value>Dang nhap</value>
+    <value>Đăng nhập</value>
   </data>
   <data name="Fast service flow" xml:space="preserve">
-    <value>Quy trinh phuc vu nhanh</value>
+    <value>Quy trình phục vụ nhanh</value>
   </data>
   <data name="QR, ordering, kitchen tracking, bill and payment are grouped into one clear experience." xml:space="preserve">
-    <value>QR, goi mon, theo doi bep, hoa don va thanh toan duoc gom thanh mot luong ro rang.</value>
+    <value>QR, gọi món, theo dõi bếp, hóa đơn và thanh toán được nhóm thành một trải nghiệm rõ ràng.</value>
   </data>
   <data name="Simple operations" xml:space="preserve">
-    <value>Van hanh don gian</value>
+    <value>Hoạt động đơn giản</value>
   </data>
   <data name="Staff, tables, products and combos stay easy to find from one navigation system." xml:space="preserve">
-    <value>Nhan vien, ban, mon an va combo de tim thay trong mot he dieu huong thong nhat.</value>
+    <value>Nhân viên, bàn, món ăn và combo dễ dàng tìm thấy trong một hệ thống điều hướng thống nhất.</value>
   </data>
   <data name="Business Flow" xml:space="preserve">
-    <value>Quy trinh van hanh</value>
+    <value>Quy trình vận hành</value>
   </data>
   <data name="Menu" xml:space="preserve">
-    <value>Thuc don</value>
+    <value>Thực đơn</value>
   </data>
   <data name="Cart" xml:space="preserve">
-    <value>Gio hang</value>
+    <value>Giỏ hàng</value>
   </data>
   <data name="Order" xml:space="preserve">
-    <value>Don hang</value>
+    <value>Đơn hàng</value>
   </data>
   <data name="Kitchen" xml:space="preserve">
-    <value>Bep</value>
+    <value>Bếp</value>
   </data>
   <data name="Tracking" xml:space="preserve">
-    <value>Theo doi</value>
+    <value>Theo dõi</value>
   </data>
   <data name="Bill" xml:space="preserve">
-    <value>Hoa don</value>
+    <value>Hóa đơn</value>
   </data>
   <data name="Checkout" xml:space="preserve">
-    <value>Thanh toan</value>
+    <value>Thanh toán</value>
   </data>
   <data name="Payment" xml:space="preserve">
-    <value>Thanh toan</value>
+    <value>Thanh toán</value>
   </data>
   <data name="End session" xml:space="preserve">
-    <value>Ket thuc phien</value>
+    <value>Kết thúc phiên</value>
   </data>
   <data name="Customer Guide" xml:space="preserve">
-    <value>Huong dan khach hang</value>
+    <value>Hướng dẫn khách hàng</value>
   </data>
   <data name="Sit at your table" xml:space="preserve">
     <value>Ngồi tại bàn của bạn</value>

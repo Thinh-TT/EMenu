@@ -9,12 +9,12 @@
 
 <section class="home-hero">
     <div class="home-hero-copy">
-        <span class="eyebrow">@Localizer["Blue and white experience"]</span>
+        @* <span class="eyebrow">@Localizer["Blue and white experience"]</span> *@
         <h1 class="display-4">@Localizer["Welcome"]</h1>
-        <p>
+        @* <p>
             @Localizer["Learn about"]
             <a href="https://learn.microsoft.com/aspnet/core">@Localizer["building Web apps with ASP.NET Core"]</a>.
-        </p>
+        </p> *@
         @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
         {
             <div class="hero-actions">
@@ -26,18 +26,18 @@
         {
             <div class="hero-actions">
                 <a class="btn btn-primary" asp-controller="Menu" asp-action="Index">@Localizer["Review Menu"]</a>
-                <a class="btn btn-outline-primary" asp-controller="Reservation" asp-action="Book">@Localizer["Book Table"]</a>
+                <a class="btn btn-outline-primary" asp-controller="Reservation" asp-action="Book">@Localizer["Book            Table"]</a>
                 <a class="btn btn-warning" asp-controller="Auth" asp-action="Login">@Localizer["Login"]</a>
             </div>
         }
         <div class="hero-feature-grid">
             <div class="feature-card">
                 <strong>@Localizer["Fast service flow"]</strong>
-                <span>@Localizer["QR, ordering, kitchen tracking, bill and payment are grouped into one clear experience."]</span>
+                <span>@Localizer["QR, ordering, kitchen tracking, bill and payment are grouped into one clear          experience."]</span>
             </div>
             <div class="feature-card">
                 <strong>@Localizer["Simple operations"]</strong>
-                <span>@Localizer["Staff, tables, products and combos stay easy to find from one navigation system."]</span>
+                <span>@Localizer["Staff, tables, products and combos stay easy to find from one navigation          system."]</span>
             </div>
         </div>
     </div>

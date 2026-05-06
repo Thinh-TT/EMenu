@@ -98,6 +98,7 @@
 - Event dang dung:
 - `OrderSubmitted`: thong bao don moi.
 - `NewOrder`: cap nhat danh sach don cho bep.
+- `Callcheckout`: gui thong bao can thanh toan
 - `OrderStatusUpdated`: dong bo trang thai mon realtime.
 
 ## 5. Luong nghiep vu chinh

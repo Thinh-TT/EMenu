@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="Restaurant operations made simple" xml:space="preserve">
-    <value>Quan ly nha hang don gian hon</value>
+    <value>Quản lý nhà hàng đơn giản hơn</value>
   </data>
   <data name="Toggle navigation" xml:space="preserve">
     <value>Mo dong dieu huong</value>
   </data>
   <data name="Operations" xml:space="preserve">
-    <value>Van hanh</value>
+    <value>Vận hành</value>
   </data>
   <data name="Dashboard" xml:space="preserve">
-    <value>Bang dieu khien</value>
+    <value>Bảng điều khiển</value>
   </data>
   <data name="Table" xml:space="preserve">
-    <value>Ban</value>
+    <value>Bàn</value>
   </data>
   <data name="Reservation" xml:space="preserve">
-    <value>Dat ban</value>
+    <value>Đặt bàn</value>
   </data>
   <data name="Menu" xml:space="preserve">
-    <value>Thuc don</value>
+    <value>Thực đơn</value>
   </data>
   <data name="Kitchen" xml:space="preserve">
-    <value>Bep</value>
+    <value>Bếp</value>
   </data>
   <data name="Menu Setup" xml:space="preserve">
-    <value>Thuc don</value>
+    <value>Thực đơn</value>
   </data>
   <data name="Category" xml:space="preserve">
-    <value>Danh muc</value>
+    <value>Danh mục</value>
   </data>
   <data name="Product" xml:space="preserve">
-    <value>Mon an</value>
+    <value>Món ăn</value>
   </data>
   <data name="Combo" xml:space="preserve">
     <value>Combo</value>
   </data>
   <data name="Inventory &amp; Supply" xml:space="preserve">
-    <value>Kho </value>
+    <value>Kho &amp; NCC</value>
   </data>
   <data name="Inventory" xml:space="preserve">
-    <value>Ton kho</value>
+    <value>Tồn kho</value>
   </data>
   <data name="Procurement" xml:space="preserve">
-    <value>Nhap hang</value>
+    <value>Nhập hàng</value>
   </data>
   <data name="Workforce" xml:space="preserve">
-    <value>Nhan su</value>
+    <value>Nhân sự</value>
   </data>
   <data name="Staff" xml:space="preserve">
-    <value>Nhan vien</value>
+    <value>Nhân viên</value>
   </data>
   <data name="Timekeeping" xml:space="preserve">
-    <value>Cham cong</value>
+    <value>Chấm công</value>
   </data>
   <data name="Wage" xml:space="preserve">
-    <value>Luong</value>
+    <value>Lương</value>
   </data>
   <data name="User" xml:space="preserve">
-    <value>Tai khoan</value>
+    <value>Tài khoản</value>
   </data>
   <data name="Kitchen Board" xml:space="preserve">
-    <value>Man hinh bep</value>
+    <value>Màn hình bếp</value>
   </data>
   <data name="Privacy" xml:space="preserve">
-    <value>Quyen rieng tu</value>
+    <value>Quyền riêng tư</value>
   </data>
   <data name="Hello" xml:space="preserve">
-    <value>Xin chao</value>
+    <value>Xin chào</value>
   </data>
   <data name="Logout" xml:space="preserve">
-    <value>Dang xuat</value>
+    <value>Đăng xuất</value>
   </data>
   <data name="Login" xml:space="preserve">
-    <value>Dang nhap</value>
+    <value>Đăng nhập</value>
   </data>
 </root>

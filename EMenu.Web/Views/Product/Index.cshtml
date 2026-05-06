@@ -44,10 +44,10 @@
                         <span class="badge bg-success">@Localizer["Single"]</span>
                     }
                 </td>
-                <td>@(item.IsAvailable ? Localizer["Available"].Value : Localizer["Disabled"].Value)</td>
+                <td>@(item.IsAvailable? Localizer["Available"].Value : Localizer["Disabled"].Value)</td>
                 <td>
-                    <a class="table-action-link" href="/Product/Edit/@item.ProductID">@Localizer["Edit"]</a> |
-                    <form asp-action="Delete" asp-route-id="@item.ProductID" method="post" class="table-action-form">
+                    <a class="table-action-link" href="/Product/Edit/@item.ProductID">@Localizer["Edit"]</a>
+                    <form asp-action="Delete" asp-route-id="@item.ProductID" method="post" class="table-action-link">
                         <button type="submit" class="btn btn-link table-action-link">
                             @Localizer["Delete"]
                         </button>
