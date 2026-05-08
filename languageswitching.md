@@ -1,12 +1,14 @@
 # Ke Hoach Tinh Nang Chuyen Doi Ngon Ngu Anh/Viet (Header Toggle)
 
 ## Summary
+
 - Muc tieu: them nut chuyen ngon ngu tren header de doi UI giua tieng Anh va tieng Viet.
 - Pham vi dot 1: ha tang localization + dich core pages da chot (`Layout`, `Home`, `Dashboard`, `Table`, `Reservation`, `Checkout`, `Payment`, `Login`).
 - Luu lua chon ngon ngu bang cookie + returnUrl de nguoi dung o lai dung trang hien tai sau khi chuyen.
 - Backend error/API message giu nguyen tieng Anh o dot nay.
 
 ## Implementation Changes
+
 - Thiet lap localization trong `Program.cs`:
   - Bat `AddLocalization(ResourcesPath = "Resources")`.
   - Bat `AddControllersWithViews().AddViewLocalization().AddDataAnnotationsLocalization()`.
@@ -32,11 +34,13 @@
   - Khong sua text `BadRequest/InvalidOperationException` o controller/service trong dot nay.
 
 ## Public Interfaces / Contract Impact
+
 - Them endpoint moi cho UI:
   - `GET /Localization/SetLanguage?culture={en-US|vi-VN}&returnUrl={local-url}`
 - Khong thay doi endpoint business hien tai (`/api/*`, `/Payment/*`, ...).
 
 ## Test Plan
+
 - Unit/integration:
   - `SetLanguage` ghi dung cookie culture va redirect ve `returnUrl`.
   - `returnUrl` khong hop le phai fallback an toan (khong redirect ra ngoai domain local).
@@ -50,7 +54,10 @@
   - Cac luong chinh `Table -> Reservation -> Checkout -> Payment result` hien thi dung ngon ngu UI.
 
 ## Assumptions / Defaults
+
 - Default culture giu la English (`en-US`) de khong pha hanh vi hien tai.
 - Chi ho tro 2 ngon ngu trong dot nay: `en-US`, `vi-VN`.
 - Chi localize UI thuoc pham vi core pages; message backend/API giu tieng Anh.
 - Khong them bang DB, khong luu ngon ngu theo user profile o giai doan nay.
+
+* Da hoan thanh

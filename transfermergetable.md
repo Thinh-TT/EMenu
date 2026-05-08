@@ -1,11 +1,13 @@
 # Ke Hoach Transfer / Gop Ban
 
 ## Summary
+
 - Bo sung nghiep vu chuyen ban va gop ban tren luong Session/Order hien tai.
 - Giua nguyen flow thanh toan hien tai.
 - Ke hoach nay du chi tiet de implement truc tiep.
 
 ## Quy tac nghiep vu
+
 - Transfer:
   - Nguon phai `Occupied`.
   - Dich chi duoc `Available`.
@@ -22,6 +24,7 @@
   - Neu session lien quan co order da invoiced thi chan thao tac.
 
 ## API va contract
+
 - Them API:
   - `POST /api/session/transfer`
   - `POST /api/session/merge`
@@ -37,6 +40,7 @@
   - ket qua thanh cong/that bai va ly do
 
 ## Service / Repository can mo rong
+
 - `SessionService`:
   - Them `TransferTable(...)`
   - Them `MergeTable(...)`
@@ -47,6 +51,7 @@
 - Tiep tuc su dung `UnitOfWork + Transaction` de tranh lech trang thai.
 
 ## UI Table
+
 - Mo rong man hinh `Table`:
   - Them action `Transfer` va `Merge` cho ban dang `Occupied`.
   - Mo modal chon ban dich theo rule tung thao tac.
@@ -54,6 +59,7 @@
 - Khong trien khai co che forward session/QR cu sau merge.
 
 ## Test cases
+
 - Unit tests:
   - Transfer thanh cong khi nguon occupied, dich available, khong invoiced.
   - Transfer bi chan khi dich khong available, source=target, hoac co invoiced.
@@ -64,3 +70,5 @@
   - Transfer API thanh cong va cap nhat dung table/session/order.
   - Merge API (target occupied) thanh cong va dong session nguon.
   - Merge API (target reserved) bi chan, du lieu nguon khong bi doi.
+
+* Da hoan thanh

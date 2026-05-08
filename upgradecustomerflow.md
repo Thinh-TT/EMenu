@@ -1,10 +1,12 @@
 # Plan Nâng Cấp Customer Flow: Cart UI + Call Checkout
 
 ## Summary
+
 - Chia làm 2 task độc lập nhưng dùng chung hạ tầng hiện có: customer flow hiện tại, `sessionStorage` cart và SignalR hub `/orderHub`.
 - Mục tiêu là giữ nguyên nghiệp vụ order/session, chỉ nâng cấp UX ở `Menu` và thêm realtime `Call checkout` giữa `Tracking` và `Table`.
 
 ## Task 1: Sửa Cart ở `Menu`
+
 - Đổi cart từ panel cố định thành `floating cart button` bám màn hình, có badge số lượng món realtime.
 - Khi bấm cart icon:
   - Desktop mở `drawer` trượt từ phải.
@@ -27,11 +29,13 @@
   - giữ trải nghiệm tốt trên mobile và desktop
 
 ### Public/UI changes
+
 - `Menu` không còn cart panel luôn mở.
 - Thêm UI state mới cho page: `cart open/closed`.
 - Không đổi API `POST /api/order/submit`.
 
 ## Task 2: Thêm `Call Checkout` giữa `Tracking` và `Table`
+
 - Trên `OrderPage/Tracking` thêm nút `Call checkout`.
 - Nút này gọi API mới:
   - `POST /api/order/call-checkout?sessionId={id}`
@@ -64,12 +68,14 @@
   - không chỉ dùng toast; trạng thái phải bám trên card đến khi được clear
 
 ### Public/API/interface changes
+
 - Thêm endpoint mới: `POST /api/order/call-checkout`
 - Thêm SignalR events: `CheckoutRequested`, `CheckoutRequestCleared`
 - Mở rộng `tableManagementData` để chứa checkout request state hiện tại và localized strings liên quan
 - Không đổi contract `GET /api/order/status`
 
 ## Test Plan
+
 - Cart:
   - Menu load bình thường, cart icon luôn bám màn hình khi scroll
   - badge cập nhật đúng khi thêm/tăng/giảm/xóa món
@@ -89,8 +95,11 @@
   - `Transfer`, `Merge`, `End Session` trên `Table` không bị vỡ UI khi có SignalR mới
 
 ## Assumptions / Defaults
+
 - Cart chỉ đổi UI, chưa chuyển sang server-side cart.
 - Checkout request là trạng thái vận hành tạm thời, lưu in-memory phía server; chưa thêm cột DB ở đợt này.
 - Một session chỉ có tối đa một checkout request đang mở.
 - Clear request xảy ra khi staff mở bill từ trang `Table`, không chờ tới lúc thanh toán hoàn tất.
 - Tiếp tục dùng `orderHub` hiện có, không tách hub mới.
+
+* Da hoan thanh
