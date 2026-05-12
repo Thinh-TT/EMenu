@@ -1,4 +1,4 @@
-@model List<EMenu.Domain.Entities.Category>
+@model EMenu.Application.Abstractions.DTOs.MenuPageDto
 @using EMenu.Domain.Enums
 @using System.Text.Json
 @inject IViewLocalizer Localizer
@@ -42,16 +42,63 @@
 
 <div class="menu-layout menu-layout--single">
     <div class="menu-catalog">
-        @foreach (var category in Model)
+        @foreach (var category in Model.Categories)
         {
+            var categoryProducts = category.Products?.ToList() ?? [];
+            var hasRecommendations = Model.RecommendedProductsByCategory.TryGetValue(
+                category.CategoryID,
+                out var recommendedProducts);
+
             <section class="menu-category">
                 <div class="category-heading">
                     <h3>@category.CategoryName</h3>
-                    <span class="category-count">@Localizer["{0} item(s)", category.Products.Count]</span>
+                    <span class="category-count">@Localizer["{0} item(s)", categoryProducts.Count]</span>
                 </div>
 
+                @if (hasRecommendations && recommendedProducts!.Count > 0)
+                {
+                    <div class="best-seller-section">
+                        <div class="best-seller-section__header">
+                            <div>
+                                <p class="eyebrow">@Localizer["Best sellers"]</p>
+                                <h4>@Localizer["Customer favorites in this category"]</h4>
+                            </div>
+                        </div>
+
+                        <div class="product-grid product-grid--featured">
+                            @foreach (var product in recommendedProducts)
+                            {
+                                <div class="product-card product-card--featured">
+                                    <span class="status-pill status-pill--sales">
+                                        @Localizer["Sold {0}", product.QuantitySold]
+                                    </span>
+
+                                    <img class="product-img" src="/images/products/@product.Image" alt="@product.ProductName" />
+
+                                    <h4>@product.ProductName</h4>
+                                    <p>@product.Price.ToVnd()</p>
+
+                                    <div class="product-card-actions">
+                                        <button class="btn btn-primary"
+                                                onclick="addToCart(@product.ProductId,'@product.ProductName',@product.Price)">
+                                            @Localizer["Add"]
+                                        </button>
+
+                                        @if (product.ProductType == ProductType.Combo)
+                                        {
+                                            <button class="btn btn-warning" onclick="showCombo(@product.ProductId)">
+                                                @Localizer["View Combo"]
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
                 <div class="product-grid">
-                    @foreach (var product in category.Products)
+                    @foreach (var product in categoryProducts)
                     {
                         <div class="product-card">
                             <img class="product-img" src="/images/products/@product.Image" alt="@product.ProductName" />
@@ -80,8 +127,8 @@
     </div>
 </div>
 
-<button id="cartFab"   type="button"    class="cart-fab"     onclick="toggleCartDrawer()"     aria-controls="cartDrawer"
-        aria-expanded="false"  aria-label="@Localizer["Open cart"]">
+<button id="cartFab" type="button" class="cart-fab" onclick="toggleCartDrawer()" aria-controls="cartDrawer"
+        aria-expanded="false" aria-label="@Localizer["Open cart"]">
     <span class="cart-fab__icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
             <path d="M3 4h2.4l1.3 7.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5l1.3-4.7H7.3" />
@@ -101,7 +148,7 @@
             <p class="eyebrow">@Localizer["Your order"]</p>
             <h3 id="cartDrawerTitle">@Localizer["Cart"]</h3>
         </div>
-        <button type="button"           class="cart-drawer__close"           onclick="closeCartDrawer()"
+        <button type="button" class="cart-drawer__close" onclick="closeCartDrawer()"
                 aria-label="@Localizer["Close cart"]">
             x
         </button>

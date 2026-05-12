@@ -9,5 +9,6 @@ namespace EMenu.Application.Abstractions.Repositories
         IReadOnlyList<OrderProduct> GetBillableByOrderId(int orderId);
         IReadOnlyList<KitchenPendingItemDto> GetPendingKitchenItems();
         IReadOnlyList<DashboardTopProductDto> GetTopProducts(int count);
+        IReadOnlyList<MenuRecommendedProductDto> GetTopProductsByCategory(int countPerCategory);
     }
 }

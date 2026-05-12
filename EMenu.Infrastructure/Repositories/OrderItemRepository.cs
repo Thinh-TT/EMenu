@@ -59,5 +59,52 @@ namespace EMenu.Infrastructure.Repositories
                 .Take(count)
                 .ToList();
         }
+
+        public IReadOnlyList<MenuRecommendedProductDto> GetTopProductsByCategory(int countPerCategory)
+        {
+            if (countPerCategory <= 0)
+            {
+                return [];
+            }
+
+            var paidOrderIds = _context.Invoices
+                .Select(x => x.OrderID);
+
+            var rankedProducts = _context.OrderProducts
+                .AsNoTracking()
+                .Where(x =>
+                    x.Status != OrderItemStatus.Cancelled &&
+                    x.Product.IsAvailable &&
+                    paidOrderIds.Contains(x.OrderID))
+                .GroupBy(x => new
+                {
+                    x.Product.CategoryID,
+                    x.ProductID,
+                    x.Product.ProductName,
+                    x.Product.Image,
+                    x.Price,
+                    x.Product.ProductType
+                })
+                .Select(group => new MenuRecommendedProductDto
+                {
+                    CategoryId = group.Key.CategoryID,
+                    ProductId = group.Key.ProductID,
+                    ProductName = group.Key.ProductName,
+                    Image = group.Key.Image,
+                    Price = group.Key.Price,
+                    ProductType = group.Key.ProductType,
+                    QuantitySold = group.Sum(x => x.Quantity)
+                })
+                .OrderBy(x => x.CategoryId)
+                .ThenByDescending(x => x.QuantitySold)
+                .ThenBy(x => x.ProductName)
+                .ThenBy(x => x.ProductId)
+                .ToList();
+
+            return rankedProducts
+                .GroupBy(x => x.CategoryId)
+                .SelectMany(group => group.Take(countPerCategory))
+                .ToList();
+        }
     }
 }

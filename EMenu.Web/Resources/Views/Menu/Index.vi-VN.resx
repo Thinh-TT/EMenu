@@ -2,6 +2,7 @@
 <root>
   <data name="Restaurant Menu" xml:space="preserve"><value>Thực đơn nhà hàng</value></data>
   <data name="Browse products by category, review combos quickly and keep the cart visible while ordering." xml:space="preserve"><value>Duyệt món theo danh mục, xem combo nhanh và luôn hiển thị giỏ hàng khi gọi món.</value></data>
+  <data name="Browse products by category, review combos quickly and open your cart from anywhere while ordering." xml:space="preserve"><value>Duyệt món theo danh mục, xem combo nhanh và mở giỏ hàng từ bất kỳ đâu khi gọi món.</value></data>
   <data name="{0} item(s)" xml:space="preserve"><value>{0} món</value></data>
   <data name="Add" xml:space="preserve"><value>Thêm</value></data>
   <data name="View Combo" xml:space="preserve"><value>Xem combo</value></data>
@@ -9,5 +10,8 @@
   <data name="Total:" xml:space="preserve"><value>Tổng:</value></data>
   <data name="Submit Order" xml:space="preserve"><value>Gửi đơn</value></data>
   <data name="Combo Items" xml:space="preserve"><value>Các món trong combo</value></data>
+  <data name="Best sellers" xml:space="preserve"><value>Bán chạy nhất</value></data>
+  <data name="Customer favorites in this category" xml:space="preserve"><value>Những món được gọi nhiều nhất trong danh mục này</value></data>
+  <data name="Sold {0}" xml:space="preserve"><value>Đã bán {0}</value></data>
   <data name="Close" xml:space="preserve"><value>Đóng</value></data>
 </root>

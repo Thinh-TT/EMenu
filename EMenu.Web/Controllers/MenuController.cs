@@ -25,9 +25,7 @@ namespace EMenu.Web.Controllers
                 ? null
                 : "Session not found! Please start a new order. By scanning the QR code at the table.";
 
-            var menu = _service.GetMenu();
-
-            return View(menu);
+            return View(_service.GetMenu());
         }
     }
 }

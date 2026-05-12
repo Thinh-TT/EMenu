@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
+using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Entities;
 using EMenu.Domain.Enums;
 using EMenu.Infrastructure.Data;
@@ -405,6 +406,54 @@ public class ApiIntegrationTests
         Assert.Equal(1, sourceTable.Status);
     }
 
+    [Fact]
+    public async Task OrderItemRepository_GetTopProductsByCategory_OnlyReturnsPaidAvailableNonCancelledTopItems()
+    {
+        using var factory = new CustomWebApplicationFactory();
+
+        var seed = await SeedMenuRecommendationScenario(factory);
+
+        using var scope = factory.Services.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<IOrderItemRepository>();
+
+        var recommendations = repository.GetTopProductsByCategory(3);
+
+        var primaryCategoryItems = recommendations
+            .Where(x => x.CategoryId == seed.PrimaryCategoryId)
+            .ToList();
+        var secondaryCategoryItems = recommendations
+            .Where(x => x.CategoryId == seed.SecondaryCategoryId)
+            .ToList();
+
+        Assert.Equal(3, primaryCategoryItems.Count);
+        Assert.Equal(
+            [seed.PrimaryTopProductName, seed.PrimarySecondProductName, seed.PrimaryThirdProductName],
+            primaryCategoryItems.Select(x => x.ProductName).ToArray());
+        Assert.DoesNotContain(primaryCategoryItems, x => x.ProductName == seed.UnavailableProductName);
+        Assert.DoesNotContain(primaryCategoryItems, x => x.ProductName == seed.UnpaidProductName);
+
+        Assert.Single(secondaryCategoryItems);
+        Assert.Equal(seed.SecondaryTopProductName, secondaryCategoryItems[0].ProductName);
+    }
+
+    [Fact]
+    public async Task MenuPage_RendersBestSellerSection_ForCategoriesWithSalesData()
+    {
+        using var factory = new CustomWebApplicationFactory();
+        using var client = CreateClient(factory);
+
+        var seed = await SeedMenuRecommendationScenario(factory);
+
+        var response = await client.GetAsync("/Menu?sessionId=1");
+        var html = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(2, CountOccurrences(html, "Best sellers"));
+        Assert.Contains(seed.PrimaryTopProductName, html, StringComparison.Ordinal);
+        Assert.Contains(seed.PrimarySecondProductName, html, StringComparison.Ordinal);
+        Assert.Contains(seed.SecondaryTopProductName, html, StringComparison.Ordinal);
+    }
+
     private static HttpClient CreateClient(CustomWebApplicationFactory factory)
     {
         return factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions
@@ -715,6 +764,190 @@ public class ApiIntegrationTests
         return (sourceTable.TableID, targetTable.TableID, sourceSession.OrderSessionID, sourceOrder.OrderID);
     }
 
+    private static async Task<MenuRecommendationSeedResult> SeedMenuRecommendationScenario(CustomWebApplicationFactory factory)
+    {
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var staff = await db.Staffs.FirstAsync();
+        var customer = await db.Customers.FirstAsync();
+        var table = await db.RestaurantTables.FirstAsync(x => x.Status == 0);
+
+        table.Status = 1;
+
+        var primaryCategoryName = $"IT Drinks {Guid.NewGuid():N}";
+        var secondaryCategoryName = $"IT Desserts {Guid.NewGuid():N}";
+
+        var primaryCategory = new Category { CategoryName = primaryCategoryName };
+        var secondaryCategory = new Category { CategoryName = secondaryCategoryName };
+
+        db.Categories.AddRange(primaryCategory, secondaryCategory);
+        await db.SaveChangesAsync();
+
+        var primaryTop = new Product
+        {
+            ProductName = $"IT Top Tea {Guid.NewGuid():N}",
+            Image = "tea.jpg",
+            Price = 30_000m,
+            Description = "Top seller",
+            IsAvailable = true,
+            ProductType = ProductType.Single,
+            CategoryID = primaryCategory.CategoryID
+        };
+        var primarySecond = new Product
+        {
+            ProductName = $"IT Top Coffee {Guid.NewGuid():N}",
+            Image = "coffee.jpg",
+            Price = 35_000m,
+            Description = "Second seller",
+            IsAvailable = true,
+            ProductType = ProductType.Single,
+            CategoryID = primaryCategory.CategoryID
+        };
+        var primaryThird = new Product
+        {
+            ProductName = $"IT Top Juice {Guid.NewGuid():N}",
+            Image = "juice.jpg",
+            Price = 32_000m,
+            Description = "Third seller",
+            IsAvailable = true,
+            ProductType = ProductType.Single,
+            CategoryID = primaryCategory.CategoryID
+        };
+        var unavailableProduct = new Product
+        {
+            ProductName = $"IT Hidden Soda {Guid.NewGuid():N}",
+            Image = "soda.jpg",
+            Price = 28_000m,
+            Description = "Unavailable seller",
+            IsAvailable = false,
+            ProductType = ProductType.Single,
+            CategoryID = primaryCategory.CategoryID
+        };
+        var unpaidProduct = new Product
+        {
+            ProductName = $"IT Unpaid Milk {Guid.NewGuid():N}",
+            Image = "milk.jpg",
+            Price = 25_000m,
+            Description = "Unpaid seller",
+            IsAvailable = true,
+            ProductType = ProductType.Single,
+            CategoryID = primaryCategory.CategoryID
+        };
+        var secondaryTop = new Product
+        {
+            ProductName = $"IT Top Cake {Guid.NewGuid():N}",
+            Image = "cake.jpg",
+            Price = 42_000m,
+            Description = "Dessert seller",
+            IsAvailable = true,
+            ProductType = ProductType.Single,
+            CategoryID = secondaryCategory.CategoryID
+        };
+
+        db.Products.AddRange(
+            primaryTop,
+            primarySecond,
+            primaryThird,
+            unavailableProduct,
+            unpaidProduct,
+            secondaryTop);
+        await db.SaveChangesAsync();
+
+        var session = new OrderSession
+        {
+            TableID = table.TableID,
+            CustomerID = customer.CustomerID,
+            StartTime = DateTime.Now,
+            Status = 1
+        };
+
+        db.OrderSessions.Add(session);
+        await db.SaveChangesAsync();
+
+        await AddOrderWithSingleItemAsync(db, session.OrderSessionID, staff.StaffID, primaryTop, 9, isPaid: true);
+        await AddOrderWithSingleItemAsync(db, session.OrderSessionID, staff.StaffID, primarySecond, 7, isPaid: true);
+        await AddOrderWithSingleItemAsync(db, session.OrderSessionID, staff.StaffID, primaryThird, 5, isPaid: true);
+        await AddOrderWithSingleItemAsync(db, session.OrderSessionID, staff.StaffID, unavailableProduct, 20, isPaid: true);
+        await AddOrderWithSingleItemAsync(db, session.OrderSessionID, staff.StaffID, unpaidProduct, 15, isPaid: false);
+        await AddOrderWithSingleItemAsync(db, session.OrderSessionID, staff.StaffID, secondaryTop, 4, isPaid: true);
+        await AddOrderWithSingleItemAsync(
+            db,
+            session.OrderSessionID,
+            staff.StaffID,
+            primaryThird,
+            99,
+            isPaid: true,
+            status: OrderItemStatus.Cancelled);
+
+        return new MenuRecommendationSeedResult(
+            primaryCategory.CategoryID,
+            secondaryCategory.CategoryID,
+            primaryTop.ProductName,
+            primarySecond.ProductName,
+            primaryThird.ProductName,
+            secondaryTop.ProductName,
+            unavailableProduct.ProductName,
+            unpaidProduct.ProductName);
+    }
+
+    private static async Task AddOrderWithSingleItemAsync(
+        AppDbContext db,
+        int sessionId,
+        int staffId,
+        Product product,
+        int quantity,
+        bool isPaid,
+        OrderItemStatus status = OrderItemStatus.Pending)
+    {
+        var order = new Order
+        {
+            OrderSessionID = sessionId,
+            StaffID = staffId,
+            Status = isPaid ? OrderStatus.Completed : OrderStatus.Pending,
+            TotalAmount = product.Price * quantity,
+            CreatedTime = DateTime.Now
+        };
+
+        db.Orders.Add(order);
+        await db.SaveChangesAsync();
+
+        db.OrderProducts.Add(new OrderProduct
+        {
+            OrderID = order.OrderID,
+            ProductID = product.ProductID,
+            Quantity = quantity,
+            Price = product.Price,
+            Status = status
+        });
+
+        if (isPaid)
+        {
+            db.Invoices.Add(new Invoice
+            {
+                OrderID = order.OrderID,
+                CreatedDate = DateTime.Now,
+                TotalAmount = product.Price * quantity
+            });
+        }
+
+        await db.SaveChangesAsync();
+    }
+
+    private static int CountOccurrences(string text, string value)
+    {
+        var count = 0;
+        var index = 0;
+
+        while ((index = text.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+
+        return count;
+    }
+
     private static string BuildTxnRefForTest(int sessionId, int orderId)
     {
         return $"S{sessionId}O{orderId}T1234567890123R1234";
@@ -743,6 +976,16 @@ public class ApiIntegrationTests
             .Replace("-", "")
             .ToLowerInvariant();
     }
+
+    private sealed record MenuRecommendationSeedResult(
+        int PrimaryCategoryId,
+        int SecondaryCategoryId,
+        string PrimaryTopProductName,
+        string PrimarySecondProductName,
+        string PrimaryThirdProductName,
+        string SecondaryTopProductName,
+        string UnavailableProductName,
+        string UnpaidProductName);
 }
 
 

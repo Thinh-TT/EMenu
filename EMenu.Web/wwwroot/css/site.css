@@ -594,6 +594,44 @@ form:not(.d-inline) .form-group {
   margin-bottom: 16px;
 }
 
+.best-seller-section {
+  margin-bottom: 22px;
+  padding: 20px;
+  border: 1px solid rgba(191, 219, 254, 0.9);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(125, 211, 252, 0.22), transparent 38%),
+    linear-gradient(180deg, #eff6ff 0%, #f8fbff 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.best-seller-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.best-seller-section__header h4 {
+  margin: 4px 0 0;
+}
+
+.product-grid--featured {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.product-card--featured {
+  position: relative;
+  border-color: rgba(147, 197, 253, 0.95);
+  background: linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
+}
+
+.status-pill--sales {
+  color: #92400e;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+}
+
 .category-count {
   padding: 8px 12px;
   color: var(--blue-700);
@@ -1290,6 +1328,11 @@ body.cart-drawer-open {
 
   .cart-drawer__header,
   .cart-drawer__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .best-seller-section__header {
     align-items: flex-start;
     flex-direction: column;
   }
