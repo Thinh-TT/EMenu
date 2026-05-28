@@ -24,7 +24,7 @@
 
     <div class="mb-3">
         <label>@Localizer["Phone (optional)"]</label>
-        <input name="phone" class="form-control" />
+        <input name="phone" class="form-control" maxlength="10" pattern="\d{10}" inputmode="numeric" title="@Localizer["Phone number must be exactly 10 digits."]" />
     </div>
 
     <div class="mb-3">

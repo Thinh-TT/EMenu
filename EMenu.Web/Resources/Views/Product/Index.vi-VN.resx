@@ -16,4 +16,9 @@
   <data name="Disabled" xml:space="preserve"><value>Tạm tắt</value></data>
   <data name="Edit" xml:space="preserve"><value>Sửa</value></data>
   <data name="Delete" xml:space="preserve"><value>Xóa</value></data>
+  <data name="Search by name..." xml:space="preserve"><value>Tìm theo tên...</value></data>
+  <data name="All" xml:space="preserve"><value>Tất cả</value></data>
+  <data name="Min Price" xml:space="preserve"><value>Giá từ</value></data>
+  <data name="Max Price" xml:space="preserve"><value>Giá đến</value></data>
+  <data name="Filter" xml:space="preserve"><value>Lọc</value></data>
 </root>

@@ -1,4 +1,5 @@
-﻿using EMenu.Application.Abstractions.Persistence;
+﻿using EMenu.Application.Abstractions.DTOs;
+using EMenu.Application.Abstractions.Persistence;
 using EMenu.Application.Abstractions.Repositories;
 using EMenu.Domain.Entities;
 
@@ -23,6 +24,11 @@ namespace EMenu.Application.Services
         public List<Product> GetAll()
         {
             return _productRepository.GetAllWithCategory().ToList();
+        }
+
+        public List<Product> GetFiltered(ProductFilterDto filter)
+        {
+            return _productRepository.GetFiltered(filter).ToList();
         }
 
         public Product GetById(int id)

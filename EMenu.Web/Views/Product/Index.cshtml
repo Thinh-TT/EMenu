@@ -1,4 +1,4 @@
-@model List<EMenu.Domain.Entities.Product>
+@model EMenu.Web.ViewModels.ProductListViewModel
 @using EMenu.Domain.Enums
 @inject IViewLocalizer Localizer
 @{
@@ -7,7 +7,68 @@
 
 <h2>@Localizer["Product Management"]</h2>
 
-<a href="/Product/Create" class="btn btn-primary">@Localizer["Add Product"]</a>
+<a href="/Product/Create" class="btn btn-primary mb-3">@Localizer["Add Product"]</a>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">@Localizer["Name"]</label>
+                <input type="text" class="form-control" name="searchName" value="@Model.SearchName" placeholder="@Localizer["Search by name..."]" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@Localizer["Category"]</label>
+                <select class="form-select" name="categoryId">
+                    <option value="">@Localizer["All"]</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        if (Model.CategoryId == cat.CategoryID)
+                        {
+                            <option value="@cat.CategoryID" selected>@cat.CategoryName</option>
+                        }
+                        else
+                        {
+                            <option value="@cat.CategoryID">@cat.CategoryName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@Localizer["Type"]</label>
+                <select class="form-select" name="productType">
+                    <option value="">@Localizer["All"]</option>
+                    @if (Model.ProductType == 1)
+                    {
+                        <option value="1" selected>@Localizer["Single"]</option>
+                    }
+                    else
+                    {
+                        <option value="1">@Localizer["Single"]</option>
+                    }
+                    @if (Model.ProductType == 2)
+                    {
+                        <option value="2" selected>@Localizer["Combo"]</option>
+                    }
+                    else
+                    {
+                        <option value="2">@Localizer["Combo"]</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@Localizer["Min Price"]</label>
+                <input type="number" class="form-control" name="minPrice" value="@Model.MinPrice" step="1000" min="0" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@Localizer["Max Price"]</label>
+                <input type="number" class="form-control" name="maxPrice" value="@Model.MaxPrice" step="1000" min="0" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary w-100">@Localizer["Filter"]</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <table class="table">
     <thead>
@@ -24,7 +85,7 @@
     </thead>
 
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Products)
         {
             <tr>
                 <td>@item.ProductID</td>

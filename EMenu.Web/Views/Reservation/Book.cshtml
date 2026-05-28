@@ -33,7 +33,11 @@
                 <input type="text"
                        class="form-control"
                        name="CustomerPhone"
-                       value="@Model.CustomerPhone" />
+                       value="@Model.CustomerPhone"
+                       maxlength="10"
+                       pattern="\d{10}"
+                       inputmode="numeric"
+                       title="@Localizer["Phone number must be exactly 10 digits."]" />
             </div>
             <div class="col-md-3">
                 <label class="form-label">@Localizer["Email"]</label>

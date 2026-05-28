@@ -42,4 +42,7 @@
   <data name="Unable to validate reservation time right now." xml:space="preserve">
     <value>Hiện tại không thể kiểm tra thời gian đặt bàn.</value>
   </data>
+  <data name="Phone number must be exactly 10 digits." xml:space="preserve">
+    <value>Số điện thoại phải có đúng 10 chữ số.</value>
+  </data>
 </root>

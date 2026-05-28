@@ -5,4 +5,7 @@
   <data name="Phone (optional)" xml:space="preserve"><value>Số điện thoại (tùy chọn)</value></data>
   <data name="Email (optional)" xml:space="preserve"><value>Email (tùy chọn)</value></data>
   <data name="Start Order" xml:space="preserve"><value>Bắt đầu gọi món</value></data>
+  <data name="Phone number must be exactly 10 digits." xml:space="preserve">
+    <value>Số điện thoại phải có đúng 10 chữ số.</value>
+  </data>
 </root>

@@ -1,6 +1,8 @@
+using EMenu.Application.Abstractions.DTOs;
 using EMenu.Application.Services;
 using EMenu.Domain.Constants;
 using EMenu.Domain.Entities;
+using EMenu.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,10 +20,29 @@ namespace EMenu.Web.Controllers
             _env = env;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? searchName, int? categoryId, decimal? minPrice, decimal? maxPrice, int? productType)
         {
-            var products = _service.GetAll();
-            return View(products);
+            var filter = new ProductFilterDto
+            {
+                Name = searchName,
+                CategoryId = categoryId,
+                MinPrice = minPrice,
+                MaxPrice = maxPrice,
+                ProductType = productType
+            };
+
+            var vm = new ProductListViewModel
+            {
+                SearchName = searchName,
+                CategoryId = categoryId,
+                MinPrice = minPrice,
+                MaxPrice = maxPrice,
+                ProductType = productType,
+                Categories = _service.GetCategories(),
+                Products = _service.GetFiltered(filter)
+            };
+
+            return View(vm);
         }
 
         public IActionResult Create()
