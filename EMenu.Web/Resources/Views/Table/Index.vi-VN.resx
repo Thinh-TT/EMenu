@@ -84,4 +84,10 @@
   <data name="Confirm" xml:space="preserve">
     <value>Xác nhận</value>
   </data>
+  <data name="Order" xml:space="preserve">
+    <value>Gọi món</value>
+  </data>
+  <data name="No active session found for this table." xml:space="preserve">
+    <value>Không tìm thấy phiên hoạt động cho bàn này.</value>
+  </data>
 </root>

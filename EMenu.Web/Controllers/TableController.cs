@@ -33,6 +33,20 @@ namespace EMenu.Web.Controllers
             var tables = _service.GetAll();
             ViewBag.CheckoutRequests = _checkoutRequestTracker.GetAll();
 
+            var activeSessions = new Dictionary<int, int>();
+            foreach (var table in tables)
+            {
+                if (table.Status == 1) // Occupied
+                {
+                    var session = _sessionService.GetActiveSessionByTable(table.TableID);
+                    if (session != null)
+                    {
+                        activeSessions[table.TableID] = session.OrderSessionID;
+                    }
+                }
+            }
+            ViewBag.ActiveSessions = activeSessions;
+
             return View(tables);
         }
 

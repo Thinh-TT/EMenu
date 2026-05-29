@@ -1,0 +1,28 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: EMenu.Web/Dockerfile
+    container_name: emenu-web
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=Talenta;User Id=sa;Password=Thinh@12345;TrustServerCertificate=True
+      - VNPay__ReturnUrl=https://overhung-cannon-mystify.ngrok-free.dev/Payment/VNPayReturn
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: emenu-ngrok
+    restart: unless-stopped
+    command:
+      - "http"
+      - "http://web:8080"
+      - "--domain=overhung-cannon-mystify.ngrok-free.dev"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - web

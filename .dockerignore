@@ -1,0 +1,13 @@
+**/.vs/
+**/bin/
+**/obj/
+**/node_modules/
+**/artifacts/
+**/*.log
+**/*.binlog
+.git/
+.github/
+*.md
+*.mdx
+.env
+.env.*

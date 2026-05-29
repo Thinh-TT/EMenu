@@ -18,6 +18,15 @@ namespace EMenu.Web.Controllers
 
         public IActionResult Start(int tableId)
         {
+            var activeSession = _sessionService.GetActiveSessionByTable(tableId);
+            if (activeSession != null)
+            {
+                return Redirect(
+                    "/Menu?tableId=" + tableId +
+                    "&sessionId=" + activeSession.OrderSessionID
+                );
+            }
+
             ViewBag.TableId = tableId;
             return View();
         }

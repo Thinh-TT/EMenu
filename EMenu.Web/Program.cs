@@ -122,7 +122,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER")))
+{
+    app.UseHttpsRedirection();
+}
 app.UseRequestLocalization(localizationOptions);
 app.UseStaticFiles();
 app.UseRouting();

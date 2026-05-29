@@ -40,6 +40,18 @@
             });
     };
 
+    window.orderTable = function (tableId) {
+        const activeSessions = tableData.activeSessions || [];
+        const entry = activeSessions.find(s => s.tableId === tableId);
+
+        if (!entry || !entry.sessionId) {
+            alert(t("sessionNotFound", "No active session found for this table."));
+            return;
+        }
+
+        window.location = `/Menu?tableId=${tableId}&sessionId=${entry.sessionId}`;
+    };
+
     window.endTable = function (tableId) {
         fetch(`/api/session/end?tableId=${tableId}`, {
             method: "POST",

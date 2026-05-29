@@ -15,9 +15,17 @@
     var checkoutRequests = ViewBag.CheckoutRequests as IReadOnlyCollection<CheckoutRequestState>
         ?? Array.Empty<CheckoutRequestState>();
 
+    var activeSessions = ViewBag.ActiveSessions as Dictionary<int, int>
+        ?? new Dictionary<int, int>();
+
     var pageDataJson = JsonSerializer.Serialize(new
     {
         tables = tableClientData,
+        activeSessions = activeSessions.Select(kv => new
+        {
+            tableId = kv.Key,
+            sessionId = kv.Value
+        }),
         checkoutRequests = checkoutRequests.Select(x => new
         {
             sessionId = x.SessionId,
@@ -46,7 +54,9 @@
             available = Localizer["Available"].Value,
             requestFailed = Localizer["Request failed."].Value,
             checkoutRequested = Localizer["Checkout requested"].Value,
-            checkoutRequestHint = Localizer["Customer is ready to checkout."].Value
+            checkoutRequestHint = Localizer["Customer is ready to checkout."].Value,
+            order = Localizer["Order"].Value,
+            sessionNotFound = Localizer["No active session found for this table."].Value
         }
     });
 }
@@ -98,6 +108,11 @@
 
                     @if (table.Status == 1)
                     {
+                        <button class="btn btn-primary"
+                                onclick="orderTable(@table.TableID)">
+                            @Localizer["Order"]
+                        </button>
+
                         <button class="btn btn-danger"
                                 onclick="endTable(@table.TableID)">
                             @Localizer["End Session"]
