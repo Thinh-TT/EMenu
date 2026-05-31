@@ -368,3 +368,6 @@ FodyWeavers.xsd
 .dotnet/.dotnet/*Sentinel*
 .dotnet/.dotnet/*.dotnetUserLevelCache
 .dotnet/.dotnet/*.sentinel
+
+# docs
+*.md
