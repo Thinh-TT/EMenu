@@ -110,10 +110,20 @@
       });
   }
 
+  function payOnline() {
+    window.location.href = "/payment/vnpay?sessionId=" + encodeURIComponent(sessionId);
+  }
+
   const callCheckoutButton = document.getElementById("callCheckoutButton");
 
   if (callCheckoutButton) {
     callCheckoutButton.addEventListener("click", requestCheckout);
+  }
+
+  const vnpayButton = document.getElementById("vnpayButton");
+
+  if (vnpayButton) {
+    vnpayButton.addEventListener("click", payOnline);
   }
 
   setCheckoutButtonState(initialCheckoutRequested);

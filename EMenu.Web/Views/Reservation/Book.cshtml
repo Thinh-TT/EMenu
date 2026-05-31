@@ -17,14 +17,18 @@
     <div class="alert alert-success">@TempData["Success"]</div>
 }
 
-<div class="card">
+<div class="card mb-4">
     <div class="card-body">
+        <h5 class="card-title">@Localizer["Step 1: Your Information"]</h5>
         <form method="post" asp-action="Book" class="js-reservation-form row g-3">
+            <input type="hidden" name="TableId" id="selectedTableId" value="" />
+
             <div class="col-md-6">
                 <label class="form-label">@Localizer["Full name"]</label>
                 <input type="text"
                        class="form-control"
                        name="CustomerName"
+                       id="CustomerName"
                        value="@Model.CustomerName"
                        required />
             </div>
@@ -33,6 +37,7 @@
                 <input type="text"
                        class="form-control"
                        name="CustomerPhone"
+                       id="CustomerPhone"
                        value="@Model.CustomerPhone"
                        maxlength="10"
                        pattern="\d{10}"
@@ -44,57 +49,61 @@
                 <input type="email"
                        class="form-control"
                        name="CustomerEmail"
+                       id="CustomerEmail"
                        value="@Model.CustomerEmail" />
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">@Localizer["Table"]</label>
-                <select class="form-select" name="TableId" required>
-                    @foreach (var table in Model.Tables)
-                    {
-                        if (Model.TableId == table.TableID)
-                        {
-                            <option value="@table.TableID" selected>
-                                @Localizer["{0} (Capacity {1})", table.TableName, table.Capacity]
-                            </option>
-                        }
-                        else
-                        {
-                            <option value="@table.TableID">
-                                @Localizer["{0} (Capacity {1})", table.TableName, table.Capacity]
-                            </option>
-                        }
-                    }
-                </select>
             </div>
             <div class="col-md-4">
                 <label class="form-label">@Localizer["Reservation time"]</label>
                 <input type="datetime-local"
                        class="form-control"
                        name="ReservationTime"
+                       id="ReservationTime"
                        value="@Model.ReservationTime.ToString("yyyy-MM-ddTHH:mm")"
                        required />
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label">@Localizer["Guests"]</label>
                 <input type="number"
                        class="form-control"
                        name="NumberOfGuests"
+                       id="NumberOfGuests"
                        min="1"
                        value="@Model.NumberOfGuests"
                        required />
             </div>
+            <div class="col-md-5 d-flex align-items-end">
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        id="checkAvailabilityBtn">
+                    @Localizer["Check Available Tables"]
+                </button>
+            </div>
+
             <div class="col-12">
-                <div class="small text-danger js-conflict-feedback"></div>
-            </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-primary w-100">@Localizer["Submit Reservation"]</button>
-            </div>
-            <div class="col-md-8 d-flex align-items-center">
-                <span class="text-muted">
-                    @Localizer["Status flow: Pending -> Confirmed -> Cancelled"]
-                </span>
+                <div class="small text-danger" id="availabilityFeedback"></div>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="card mb-4" id="tablePickerSection" style="display:none;">
+    <div class="card-body">
+        <h5 class="card-title">@Localizer["Step 2: Select a Table"]</h5>
+        <p class="text-muted">@Localizer["Choose an available table from the diagram below."]</p>
+
+        <div id="tablePickerContainer">
+            <!-- Rendered by JS -->
+        </div>
+
+        <div class="mt-3 d-flex gap-2">
+            <button type="button"
+                    class="btn btn-primary"
+                    id="submitReservationBtn"
+                    disabled>
+                @Localizer["Submit Reservation"]
+            </button>
+            <span class="text-muted d-flex align-items-center" id="selectedTableLabel"></span>
+        </div>
     </div>
 </div>
 
@@ -104,7 +113,18 @@
         window.reservationI18n = {
             unableToValidateReservationTime: "@Localizer["Unable to validate reservation time."]",
             selectedTableHasReservation: "@Localizer["Selected table already has a reservation at this time."]",
-            unableToValidateNow: "@Localizer["Unable to validate reservation time right now."]"
+            unableToValidateNow: "@Localizer["Unable to validate reservation time right now."]",
+            pleaseEnterNameAndTime: "@Localizer["Please enter your name and reservation time."]",
+            noTablesAvailable: "@Localizer["No tables available for the selected time and guest count."]",
+            selectATable: "@Localizer["Select a table"]",
+            table: "@Localizer["Table"]",
+            capacity: "@Localizer["Capacity"]",
+            guests: "@Localizer["guests"]",
+            available: "@Localizer["Available"]",
+            busy: "@Localizer["Busy"]",
+            reserved: "@Localizer["Reserved"]",
+            tables: "@Localizer["tables"]",
+            unknownError: "@Localizer["An error occurred while checking availability."]"
         };
     </script>
     <script src="~/js/reservation.js" asp-append-version="true"></script>

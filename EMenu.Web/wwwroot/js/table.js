@@ -11,6 +11,13 @@
         ])
     );
 
+    const activeSessions = new Map(
+        (tableData.activeSessions || []).map(s => [
+            Number.parseInt(s.tableId, 10),
+            s.sessionId
+        ])
+    );
+
     function t(key, fallback) {
         return i18n[key] || fallback;
     }
@@ -189,6 +196,73 @@
         checkoutRequests.delete(tableId);
         applyCheckoutRequestState();
     });
+
+    connection.on("SessionStarted", payload => {
+        const tableId = Number.parseInt(payload?.tableId ?? payload?.tableID, 10);
+        const sessionId = Number.parseInt(payload?.sessionId ?? payload?.sessionID, 10);
+
+        if (Number.isNaN(tableId) || Number.isNaN(sessionId)) {
+            return;
+        }
+
+        activeSessions.set(tableId, sessionId);
+        updateTableCardState(tableId, TABLE_STATUS_OCCUPIED, sessionId);
+    });
+
+    connection.on("SessionEnded", payload => {
+        const tableId = Number.parseInt(payload?.tableId ?? payload?.tableID, 10);
+
+        if (Number.isNaN(tableId)) {
+            return;
+        }
+
+        activeSessions.delete(tableId);
+        checkoutRequests.delete(tableId);
+        updateTableCardState(tableId, TABLE_STATUS_AVAILABLE, null);
+    });
+
+    function updateTableCardState(tableId, newStatus, sessionId) {
+        const card = document.querySelector(`[data-table-card][data-table-id="${tableId}"]`);
+        if (!card) return;
+
+        // Update CSS class
+        card.classList.remove("table-box--free", "table-box--busy", "table-box--reserved");
+        let statusClass, statusText;
+        if (newStatus === TABLE_STATUS_OCCUPIED) {
+            statusClass = "table-box--busy";
+            statusText = t("busy", "Busy");
+        } else if (newStatus === TABLE_STATUS_RESERVED) {
+            statusClass = "table-box--reserved";
+            statusText = t("reserved", "Reserved");
+        } else {
+            statusClass = "table-box--free";
+            statusText = t("available", "Available");
+        }
+        card.classList.add(statusClass);
+
+        // Update status pill
+        const pill = card.querySelector(".status-pill");
+        if (pill) pill.textContent = statusText;
+
+        // Update action buttons
+        const actions = card.querySelector(".table-box-actions");
+        if (!actions) return;
+
+        if (newStatus === TABLE_STATUS_AVAILABLE) {
+            actions.innerHTML = `<button onclick="openTable(${tableId})">${t("open", "Open")}</button>`;
+        } else if (newStatus === TABLE_STATUS_OCCUPIED) {
+            const sid = sessionId || activeSessions.get(tableId) || 0;
+            actions.innerHTML = `
+                <button class="btn btn-primary" onclick="orderTable(${tableId})">${t("order", "Order")}</button>
+                <button class="btn btn-danger" onclick="endTable(${tableId})">${t("endSession", "End Session")}</button>
+                <button class="btn btn-warning" data-bill-button onclick="openBill(${tableId})">${t("bill", "Bill")}</button>
+                <button onclick="openTransferModal(${tableId})">${t("transfer", "Transfer")}</button>
+                <button onclick="openMergeModal(${tableId})">${t("merge", "Merge")}</button>`;
+        }
+
+        // Re-apply checkout state (may have been cleared)
+        applyCheckoutRequestState();
+    }
 
     function openTableActionModal(actionType, sourceTableId) {
         const sourceTable = tableData.tables.find(table => table.id === sourceTableId);

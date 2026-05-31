@@ -19,7 +19,9 @@
             checkoutHint = Localizer["Tap here when you are ready for the staff to bring your bill."].Value,
             checkoutRequestedMessage = Localizer["The staff has been notified and will come to your table shortly."].Value,
             unableToCallCheckout = Localizer["Unable to call checkout"].Value,
-            waitingForItems = Localizer["Your items will appear here after the kitchen receives them."].Value
+            waitingForItems = Localizer["Your items will appear here after the kitchen receives them."].Value,
+            payOnline = Localizer["Pay Online (VNPay)"].Value,
+            payOnlineHint = Localizer["Pay directly via VNPay online payment gateway."].Value
         }
     });
 }
@@ -37,6 +39,15 @@
             </button>
             <p id="checkoutCallState" class="tracking-checkout-card__state">
                 @Localizer["Tap here when you are ready for the staff to bring your bill."]
+            </p>
+
+            <hr class="tracking-checkout-card__divider">
+
+            <button id="vnpayButton" type="button" class="btn btn-primary">
+                @Localizer["Pay Online (VNPay)"]
+            </button>
+            <p id="vnpayHint" class="tracking-checkout-card__state">
+                @Localizer["Pay directly via VNPay online payment gateway."]
             </p>
         </div>
     </div>

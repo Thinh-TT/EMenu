@@ -53,6 +53,7 @@ function addToCart(productId, name, price) {
       name: name,
       price: price,
       quantity: 1,
+      note: "",
     });
   }
 
@@ -131,6 +132,21 @@ function updateCartUI() {
       item.price * item.quantity,
     );
     copyElement.appendChild(priceElement);
+
+    const noteInput = document.createElement("input");
+    noteInput.type = "text";
+    noteInput.className = "cart-item__note";
+    noteInput.placeholder = t("addNote", "Add a note...");
+    noteInput.value = item.note || "";
+    noteInput.setAttribute("aria-label", t("itemNote", "Item note"));
+    noteInput.addEventListener("input", (e) => {
+      item.note = e.target.value;
+      saveCart(cart);
+    });
+    noteInput.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+    itemElement.appendChild(noteInput);
 
     const controlsElement = document.createElement("div");
     controlsElement.className = "cart-controls";

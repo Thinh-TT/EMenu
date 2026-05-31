@@ -277,6 +277,75 @@ namespace EMenu.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet("/api/reservation/available-tables")]
+        public IActionResult GetAvailableTables(DateTime reservationTime, int numberOfGuests)
+        {
+            try
+            {
+                var tables = _reservationService.GetTables();
+
+                var result = tables.Select(table =>
+                {
+                    bool hasConflict;
+                    try
+                    {
+                        hasConflict = _reservationService.HasConflict(table.TableID, reservationTime);
+                    }
+                    catch
+                    {
+                        hasConflict = true;
+                    }
+
+                    bool capacityOk = numberOfGuests <= table.Capacity;
+                    bool isAvailable = !hasConflict && capacityOk;
+
+                    string? reason = null;
+                    if (!isAvailable)
+                    {
+                        if (hasConflict)
+                            reason = "Đã có đặt bàn trước";
+                        else if (!capacityOk)
+                            reason = $"Sức chứa tối đa {table.Capacity} khách";
+                    }
+
+                    return new
+                    {
+                        tableId = table.TableID,
+                        tableName = table.TableName,
+                        capacity = table.Capacity,
+                        area = GetTableArea(table.TableName),
+                        currentStatus = table.Status,
+                        isAvailable,
+                        reason
+                    };
+                })
+                .OrderBy(t => t.area)
+                .ThenBy(t => t.tableName)
+                .ToList();
+
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        private static string GetTableArea(string tableName)
+        {
+            // T01-T04: Khu vực lộ thiên (outdoor)
+            // T05-T10: Khu vực trung tâm (central)
+            if (tableName.StartsWith("T0") && int.TryParse(tableName[1..], out int num))
+            {
+                if (num >= 1 && num <= 4)
+                    return "Khu vực lộ thiên";
+                if (num >= 5 && num <= 10)
+                    return "Khu vực trung tâm";
+            }
+            return "Khác";
+        }
+
         private ReservationIndexViewModel BuildIndexViewModel(
             DateTime? fromDate,
             DateTime? toDate,

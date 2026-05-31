@@ -1,9 +1,11 @@
 using EMenu.Application.Services;
 using EMenu.Domain.Constants;
 using EMenu.Web.Extensions;
+using EMenu.Web.Hubs;
 using EMenu.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace EMenu.Web.Controllers
 {
@@ -13,22 +15,31 @@ namespace EMenu.Web.Controllers
     public class SessionController : ControllerBase
     {
         private readonly SessionService _sessionService;
+        private readonly TableService _tableService;
+        private readonly IHubContext<OrderHub> _hub;
         private readonly ILogger<SessionController> _logger;
 
         public SessionController(
             SessionService sessionService,
+            TableService tableService,
+            IHubContext<OrderHub> hub,
             ILogger<SessionController> logger)
         {
             _sessionService = sessionService;
+            _tableService = tableService;
+            _hub = hub;
             _logger = logger;
         }
 
         [HttpPost("start")]
-        public IActionResult Start(int tableId, int customerId)
+        public async Task<IActionResult> Start(int tableId, int customerId)
         {
             try
             {
                 var session = _sessionService.StartSession(tableId, customerId);
+
+                var table = _tableService.GetById(tableId);
+                var tableName = table?.TableName ?? $"Table {tableId}";
 
                 _logger.LogInformation(
                     "Session started by user {UserId} ({Username}) roles {Roles}: table {TableId}, customer {CustomerId}, session {SessionId}.",
@@ -38,6 +49,13 @@ namespace EMenu.Web.Controllers
                     tableId,
                     customerId,
                     session.OrderSessionID);
+
+                await _hub.Clients.All.SendAsync("SessionStarted", new
+                {
+                    SessionId = session.OrderSessionID,
+                    TableId = tableId,
+                    TableName = tableName
+                });
 
                 return Ok(session);
             }
@@ -56,7 +74,7 @@ namespace EMenu.Web.Controllers
         }
 
         [HttpPost("end")]
-        public IActionResult EndSession(int tableId)
+        public async Task<IActionResult> EndSession(int tableId)
         {
             try
             {
@@ -68,6 +86,11 @@ namespace EMenu.Web.Controllers
                     User.GetAuditUserName(),
                     User.GetAuditRoles(),
                     tableId);
+
+                await _hub.Clients.All.SendAsync("SessionEnded", new
+                {
+                    TableId = tableId
+                });
 
                 return Ok();
             }

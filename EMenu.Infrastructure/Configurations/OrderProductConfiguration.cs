@@ -20,6 +20,9 @@ namespace EMenu.Infrastructure.Configurations
             builder.Property(x => x.Price)
                    .HasPrecision(10, 2);
 
+            builder.Property(x => x.Note)
+                   .HasMaxLength(500);
+
             builder.HasOne(x => x.Order)
                    .WithMany(x => x.OrderProducts)
                    .HasForeignKey(x => x.OrderID);

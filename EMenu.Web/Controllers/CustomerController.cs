@@ -1,5 +1,7 @@
 ﻿using EMenu.Application.Services;
+using EMenu.Web.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace EMenu.Web.Controllers
 {
@@ -7,13 +9,19 @@ namespace EMenu.Web.Controllers
     {
         private readonly SessionService _sessionService;
         private readonly CustomerService _customerService;
+        private readonly TableService _tableService;
+        private readonly IHubContext<OrderHub> _hub;
 
         public CustomerController(
             SessionService sessionService,
-            CustomerService customerService)
+            CustomerService customerService,
+            TableService tableService,
+            IHubContext<OrderHub> hub)
         {
             _sessionService = sessionService;
             _customerService = customerService;
+            _tableService = tableService;
+            _hub = hub;
         }
 
         public IActionResult Start(int tableId)
@@ -32,7 +40,7 @@ namespace EMenu.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Start(
+        public async Task<IActionResult> Start(
                  int tableId,
                  string name,
                  string? phone,
@@ -48,6 +56,16 @@ namespace EMenu.Web.Controllers
                         tableId,
                         customer.CustomerID
                     );
+
+                var table = _tableService.GetById(tableId);
+                var tableName = table?.TableName ?? $"Table {tableId}";
+
+                await _hub.Clients.All.SendAsync("SessionStarted", new
+                {
+                    SessionId = session.OrderSessionID,
+                    TableId = tableId,
+                    TableName = tableName
+                });
 
                 return Redirect(
                     "/Menu?tableId=" + tableId +

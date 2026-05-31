@@ -13,5 +13,7 @@ namespace EMenu.Application.Abstractions.DTOs
         public OrderItemStatus Status { get; set; }
 
         public int OrderId { get; set; }
+
+        public string? Note { get; set; }
     }
 }

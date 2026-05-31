@@ -47,7 +47,32 @@ namespace EMenu.Web.Controllers
             }
             ViewBag.ActiveSessions = activeSessions;
 
+            // Hardcode area mapping based on table name prefix
+            var areaGroups = tables
+                .GroupBy(t => GetTableArea(t.TableName))
+                .Select(g => new
+                {
+                    Area = g.Key,
+                    Tables = g.OrderBy(t => t.TableName).ToList()
+                })
+                .ToList();
+            ViewBag.AreaGroups = areaGroups;
+
             return View(tables);
+        }
+
+        private static string GetTableArea(string tableName)
+        {
+            // T01-T04: Khu vực lộ thiên (outdoor)
+            // T05-T10: Khu vực trung tâm (central)
+            if (tableName.StartsWith("T0") && int.TryParse(tableName[1..], out int num))
+            {
+                if (num >= 1 && num <= 4)
+                    return "Khu vực lộ thiên";
+                if (num >= 5 && num <= 10)
+                    return "Khu vực trung tâm";
+            }
+            return "Khác";
         }
 
         public IActionResult StartSession(int tableId)

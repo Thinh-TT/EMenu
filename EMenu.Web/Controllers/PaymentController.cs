@@ -100,6 +100,41 @@ namespace EMenu.Web.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("/payment/vnpay")]
+        public IActionResult VNPayPublic(int sessionId)
+        {
+            try
+            {
+                var orderId = _billService.GetOrderIdBySession(sessionId);
+                var bill = _billService.GetBillByOrderId(orderId);
+                var clientIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                var paymentUrl = _vnPayService.CreatePaymentUrl(
+                    sessionId,
+                    orderId,
+                    bill.TotalAmount,
+                    clientIpAddress);
+
+                _logger.LogInformation(
+                    "VNPay payment initialized publicly: session {SessionId}, order {OrderId}, amount {Amount}.",
+                    sessionId,
+                    orderId,
+                    bill.TotalAmount);
+
+                return Redirect(paymentUrl);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "VNPay public payment initialization failed: session {SessionId}.",
+                    sessionId);
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Tracking", "OrderPage", new { sessionId });
+            }
+        }
+
+        [AllowAnonymous]
         public IActionResult VNPayReturn()
         {
             var returnData = BuildReturnData(Request.Query);

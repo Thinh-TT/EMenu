@@ -524,6 +524,154 @@ form:not(.d-inline) .form-group {
   background: linear-gradient(135deg, #fde68a, #facc15) !important;
 }
 
+/* ---- Table area grouping ---- */
+
+.table-area-section {
+  margin-bottom: 36px;
+}
+
+.table-area-section:last-child {
+  margin-bottom: 0;
+}
+
+.table-area-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.table-area-title {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.table-area-count {
+  padding: 6px 14px;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+/* ---- Table picker (reservation step 2) ---- */
+
+.table-picker-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 16px;
+}
+
+.table-picker-card {
+  min-height: 150px;
+  padding: 18px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 3px solid transparent;
+  position: relative;
+}
+
+.table-picker-card h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+.table-picker-card__capacity {
+  margin: 0;
+  font-size: 0.85rem;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.table-picker-card__reason {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.12);
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.table-picker-card__radio {
+  margin-top: auto;
+}
+
+.table-picker-radio {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.7);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.table-picker-radio--disabled {
+  border-color: rgba(255,255,255,0.3);
+  opacity: 0.5;
+}
+
+/* Available */
+.table-picker-card--available {
+  background: linear-gradient(160deg, #38bdf8, #2563eb);
+  color: var(--white);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.2);
+}
+
+.table-picker-card--available:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.32);
+}
+
+/* Unavailable */
+.table-picker-card--unavailable {
+  background: linear-gradient(160deg, #94a3b8, #64748b);
+  color: rgba(255,255,255,0.65);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Selected */
+.table-picker-card--selected {
+  border-color: #fde68a;
+  box-shadow: 0 0 0 3px rgba(253, 224, 71, 0.45), 0 16px 36px rgba(37, 99, 235, 0.32);
+  transform: translateY(-3px);
+}
+
+.table-picker-card--selected .table-picker-radio {
+  background: #fde68a;
+  border-color: #fde68a;
+  box-shadow: 0 0 0 4px rgba(253, 224, 71, 0.35);
+}
+
+/* Status pill variants */
+.status-pill--free {
+  background: rgba(255,255,255,0.25);
+}
+
+.status-pill--busy {
+  background: rgba(220, 38, 38, 0.35);
+}
+
+.status-pill--reserved {
+  background: rgba(251, 191, 36, 0.4);
+}
+
 .status-pill {
   display: inline-flex;
   width: fit-content;
@@ -797,6 +945,22 @@ form:not(.d-inline) .form-group {
   font-weight: 700;
 }
 
+.cart-item__note {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  background: #f8fafc;
+  transition: border-color 0.2s;
+}
+
+.cart-item__note:focus {
+  outline: none;
+  border-color: var(--blue-500);
+  background: white;
+}
+
 .cart-controls {
   display: flex;
   gap: 8px;
@@ -923,6 +1087,22 @@ body.cart-drawer-open {
   margin-bottom: 12px;
 }
 
+.order-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-item__note {
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  background: #fef3c7;
+  color: #92400e;
+  border-left: 3px solid #f59e0b;
+}
+
 .tracking-stage {
   padding: 28px;
   border: 1px solid rgba(255, 255, 255, 0.78);
@@ -955,6 +1135,12 @@ body.cart-drawer-open {
 
 .tracking-checkout-card__state {
   margin: 14px 0 0;
+}
+
+.tracking-checkout-card__divider {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .tracking-list {
@@ -1358,6 +1544,15 @@ body.cart-drawer-open {
     flex-direction: column;
     text-align: center;
     border-radius: 28px;
+  }
+
+  .table-area-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .table-area-section {
+    margin-bottom: 28px;
   }
 }
 

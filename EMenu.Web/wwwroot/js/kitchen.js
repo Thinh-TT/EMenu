@@ -1,5 +1,11 @@
 loadOrders();
 
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 function pickValue(source, keys) {
   for (const key of keys) {
     if (source[key] !== undefined && source[key] !== null) {
@@ -43,6 +49,7 @@ No pending orders right now.
       productName: pickValue(rawItem, ["productName", "ProductName"]),
       quantity: pickValue(rawItem, ["quantity", "Quantity"]),
       status: pickValue(rawItem, ["status", "Status"]),
+      note: pickValue(rawItem, ["note", "Note"]),
     };
 
     if (item.orderId === undefined || item.orderProductId === undefined) {
@@ -93,7 +100,10 @@ No pending orders right now.
       html += `
 <div class="order-item">
 
+<div class="order-item__info">
 <span>${i.productName} x${i.quantity}</span>
+${i.note ? `<div class="order-item__note">📝 ${escapeHtml(i.note)}</div>` : ""}
+</div>
 
 <button class="status-btn ${statusClass}"
 onclick="updateStatus(${i.orderProductId},${nextStatus})">

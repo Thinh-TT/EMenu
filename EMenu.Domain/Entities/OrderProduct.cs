@@ -17,6 +17,8 @@ namespace EMenu.Domain.Entities
 
         public int Quantity { get; set; }
 
+        public string? Note { get; set; }
+
         public decimal Price { get; set; }
 
         public OrderItemStatus Status { get; set; }

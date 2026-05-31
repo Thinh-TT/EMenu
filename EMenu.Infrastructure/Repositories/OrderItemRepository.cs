@@ -40,7 +40,8 @@ namespace EMenu.Infrastructure.Repositories
                     ProductName = x.Product.ProductName,
                     Quantity = x.Quantity,
                     Status = x.Status,
-                    OrderId = x.Order.OrderID
+                    OrderId = x.Order.OrderID,
+                    Note = x.Note
                 })
                 .ToList();
         }

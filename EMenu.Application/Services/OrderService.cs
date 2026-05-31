@@ -170,7 +170,8 @@ namespace EMenu.Application.Services
                     ProductID = item.ProductId,
                     Quantity = item.Quantity,
                     Price = product.Price,
-                    Status = OrderItemStatus.Pending
+                    Status = OrderItemStatus.Pending,
+                    Note = string.IsNullOrWhiteSpace(item.Note) ? null : item.Note.Trim()
                 };
 
                 _orderRepository.AddOrderProduct(orderProduct);
