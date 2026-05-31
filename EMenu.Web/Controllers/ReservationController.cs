@@ -334,16 +334,16 @@ namespace EMenu.Web.Controllers
 
         private static string GetTableArea(string tableName)
         {
-            // T01-T04: Khu vực lộ thiên (outdoor)
-            // T05-T10: Khu vực trung tâm (central)
+            // T01-T04: Open-air area
+            // T05-T10: Central area
             if (tableName.StartsWith("T0") && int.TryParse(tableName[1..], out int num))
             {
                 if (num >= 1 && num <= 4)
-                    return "Khu vực lộ thiên";
+                    return "Open-air area";
                 if (num >= 5 && num <= 10)
-                    return "Khu vực trung tâm";
+                    return "Central area";
             }
-            return "Khác";
+            return "Other area";
         }
 
         private ReservationIndexViewModel BuildIndexViewModel(
