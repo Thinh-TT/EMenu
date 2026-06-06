@@ -371,3 +371,5 @@ FodyWeavers.xsd
 
 # docs
 *.md
+#env
+.env
